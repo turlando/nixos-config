@@ -1,23 +1,23 @@
-{ config, options, ... }:
+{ config, lib, options, ... }:
 
 let
-  inherit (lib) mkIf;
+  inherit (lib) mkIf mkMerge;
+  inherit (lib.attrsets) updateManyAttrsByPath;
 in
 {
-  options = {
+  config = {
     services.openssh.hostKeys = let
       ephemeral = config.boot.ephemeral.enable;
+      stateDir = config.boot.ephemeral.stateDir;
       default = options.services.openssh.hostKeys.default;
-    in
-      mkIf
-        ephemeral
-        map
+      new =  map
         (attr: updateManyAttrsByPath
           [ {
             path = [ "path" ];
-            update = p: "${statePath}/${p}";
+            update = p: "${stateDir}/${p}";
           } ]
           attr)
         default;
+    in mkIf ephemeral new;
   };
 }
