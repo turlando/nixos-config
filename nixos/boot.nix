@@ -25,6 +25,12 @@ in
           example = "system/root@empty";
           description = ""; # TODO: add description
         };
+
+        stateDir = mkOption {
+          type = types.path;
+          default = /var/state;
+          description = ""; # TODO: add description
+        };
       };
 
       drives = mkOption {
