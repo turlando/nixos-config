@@ -58,6 +58,8 @@ in
         (length config.boot.drives > 1)
         (grubMirroredBoots config.boot.drives);
 
+    boot.tmpOnTmpfs = true;
+
     fileSystems =
       mergeAttrsets (imap1 bootFileSystem config.boot.partitions);
   };
