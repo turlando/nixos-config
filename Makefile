@@ -7,7 +7,7 @@ TRACE ?=
 
 ###############################################################################
 
-_NIX := nix --experimental-features 'nix-command flakes'
+_NIX := nix --experimental-features 'nix-command flakes repl-flake'
 
 ###############################################################################
 
@@ -35,6 +35,10 @@ build:
 .PHONY: build-vm
 build-vm:
 	$(NIX) build .#nixosConfigurations.$(HOSTNAME).config.system.build.vm
+
+.PHONY: repl
+repl:
+	$(NIX) repl .#nixosConfigurations.$(HOSTNAME)
 
 ###############################################################################
 
