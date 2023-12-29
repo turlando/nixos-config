@@ -1,32 +1,14 @@
 { config, lib, ... }:
 
 let
-  inherit (lib.attrsets) mergeAttrsets;
-  inherit (lib.filesystems) serviceFileSystem servicePath;
-
-  name = "quassel";
-  data = config.storage.pools.system.datasets."services/${name}".mountPoint;
-  dataPath = "/data";
+  inherit (lib.containers) dataPath mkContainer;
 in
 {
-  containers."${name}" = {
-    ephemeral = true;
-    autoStart = true;
-
-    bindMounts = {
-      "${dataPath}" = {
-        hostPath = dataPath;
-        isReadOnly = false;
-      };
-    };
-
-    # See https://github.com/NixOS/nixpkgs/issues/196370
-    extraFlags = [
-      "--resolv-conf=bind-host"
-    ];
-
+  containers = mkContainer {
+    name = "quassel";
+    data = config.storage.pools.system.datasets."services/quassel".mountPoint;
     config =
-      { config, pkgs, ... }:
+      { pkgs, ... }:
       {
         system.stateVersion = "23.11";
 
