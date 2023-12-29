@@ -20,6 +20,7 @@ let
 
   mountPointOption = mkOption {
     type = types.nullOr nonEmptyWithoutTrailingSlash;
+    default = null;
     example = "/var/log";
     description = lib.mdDoc "Location of the mounted file system.";
   };
