@@ -25,6 +25,17 @@ help:
 
 ###############################################################################
 
+.PHONY: update
+update:
+	$(NIX) flake update
+
+.PHONY: switch
+switch:
+	nixos-rebuild switch --flake .#$(HOSTNAME)
+
+.PHONY: upgrade
+upgrade: update switch
+
 .PHONY: generate-hardware-config
 generate-hardware-config: hosts/$(HOSTNAME)/hardware.nix
 
