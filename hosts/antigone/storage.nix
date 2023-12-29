@@ -34,7 +34,7 @@ in
     scratch = {
       datasets = {
         "downloads" = { mountPoint = null; };
-        "downloads/slskd" = { mountPoint = null; };
+        "downloads/slskd" = { mountPoint = "/mnt/scratch/downloads/slskd"; };
         "music-mp3" = { mountPoint = null; };
         "music-mp3/electronic" = { mountPoint = "/mnt/scratch/music-mp3/electronic"; };
         "music-opus" = { mountPoint = null; };

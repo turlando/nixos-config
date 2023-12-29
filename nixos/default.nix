@@ -5,6 +5,7 @@
     ./boot.nix
     ./networking.nix
     ./storage.nix
+    ./services
   ];
 
   nix.settings.experimental-features = [
