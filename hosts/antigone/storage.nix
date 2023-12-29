@@ -16,7 +16,7 @@ in
         "state" = { mountPoint = "/var/state"; };
         "services" = { mountPoint = null; };
         "services/quassel" = { mountPoint = "/var/services/quassel"; };
-        "services/syncting" = { mountPoint = "/var/services/syncthing"; };
+        "services/syncthing" = { mountPoint = "/var/services/syncthing"; };
         "services/slskd" = { mountPoint = "/var/services/slskd"; };
         "podman" = { mountPoint = null; };
         "home" = { mountPoint = null; };
