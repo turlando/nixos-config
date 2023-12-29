@@ -18,6 +18,13 @@ let
     types.str
     (s: isNonEmpty s && (match ".+/" s) == null);
 
+  nameOption = name: mkOption {
+    type = types.str;
+    default = name;
+    readOnly = true;
+    visible = false;
+  };
+
   mountPointOption = mkOption {
     type = types.nullOr nonEmptyWithoutTrailingSlash;
     default = null;
@@ -29,14 +36,16 @@ in
   options = {
     storage.pools = mkOption {
       type = types.attrsOf (types.submodule (
-        { ... }:
+        { name, ... }:
         {
           options = {
+            name = nameOption name;
             datasets = mkOption {
               type = types.attrsOf (types.submodule (
-                { ... }:
+                { name, ... }:
                 {
                   options = {
+                    name = nameOption name;
                     mountPoint = mountPointOption;
                   };
                 }
