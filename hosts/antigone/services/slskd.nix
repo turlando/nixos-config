@@ -3,6 +3,7 @@
 let
   inherit (lib.containers) dataPath mkContainer;
 
+  systemDatasets = config.storage.pools.system.datasets;
   storageDatasets = config.storage.pools.storage.datasets;
   scratchDatasets = config.storage.pools.scratch.datasets;
 
@@ -15,7 +16,7 @@ in
 
   containers = mkContainer {
     name = "slskd";
-    data = config.storage.pools.system.datasets."services/slskd".mountPoint;
+    data = systemDatasets."services/slskd".mountPoint;
     mounts = [
       storageDatasets."music/electronic".mountPoint
       scratchDatasets."downloads/slskd".mountPoint
