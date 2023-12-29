@@ -9,6 +9,7 @@
     ./users.nix
     ./packages.nix
     ./alerting.nix
+    ./virtualisation.nix
   ];
 
   system.stateVersion = "23.11";
