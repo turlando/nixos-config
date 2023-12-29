@@ -9,10 +9,14 @@
     let 
       lib = nixpkgs.lib.extend (final: prev: import ./lib prev);
     in {
+      packages = {
+        "x86_64-linux" = import ./pkgs nixpkgs.legacyPackages."x86_64-linux";
+      };
+
       nixosConfigurations = {
         antigone  = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
-          specialArgs = { inherit inputs; inherit lib; };
+          specialArgs = { inherit lib; inherit (self) packages; };
           modules = [ ./nixos ./hosts/antigone ];
         };
       };
