@@ -4,8 +4,10 @@
   imports = [
     ./hardware.nix
     ./boot.nix
-    ./networking.nix
     ./storage.nix
+    ./networking.nix
+    ./users.nix
+    ./packages.nix
     ./alerting.nix
   ];
 
