@@ -74,7 +74,7 @@ in
         ProtectKernelModules = true;
         ProtectKernelTunables = true;
         ProtectProc = "invisible";
-        ProtectSystem = "strict";
+        ProtectSystem = "full";
         RemoveIPC = true;
         RestrictNamespaces = true;
         RestrictSUIDSGID = true;
