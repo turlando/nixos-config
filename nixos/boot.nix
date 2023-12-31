@@ -55,10 +55,8 @@ in
 
     boot.loader.grub.mirroredBoots =
       mkIf
-        (length config.boot.drives > 1)
+        (config.boot.loader.grub.enable && length config.boot.drives > 1)
         (grubMirroredBoots config.boot.drives);
-
-    boot.tmp.useTmpfs = true;
 
     fileSystems =
       mergeAttrsets (imap1 bootFileSystem config.boot.partitions);
