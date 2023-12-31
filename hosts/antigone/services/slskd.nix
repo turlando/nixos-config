@@ -1,4 +1,4 @@
-{ config, lib, ... }: 
+{ config, lib, packages, ... }: 
 
 let
   inherit (lib.containers) dataPath mkContainer;
@@ -35,6 +35,7 @@ in
 
         services.slskd = {
           enable = true;
+          package = packages."x86_64-linux".slskd;
           rotateLogs = true;
           dataDir = dataPath;
           configFile = "${dataPath}/slskd.yml";
