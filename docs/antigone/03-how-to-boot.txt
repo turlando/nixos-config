@@ -1,0 +1,13 @@
+# -*- mode: sh; -*-
+
+# How to boot
+# ===========
+
+ssh -p 2222 -l root host
+
+zpool import -a
+
+zfs load-key system
+zfs load-key storage
+zfs load-key backup
+zfs load-key scratch

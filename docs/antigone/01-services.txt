@@ -1,0 +1,48 @@
+# -*- mode: sh; -*-
+
+# Services
+# ========
+
+zfs create          \
+    system/services
+
+mkdir -p /var/services
+
+# Podman containers
+# ~~~~~~~~~~~~~~~~~
+
+zfs create system/podman
+
+# Quassel
+# ~~~~~~~
+
+zfs create                  \
+    -o acltype=posixacl     \
+    -o mountpoint=legacy    \
+    system/services/quassel
+
+mkdir -p /var/services/quassel
+mount -t zfs system/services/quassel /var/services/quassel
+
+# Syncthing
+# ~~~~~~~~~
+
+zfs create                    \
+    -o acltype=posixacl       \
+    -o mountpoint=legacy      \
+    system/services/syncthing
+
+mkdir -p /var/services/syncthing
+mount -t zfs system/services/syncthing /var/services/syncthing
+
+# slskd
+# ~~~~~
+
+zfs create                    \
+    -o acltype=posixacl       \
+    -o mountpoint=legacy      \
+    system/services/slskd
+
+mkdir -p /var/services/slskd
+mount -t zfs system/services/slskd /var/services/slskd
+
