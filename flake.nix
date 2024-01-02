@@ -19,7 +19,10 @@
     nixosConfigurations = {
       antigone  = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
-        specialArgs = { inherit lib; inherit (self) packages; };
+        specialArgs = {
+          inherit lib;
+          packages = self.packages."x86_64-linux";
+        };
         modules = [
           ./nixos
           ./hosts/common

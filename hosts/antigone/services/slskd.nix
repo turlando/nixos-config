@@ -35,7 +35,7 @@ in
 
         services.slskd = {
           enable = true;
-          package = packages."x86_64-linux".slskd;
+          package = packages.slskd;
           rotateLogs = true;
           dataDir = dataPath;
           configFile = "${dataPath}/slskd.yml";

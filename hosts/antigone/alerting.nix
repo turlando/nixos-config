@@ -2,7 +2,7 @@
 
 let
   statePath = config.storage.pools.system.datasets."state".mountPoint;
-  notifyPkg = packages."x86_64-linux".telegram-send;
+  notifyPkg = packages.telegram-send;
   notifyCmd = "${notifyPkg}/bin/telegram-send";
   notifyCfg = "${statePath}/etc/telegram-send.ini";
 
