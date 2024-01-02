@@ -3,9 +3,13 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.11";
+    home-manager = {
+      url = "github:nix-community/home-manager/release-23.11";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, ... }@inputs: let 
+  outputs = { self, nixpkgs, home-manager, ... }@inputs: let 
     lib = nixpkgs.lib.extend (final: prev: import ./lib prev);
   in {
     packages = {
@@ -20,6 +24,16 @@
           ./nixos
           ./hosts/common
           ./hosts/antigone
+        ];
+      };
+    };
+
+    homeConfigurations = {
+      "tancredi@antigone" = home-manager.lib.homeManagerConfiguration {
+        pkgs = nixpkgs.legacyPackages."x86_64-linux";
+        modules = [
+          ./users/tancredi-common
+          ./users/tancredi-antigone
         ];
       };
     };

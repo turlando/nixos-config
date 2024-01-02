@@ -3,7 +3,9 @@
 ###############################################################################
 
 HOSTNAME ?= $(shell hostname)
+USER ?= $(shell whoami)
 TRACE ?=
+VERSION ?= 23.11
 
 ###############################################################################
 
@@ -29,12 +31,14 @@ help:
 update:
 	$(NIX) flake update
 
-.PHONY: switch
-switch:
+.PHONY: switch-nixos
+switch-nixos:
 	nixos-rebuild switch --flake .#$(HOSTNAME)
 
-.PHONY: upgrade
-upgrade: update switch
+.PHONY: switch-home
+switch-home:
+	$(NIX) run home-manager/release-$(VERSION) -- \
+		switch --flake .#$(USER)@$(HOSTNAME)
 
 .PHONY: generate-hardware-config
 generate-hardware-config: hosts/$(HOSTNAME)/hardware.nix
