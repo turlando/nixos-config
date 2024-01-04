@@ -33,10 +33,14 @@
         ];
       };
     };
-
+  
     homeConfigurations = {
       "tancredi@antigone" = home-manager.lib.homeManagerConfiguration {
         inherit pkgs;
+        extraSpecialArgs = {
+          inherit packages;
+          lib = lib.extend (_: _: home-manager.lib);
+        };
         modules = [
           ./users/tancredi-common
           ./users/tancredi-antigone

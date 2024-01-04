@@ -1,4 +1,7 @@
 { ... }:
 
 {
+  imports = [
+    ./emacs.nix
+  ];
 }
