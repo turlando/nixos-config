@@ -43,9 +43,17 @@ switch-home:
 .PHONY: generate-hardware-config
 generate-hardware-config: hosts/$(HOSTNAME)/hardware.nix
 
-.PHONY: build
-build:
+.PHONY: build-nixos
+build-nixos:
 	$(NIX) build .#nixosConfigurations.$(HOSTNAME).config.system.build.toplevel
+
+.PHONY: build-home
+build-home:
+	$(NIX) run home-manager/release-$(VERSION) -- \
+		build --flake .#$(USER)@$(HOSTNAME)
+
+.PHONY: build
+build: build-nixos build-home
 
 .PHONY: build-vm
 build-vm:
