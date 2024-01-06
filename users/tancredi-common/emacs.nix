@@ -4,6 +4,8 @@ let
   inherit (lib.files) getFile;
 in
 {
+  programs.emacs.enable = true;
+
   services.emacs.enable = true;
   services.emacs.client.enable = true;
 
