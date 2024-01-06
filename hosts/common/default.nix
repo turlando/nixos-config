@@ -1,5 +1,9 @@
 { ... }:
 
 {
-  boot.tmp.useTmpfs = true;
+  imports = [
+    ./boot.nix
+    ./users.nix
+    ./packages.nix
+  ];
 }

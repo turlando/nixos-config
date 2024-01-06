@@ -32,6 +32,18 @@
           ./hosts/antigone
         ];
       };
+      ifigenia = nixpkgs.lib.nixosSystem {
+        inherit system;
+        specialArgs = {
+          inherit lib;
+          inherit packages;
+        };
+        modules = [
+          ./nixos
+          ./hosts/common
+          ./hosts/ifigenia
+        ];
+      };
     };
   
     homeConfigurations = {

@@ -1,0 +1,89 @@
+# -*- mode: sh; -*-
+
+set -eu
+
+# Prepare system drives
+# ~~~~~~~~~~~~~~~~~~~~~
+
+SYSTEM_DISK=/dev/disk/by-id/ata-CT500MX500SSD1_1944E225D422
+
+sgdisk --zap-all $SYSTEM_DISK
+
+parted --script $SYSTEM_DISK    \
+    mklabel gpt                 \
+    mkpart efi    fat32 1M 1G   \
+    mkpart system       1G 100% \
+    set 1 esp on
+
+EFI_PART=/dev/disk/by-partlabel/efi
+SYSTEM_PART=/dev/disk/by-partlabel/system
+
+mkfs.fat -F 32 -n efi $BOOT_PART
+
+# 80% of 465GiB which is the available space
+SYSTEM_POOL_QUOTA="370G"
+
+zpool create                                      \
+    -m none                                       \
+    -o ashift=12                                  \
+    -o altroot=/mnt                               \
+    -O quota=$SYSTEM_POOL_QUOTA                   \
+    -O canmount=off                               \
+    -O checksum=fletcher4                         \
+    -O compression=zstd                           \
+    -O xattr=sa                                   \
+    -O normalization=formD                        \
+    -O atime=off                                  \
+    -O encryption=aes-256-gcm                     \
+    -O keyformat=passphrase -O keylocation=prompt \
+    system                                        \
+    $SYSTEM_PART
+
+zfs create               \
+    -o mountpoint=legacy \
+    system/nix
+
+zfs create               \
+    -o acltype=posixacl  \
+    -o mountpoint=legacy \
+    system/root
+
+zfs snapshot             \
+    system/root@empty
+
+zfs create               \
+    -o acltype=posixacl
+    -o mountpoint=legacy
+    system/state
+
+zfs create               \
+    system/home
+
+zfs create               \
+    -o acltype=posixacl  \
+    -o mountpoint=legacy \
+    system/home/tancredi
+
+# Mount partitions
+# ~~~~~~~~~~~~~~~~
+
+mkdir -p /mnt
+mount -t zfs system/root /mnt 
+
+mkdir -p /mnt/boot
+mount -t ext4 $BOOT_PART /mnt/boot/2
+
+mkdir -p /mnt/nix
+mount -t zfs system/nix /mnt/nix
+
+mkidr -p /mnt/var/state
+mount -t zfs system/state /mnt/var/state
+
+mkdir -p /mnt/home/tancredi
+mount -t zfs system/home/tancredi /mnt/home/tancredi
+
+# Install NixOS
+# ~~~~~~~~~~~~~
+
+make HOSTNAME=ifigenia generate-hardware-config
+nixos-install --verbose --no-root-password --flake .#ifigenia
