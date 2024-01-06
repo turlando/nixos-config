@@ -5,18 +5,22 @@
 HOSTNAME ?= $(shell hostname)
 USER ?= $(shell whoami)
 TRACE ?=
-VERSION ?= 23.11
+PERIOD ?= 30d
+DRY ?=
 
 ###############################################################################
 
 _NIX := nix --experimental-features 'nix-command flakes repl-flake'
-
-###############################################################################
+HN := $(_NIX) run home-manager/release-23.11 --
 
 ifneq ($(TRACE),)
 	NIX = $(_NIX) --show-trace
 else
 	NIX = $(_NIX)
+endif
+
+ifneq ($(DRY),)
+	_DRY := --dry-run
 endif
 
 ###############################################################################
@@ -37,8 +41,7 @@ switch-nixos:
 
 .PHONY: switch-home
 switch-home:
-	$(NIX) run home-manager/release-$(VERSION) -- \
-		switch --flake .#$(USER)@$(HOSTNAME)
+	$(HN) switch --flake .#$(USER)@$(HOSTNAME)
 
 .PHONY: generate-hardware-config
 generate-hardware-config: hosts/$(HOSTNAME)/hardware.nix
@@ -49,8 +52,7 @@ build-nixos:
 
 .PHONY: build-home
 build-home:
-	$(NIX) run home-manager/release-$(VERSION) -- \
-		build --flake .#$(USER)@$(HOSTNAME)
+	$(HN) build --flake .#$(USER)@$(HOSTNAME)
 
 .PHONY: build
 build: build-nixos build-home
@@ -62,6 +64,10 @@ build-vm:
 .PHONY: repl
 repl:
 	$(NIX) repl .#nixosConfigurations.$(HOSTNAME)
+
+.PHONY: clean
+clean:
+	nix-collect-garbage --delete-older-than $(PERIOD) $(_DRY)
 
 ###############################################################################
 
