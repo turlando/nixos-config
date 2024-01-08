@@ -18,7 +18,7 @@ parted --script $SYSTEM_DISK    \
 EFI_PART=/dev/disk/by-partlabel/efi
 SYSTEM_PART=/dev/disk/by-partlabel/system
 
-mkfs.fat -F 32 -n efi $BOOT_PART
+mkfs.fat -F 32 -n EFI $BOOT_PART
 
 # 80% of 465GiB which is the available space
 SYSTEM_POOL_QUOTA="370G"
@@ -71,7 +71,7 @@ mkdir -p /mnt
 mount -t zfs system/root /mnt 
 
 mkdir -p /mnt/boot
-mount -t ext4 $BOOT_PART /mnt/boot/2
+mount -t vfat $BOOT_PART /mnt/boot/2
 
 mkdir -p /mnt/nix
 mount -t zfs system/nix /mnt/nix
