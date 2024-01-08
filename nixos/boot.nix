@@ -2,9 +2,9 @@
 
 let
   inherit (builtins) length;
-  inherit (lib) mkAfter mkIf mkOption types;
+  inherit (lib) mkAfter mkIf mkMerge mkOption types;
   inherit (lib.attrsets) mergeAttrsets;
-  inherit (lib.filesystems) bootFileSystem;
+  inherit (lib.filesystems) bootFileSystem efiFileSystem;
   inherit (lib.grub) grubMirroredBoots;
   inherit (lib.lists) imap1;
 in
@@ -55,10 +55,17 @@ in
 
     boot.loader.grub.mirroredBoots =
       mkIf
-        (config.boot.loader.grub.enable && length config.boot.drives > 1)
+        (config.boot.loader.grub.enable && !config.boot.loader.grub.efiSupport
+         && length config.boot.drives > 1)
         (grubMirroredBoots config.boot.drives);
 
-    fileSystems =
-      mergeAttrsets (imap1 bootFileSystem config.boot.partitions);
+    fileSystems = mkMerge [
+      (mkIf
+        (!config.boot.loader.grub.efiSupport && length config.boot.partitions > 1)
+        (mergeAttrsets (imap1 bootFileSystem config.boot.partitions)))
+      (mkIf
+        (config.boot.loader.grub.efiSupport && length config.boot.partitions == 1)
+        (efiFileSystem (builtins.elemAt config.boot.partitions 0)))
+    ];
   };
 }

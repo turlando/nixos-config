@@ -10,6 +10,14 @@ lib:
     };
   };
 
+  efiFileSystem = partition: {
+    "/boot" = {
+      device = toString partition;
+      fsType = "vfat";
+      options = [ "nofail" ];
+    };
+  };
+
   # type: str -> str -> str -> AttrSet
   zfsFileSystem = pool: filesystem: mountPoint: {
     "${mountPoint}" = {
