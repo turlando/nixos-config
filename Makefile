@@ -69,6 +69,10 @@ repl:
 clean:
 	nix-collect-garbage --delete-older-than $(PERIOD) $(_DRY)
 
+.PHONY: clean-all
+clean-all:
+	nix-collect-garbage --delete-old $(_DRY)
+
 ###############################################################################
 
 hosts/$(HOSTNAME)/hardware.nix: .FORCE
