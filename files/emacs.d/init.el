@@ -115,8 +115,7 @@
   :init (load-theme 'spacemacs-dark t))
 
 (set-face-attribute 'default nil
-                    :font "Source Code Pro"
-                    :height 120)
+                    :font "Source Code Pro")
 
 
 ;;;; Mode activation
