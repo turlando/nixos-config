@@ -1,7 +1,7 @@
 { config, ... }:
 
 let
-  stateDir = config.boot.ephemeral.stateDir;
+  stateDir = toString config.boot.ephemeral.stateDir;
 in
 {
   networking.hostName = "ifigenia";
