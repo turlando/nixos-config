@@ -1,4 +1,4 @@
-{ ... }:
+{ config, ... }:
 
 {
   storage.pools = {
@@ -9,7 +9,12 @@
         "state" = { mountPoint = "/var/state"; };
         "home" = { mountPoint = null; };
         "home/tancredi" = { mountPoint = "/home/tancredi"; };
+        "swap" = { mountPoint = null; };
       };
     };
   };
+
+  swapDevices = [
+    { device = "/dev/zvol/system/swap"; }
+  ];
 }

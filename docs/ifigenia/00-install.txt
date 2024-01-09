@@ -64,6 +64,15 @@ zfs create               \
     -o mountpoint=legacy \
     system/home/tancredi
 
+zfs create                         \
+    -V 16G -b $(getconf PAGESIZE)  \
+    -o logbias=throughput          \
+    -o sync=always                 \
+    -o primarycache=metadata       \
+    -o secondarycache=none         \
+    -o com.sun:auto-snapshot=false \
+    system/swap
+
 # Mount partitions
 # ~~~~~~~~~~~~~~~~
 
