@@ -1,4 +1,4 @@
-{ ... }:
+{ config, ... }:
 
 {
   services.xserver.enable = true;
@@ -17,4 +17,9 @@
 
   # Allow GTK theming in KDE.
   programs.dconf.enable = true;
+
+  # VirtualBox
+   virtualisation.virtualbox.host.enable = true;
+   users.extraGroups.vboxusers.members = with config.users.users;
+     [ tancredi.name ];
 }
