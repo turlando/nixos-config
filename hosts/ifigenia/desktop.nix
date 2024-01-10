@@ -1,4 +1,4 @@
-{ config, ... }:
+{ config, pkgs, ... }:
 
 {
   services.xserver.enable = true;
@@ -14,6 +14,8 @@
     alsa.support32Bit = true;
     pulse.enable = true;
   };
+
+  xdg.portal.enable = true;
 
   # Allow GTK theming in KDE.
   programs.dconf.enable = true;

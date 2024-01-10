@@ -10,6 +10,7 @@
       settings = {
         "extensions.pocket.enabled" = false;
         "browser.newtabpage.activity-stream.showSponsoredTopSites" = false;
+        "widget.use-xdg-desktop-portal.file-picker" = 1;
       };
     };
   };
