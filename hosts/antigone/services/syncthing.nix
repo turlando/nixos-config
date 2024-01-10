@@ -10,7 +10,7 @@ let
   scratchDatasets = config.storage.pools.scratch.datasets;
 
   antigoneId = "6YAFIOP-Y6TGT4V-FPT77ER-YZMJODJ-533JSKV-FJ5IFOW-QNVMVAV-32XR6AR";
-  bahnhofId = "USBCMJL-WXMG4PP-XC364HB-OKBWEVH-HGKVW6E-T2YML7O-56BMQMH-3P7BUAP";
+  ifigeniaId = "VTWMAEV-B7AQPIC-5EPL3R7-NM2NWAE-5JHMFAN-WT6SKVI-7V4ITZO-ZVPH7AK";
   tersicoreId = "FM5JR2N-PM7ZAHY-MDCOE35-O2JPFVC-WAQVIE7-BGSCIE5-RTL25WO-TG2Z6AY";
   smartphoneId = "OF5ZIAD-MQ5C6JC-7LVLTSJ-EP4LLXX-ZVVXD7J-72PQQRU-KWFDLD3-XKOSPQ5";
   tabletId = "RLGYY64-A45GLZF-I6SHORQ-4YQCNO6-U4NNPIS-BBUPTTG-QPCTXVW-RFQJYAO";
@@ -51,7 +51,7 @@ in
 
           settings.devices = {
             Antigone.id = antigoneId;
-            Bahnhof.id = bahnhofId;
+            Ifigenia.id = ifigeniaId;
             Tersicore.id = tersicoreId;
             Smartphone.id = smartphoneId;
             Tablet.id = tabletId;
@@ -65,7 +65,6 @@ in
               path = storageDatasets."books".mountPoint;
               type = "sendonly";
               devices = [
-                devices.Bahnhof.name
                 devices.Tablet.name
               ];
             };
@@ -74,7 +73,6 @@ in
               path = storageDatasets."papers".mountPoint;
               type = "sendonly";
               devices = [
-                devices.Bahnhof.name
                 devices.Tablet.name
               ];
             };
@@ -83,6 +81,7 @@ in
               path = scratchDatasets."music-opus/electronic".mountPoint;
               type = "sendonly";
               devices = [
+                devices.Ifigenia.name
                 devices.Smartphone.name
               ];
             };
