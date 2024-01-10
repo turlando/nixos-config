@@ -26,6 +26,7 @@
   services.syncthing = {
     enable = true;
     tray.enable = true;
+    tray.command = "syncthingtray --wait";
   };
 
   home.packages = with pkgs; [
