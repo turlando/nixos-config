@@ -14,10 +14,27 @@
     };
   };
 
+  # Workaround https://github.com/nix-community/home-manager/issues/2064
+	systemd.user.targets.tray = {
+		Unit = {
+			Description = "Home Manager System Tray";
+			Requires = [ "graphical-session-pre.target" ];
+		};
+	};
+
+  services.syncthing = {
+    enable = true;
+    tray.enable = true;
+  };
+
   home.packages = with pkgs; [
     source-code-pro
 
-    telegram-desktop
     keepassxc
+
+    telegram-desktop
+    whatsapp-for-linux
+
+    vlc
   ];
 }
