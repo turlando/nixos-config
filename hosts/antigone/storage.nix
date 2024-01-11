@@ -15,6 +15,7 @@ in
         "nix" = { mountPoint = "/nix"; };
         "state" = { mountPoint = "/var/state"; };
         "services" = { mountPoint = null; };
+        "services/airdcpp" = { mountPoint = "/var/services/airdcpp"; };
         "services/quassel" = { mountPoint = "/var/services/quassel"; };
         "services/syncthing" = { mountPoint = "/var/services/syncthing"; };
         "services/slskd" = { mountPoint = "/var/services/slskd"; };

@@ -46,3 +46,13 @@ zfs create                    \
 mkdir -p /var/services/slskd
 mount -t zfs system/services/slskd /var/services/slskd
 
+# AirDC++
+# ~~~~~
+
+zfs create                    \
+    -o acltype=posixacl       \
+    -o mountpoint=legacy      \
+    system/services/airdcpp
+
+mkdir -p /var/services/airdcpp
+mount -t zfs system/services/airdcpp /var/services/airdcpp
