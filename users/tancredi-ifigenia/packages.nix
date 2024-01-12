@@ -5,12 +5,21 @@
 
   programs.firefox = {
     enable = true;
-    profiles.tancredi = {
-      isDefault = true;
+    profiles = let
       settings = {
         "extensions.pocket.enabled" = false;
         "browser.newtabpage.activity-stream.showSponsoredTopSites" = false;
         "widget.use-xdg-desktop-portal.file-picker" = 1;
+      };
+    in {
+      tancredi = {
+        id = 0;
+        isDefault = true;
+        inherit settings;
+      };
+      google = {
+        id = 1;
+        inherit settings;
       };
     };
   };
@@ -30,13 +39,19 @@
   };
 
   home.packages = with pkgs; [
+    sshfs
+
     source-code-pro
 
     keepassxc
 
     telegram-desktop
     whatsapp-for-linux
+    quasselClient
 
     vlc
+    quodlibet
+
+    libreoffice-qt
   ];
 }

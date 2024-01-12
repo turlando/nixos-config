@@ -16,4 +16,6 @@
     enable = true;
     dataset = "system/root@empty";
   };
+
+  boot.supportedFilesystems = [ "ntfs" ];
 }

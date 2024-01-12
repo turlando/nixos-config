@@ -24,4 +24,6 @@
    virtualisation.virtualbox.host.enable = true;
    users.extraGroups.vboxusers.members = with config.users.users;
      [ tancredi.name ];
+
+   environment.systemPackages = with pkgs; [ kio-fuse ];
 }
