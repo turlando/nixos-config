@@ -1,4 +1,4 @@
-{ config, lib, ... }:
+{ config, lib, pkgs, ... }:
 
 let
   inherit (builtins) length;
@@ -50,8 +50,21 @@ in
   config = {
     boot.initrd.postDeviceCommands =
       mkIf
-        config.boot.ephemeral.enable
+        (config.boot.ephemeral.enable && !config.boot.initrd.systemd.enable)
         (mkAfter "zfs rollback -r ${config.boot.ephemeral.dataset}");
+
+    boot.initrd.systemd.services.ephemeral-root = mkIf
+      (config.boot.ephemeral.enable && config.boot.initrd.systemd.enable)
+      {
+        description = "Rollback system root dataset to empty state";
+        wantedBy = [ "initrd.target" ];
+        before = [ "sysroot.mount" ];
+        after = [ "zfs-import.target" ]; # zfs-import-system.service?
+        path = with pkgs; [ zfs ];
+        unitConfig.DefaultDependencies = "no";
+        serviceConfig.Type = "oneshot";
+        script = "zfs rollback -r ${config.boot.ephemeral.dataset}";
+      };
 
     boot.loader.grub.mirroredBoots =
       mkIf
