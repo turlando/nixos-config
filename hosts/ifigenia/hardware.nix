@@ -15,14 +15,20 @@
 
   hardware.cpu.intel.updateMicrocode = true;
 
+  # GPU
   hardware.opengl.enable = true;
   hardware.opengl.extraPackages = with pkgs; [
     intel-vaapi-driver
     libvdpau-va-gl
     intel-media-driver
   ];
-
   environment.variables = {
     VDPAU_DRIVER = "va_gl";
   };
+
+  # Smartcard
+  services.pcscd.enable = true;
+  environment.etc."pkcs11/modules/opensc-pkcs11".text = ''
+    module: ${pkgs.opensc}/lib/opensc-pkcs11.so
+  '';
 }

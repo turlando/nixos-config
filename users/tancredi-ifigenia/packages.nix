@@ -22,6 +22,10 @@
         inherit settings;
       };
     };
+    policies = {
+      # Smartcard support
+      SecurityDevices.p11-kit-proxy = "${pkgs.p11-kit}/lib/p11-kit-proxy.so";
+    };
   };
 
   # Workaround https://github.com/nix-community/home-manager/issues/2064
