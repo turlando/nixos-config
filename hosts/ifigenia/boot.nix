@@ -12,6 +12,8 @@
     device = "nodev";
   };
 
+  boot.initrd.systemd.enable = true;
+
   boot.ephemeral = {
     enable = true;
     dataset = "system/root@empty";
