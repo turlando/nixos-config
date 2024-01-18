@@ -36,16 +36,17 @@ in
   options = {
     storage.pools = mkOption {
       type = types.attrsOf (types.submodule (
-        { name, ... }:
+        { poolName, ... }:
         {
           options = {
-            name = nameOption name;
+            name = nameOption poolName;
             datasets = mkOption {
               type = types.attrsOf (types.submodule (
                 { name, ... }:
                 {
                   options = {
                     name = nameOption name;
+                    poolName = nameOption poolName;
                     mountPoint = mountPointOption;
                   };
                 }

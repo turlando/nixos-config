@@ -2,6 +2,7 @@
 
 let
   inherit (lib.attrsets) mergeAttrsets;
+  inherit (lib.storage) datasetName;
 in
 {
   users.groups.storage = {
@@ -73,11 +74,11 @@ in
       };
     in {
       # The system state changes so slowly I manually snapshot it.
-      # "${systemDatasets."state".name}" = dailyCfg;
-      "${systemDatasets."services/quassel".name}" = dailyCfg;
-      "${storageDatasets."books".name}" = dailyCfg;
-      "${storageDatasets."papers".name}" = dailyCfg;
-      "${storageDatasets."music/electronic".name}" = dailyCfg;
+      # "${datasetName systemDatasets."state"}" = dailyCfg;
+      "${datasetName systemDatasets."services/quassel"}" = dailyCfg;
+      "${datasetName storageDatasets."books"}" = dailyCfg;
+      "${datasetName storageDatasets."papers"}" = dailyCfg;
+      "${datasetName storageDatasets."music/electronic"}" = dailyCfg;
       "${backupPool.name}" = backupCfg;
     };
   };
@@ -106,8 +107,8 @@ in
         config.storage.pools.backup.name + "/" + dataset;
 
       command = dataset: args:
-        { "${dataset.name}" =
-            { target = addBackupPrefix dataset.name; } // args; };
+        { "${datasetName dataset}" =
+            { target = addBackupPrefix (datasetName dataset); } // args; };
     in mergeAttrsets [
       (command systemDatasets."state" common)
       (command systemDatasets."services/quassel" common)
