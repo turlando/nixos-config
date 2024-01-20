@@ -19,5 +19,14 @@
     dataset = "system/root@empty";
   };
 
+  boot.plymouth.enable = true;
+
   boot.supportedFilesystems = [ "ntfs" ];
+
+  zramSwap = {
+    enable = true;
+    algorithm = "zstd";
+  };
+
+  services.logind.lidSwitch = "lock";
 }

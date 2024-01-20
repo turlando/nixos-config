@@ -3,6 +3,7 @@
 {
   services.xserver.enable = true;
   services.xserver.displayManager.sddm.enable = true;
+  services.xserver.displayManager.sddm.wayland.enable = true;
   services.xserver.desktopManager.plasma5.enable = true;
   services.xserver.displayManager.defaultSession = "plasmawayland";
 
@@ -21,9 +22,9 @@
   programs.dconf.enable = true;
 
   # VirtualBox
-   virtualisation.virtualbox.host.enable = true;
-   users.extraGroups.vboxusers.members = with config.users.users;
-     [ tancredi.name ];
+  virtualisation.virtualbox.host.enable = true;
+  users.extraGroups.vboxusers.members = with config.users.users;
+    [ tancredi.name ];
 
-   environment.systemPackages = with pkgs; [ kio-fuse ];
+  environment.systemPackages = with pkgs; [ kio-fuse ];
 }

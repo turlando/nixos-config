@@ -28,13 +28,25 @@
     };
   };
 
+  programs.thunderbird = {
+    enable = true;
+    profiles = {
+      tancredi = {
+        isDefault = true;
+        settings = {
+          "widget.use-xdg-desktop-portal.file-picker" = 1;
+        };
+      };
+    };
+  };
+
   # Workaround https://github.com/nix-community/home-manager/issues/2064
-	systemd.user.targets.tray = {
-		Unit = {
-			Description = "Home Manager System Tray";
-			Requires = [ "graphical-session-pre.target" ];
-		};
-	};
+  systemd.user.targets.tray = {
+    Unit = {
+      Description = "Home Manager System Tray";
+      Requires = [ "graphical-session-pre.target" ];
+    };
+  };
 
   services.syncthing = {
     enable = true;
@@ -54,8 +66,12 @@
     quasselClient
 
     vlc
-    quodlibet
+    quodlibet-full
 
     libreoffice-qt
+
+    hunspell
+    hunspellDicts.en-us
+    hunspellDicts.it-it
   ];
 }
