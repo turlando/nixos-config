@@ -21,6 +21,10 @@
         id = 1;
         inherit settings;
       };
+      unime = {
+        id = 2;
+        inherit settings;
+      };
     };
     policies = {
       # Smartcard support
