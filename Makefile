@@ -11,7 +11,7 @@ DRY ?=
 ###############################################################################
 
 _NIX := nix --experimental-features 'nix-command flakes repl-flake'
-HN := $(_NIX) run home-manager/release-23.11 --
+HN := $(_NIX) run home-manager/release-24.05 --
 
 ifneq ($(TRACE),)
 	NIX = $(_NIX) --show-trace
