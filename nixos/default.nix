@@ -1,15 +1,7 @@
-{ ... }:
-
 {
-  imports = [
-    ./boot.nix
-    ./networking.nix
-    ./storage.nix
-    ./services
-  ];
-
-  nix.settings.experimental-features = [
-    "nix-command"
-    "flakes"
-  ];
+  defaults = import ./defaults.nix;
+  ephemeral = import ./ephemeral.nix;
+  slskd = import ./slskd.nix;
+  state = import ./state.nix;
+  zpools = import ./zpools.nix;
 }

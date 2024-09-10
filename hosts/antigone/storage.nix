@@ -1,15 +1,15 @@
 { config, lib, ... }:
 
 let
-  inherit (lib.attrsets) mergeAttrsets;
-  inherit (lib.storage) datasetName;
+  datasetName = dataset: "${dataset.pool.name}/${dataset.name}";
 in
+
 {
   users.groups.storage = {
     gid = 5000;
   };
 
-  storage.pools = {
+  storage.zpools = {
     system = {
       datasets = {
         "root" = { mountPoint = "/"; };
@@ -61,9 +61,9 @@ in
     enable = true;
     extraArgs = [ "--verbose" ];
     datasets = let
-      systemDatasets = config.storage.pools.system.datasets;
-      storageDatasets = config.storage.pools.storage.datasets;
-      backupPool = config.storage.pools.backup;
+      systemDatasets = config.storage.zpools.system.datasets;
+      storageDatasets = config.storage.zpools.storage.datasets;
+      backupPool = config.storage.zpools.backup;
       dailyCfg = {
         yearly = 0; monthly = 0; daily = 30; hourly = 0; frequently = 0;
         autosnap = true; autoprune = true; recursive = false;
@@ -86,8 +86,10 @@ in
   services.syncoid = {
     enable = true;
     commands = let
-      systemDatasets = config.storage.pools.system.datasets;
-      storageDatasets = config.storage.pools.storage.datasets;
+      inherit (lib.attrsets) mergeAttrsList;
+
+      systemDatasets = config.storage.zpools.system.datasets;
+      storageDatasets = config.storage.zpools.storage.datasets;
 
       common = {
         extraArgs = [ "--no-sync-snap" "--no-resume" ];
@@ -104,12 +106,13 @@ in
       #  addPrefix "system/services/quassel"
       #  => "backup/system/services/quassel"
       addBackupPrefix = dataset:
-        config.storage.pools.backup.name + "/" + dataset;
+        config.storage.zpools.backup.name + "/" + dataset;
 
-      command = dataset: args:
-        { "${datasetName dataset}" =
-            { target = addBackupPrefix (datasetName dataset); } // args; };
-    in mergeAttrsets [
+      command = dataset: args: {
+        "${datasetName dataset}" =
+          { target = addBackupPrefix (datasetName dataset); } // args;
+      };
+    in mergeAttrsList [
       (command systemDatasets."state" common)
       (command systemDatasets."services/quassel" common)
       (command storageDatasets."books" common)

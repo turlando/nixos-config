@@ -1,5 +1,0 @@
-{ ... }:
-
-{
-  boot.tmp.useTmpfs = true;
-}

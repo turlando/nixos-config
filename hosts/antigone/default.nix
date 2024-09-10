@@ -1,17 +1,21 @@
-{ ... }:
+{ self, lib, nixpkgs, flake-utils, ... }:
 
-{
-  imports = [
+nixpkgs.lib.nixosSystem {
+  system = flake-utils.lib.system.x86_64-linux;
+  specialArgs = { inherit self lib; };
+  modules = [
+    { system.stateVersion = "23.11"; }
+    self.nixosModules.defaults
+    self.nixosModules.ephemeral
+    self.nixosModules.state
+    self.nixosModules.zpools
     ./hardware.nix
-    ./boot.nix
-    ./storage.nix
+    ./configuration.nix
+    ./booting.nix
     ./networking.nix
-    ./users.nix
-    ./packages.nix
-    ./alerting.nix
+    ./storage.nix
     ./virtualisation.nix
+    ./alerting.nix
     ./services
   ];
-
-  system.stateVersion = "23.11";
 }

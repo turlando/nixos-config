@@ -11,3 +11,5 @@ zfs load-key system
 zfs load-key storage
 zfs load-key backup
 zfs load-key scratch
+
+systemctl default

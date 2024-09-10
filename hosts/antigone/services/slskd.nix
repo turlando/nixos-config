@@ -1,11 +1,11 @@
-{ config, lib, packages, ... }: 
+{ self, config, lib, ... }: 
 
 let
   inherit (lib.containers) dataPath mkContainer;
 
-  systemDatasets = config.storage.pools.system.datasets;
-  storageDatasets = config.storage.pools.storage.datasets;
-  scratchDatasets = config.storage.pools.scratch.datasets;
+  systemDatasets = config.storage.zpools.system.datasets;
+  storageDatasets = config.storage.zpools.storage.datasets;
+  scratchDatasets = config.storage.zpools.scratch.datasets;
 
   soulseekNetPort = 23530;
   httpPort = 5030;
@@ -24,10 +24,7 @@ in
     config =
       { ... }:
       {
-        # FIXME: find a less hacky way to do this without relying on imports.
-        imports = [
-          ../../../nixos/services/slskd.nix
-        ];
+        imports = [ self.nixosModules.slskd ];
 
         system.stateVersion = "23.11";
 
@@ -35,7 +32,7 @@ in
 
         services.slskd = {
           enable = true;
-          package = packages.slskd;
+          package = self.packages.x86_64-linux.slskd;
           rotateLogs = true;
           dataDir = dataPath;
           configFile = "${dataPath}/slskd.yml";

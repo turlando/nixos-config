@@ -1,10 +1,16 @@
 { pkgs, ... }:
 
 {
+  environment.defaults.enable = true;
+
   programs.emacs.package = pkgs.emacs29-pgtk;
 
   programs.firefox = {
     enable = true;
+    policies = {
+      # Smartcard support
+      SecurityDevices.p11-kit-proxy = "${pkgs.p11-kit}/lib/p11-kit-proxy.so";
+    };
     profiles = let
       settings = {
         "extensions.pocket.enabled" = false;
@@ -26,10 +32,6 @@
         inherit settings;
       };
     };
-    policies = {
-      # Smartcard support
-      SecurityDevices.p11-kit-proxy = "${pkgs.p11-kit}/lib/p11-kit-proxy.so";
-    };
   };
 
   programs.thunderbird = {
@@ -41,14 +43,6 @@
           "widget.use-xdg-desktop-portal.file-picker" = 1;
         };
       };
-    };
-  };
-
-  # Workaround https://github.com/nix-community/home-manager/issues/2064
-  systemd.user.targets.tray = {
-    Unit = {
-      Description = "Home Manager System Tray";
-      Requires = [ "graphical-session-pre.target" ];
     };
   };
 

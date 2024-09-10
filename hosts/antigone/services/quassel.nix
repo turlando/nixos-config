@@ -6,7 +6,7 @@ in
 {
   containers = mkContainer {
     name = "quassel";
-    data = config.storage.pools.system.datasets."services/quassel".mountPoint;
+    data = config.storage.zpools.system.datasets."services/quassel".mountPoint;
     config =
       { pkgs, ... }:
       {

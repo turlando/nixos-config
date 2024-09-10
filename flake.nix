@@ -3,72 +3,32 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
+
     home-manager = {
       url = "github:nix-community/home-manager/release-24.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = { self, nixpkgs, home-manager, ... }@inputs: let 
-    system = "x86_64-linux";
+  outputs = {
+    self,
+    nixpkgs,
+    home-manager,
+    flake-utils,
+    ...
+  }@inputs:
+  let
+    eachSystem = nixpkgs.lib.genAttrs flake-utils.lib.defaultSystems;
     lib = nixpkgs.lib.extend (final: prev: import ./lib prev);
-    pkgs = nixpkgs.legacyPackages."${system}";
-    packages = self.packages."${system}";
-  in {
-    packages = {
-      "${system}" = import ./pkgs pkgs;
-    };
-
-    nixosConfigurations = {
-      antigone  = nixpkgs.lib.nixosSystem {
-        inherit system;
-        specialArgs = {
-          inherit lib;
-          inherit packages;
-        };
-        modules = [
-          ./nixos
-          ./hosts/common
-          ./hosts/antigone
-        ];
-      };
-      ifigenia = nixpkgs.lib.nixosSystem {
-        inherit system;
-        specialArgs = {
-          inherit lib;
-          inherit packages;
-        };
-        modules = [
-          ./nixos
-          ./hosts/common
-          ./hosts/ifigenia
-        ];
-      };
-    };
-  
-    homeConfigurations = {
-      "tancredi@antigone" = home-manager.lib.homeManagerConfiguration {
-        inherit pkgs;
-        extraSpecialArgs = {
-          inherit packages;
-          lib = lib.extend (_: _: home-manager.lib);
-        };
-        modules = [
-          ./users/tancredi-common
-          ./users/tancredi-antigone
-        ];
-      };
-      "tancredi@ifigenia" = home-manager.lib.homeManagerConfiguration {
-        inherit pkgs;
-        extraSpecialArgs = {
-          inherit packages;
-          lib = lib.extend (_: _: home-manager.lib);
-        };
-        modules = [
-          ./users/tancredi-common
-          ./users/tancredi-ifigenia
-        ];
-      };
-    };
+  in
+  {
+    packages = eachSystem (s: import ./pkgs nixpkgs.legacyPackages.${s});
+    nixosModules = import ./nixos;
+    nixosConfigurations = import ./hosts (inputs // { inherit lib; });
+    homeManagerModules = import ./home-manager;
+    homeConfigurations = import ./users (inputs // { inherit lib; });
+    devShell = eachSystem (s: import ./shell.nix nixpkgs.legacyPackages.${s});
   };
 }

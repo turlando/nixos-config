@@ -1,0 +1,3 @@
+{
+  defaults = import ./defaults.nix;
+}

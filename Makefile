@@ -4,24 +4,12 @@
 
 HOSTNAME ?= $(shell hostname)
 USER ?= $(shell whoami)
-TRACE ?=
 PERIOD ?= 30d
-DRY ?=
 
 ###############################################################################
 
-_NIX := nix --experimental-features 'nix-command flakes repl-flake'
-HN := $(_NIX) run home-manager/release-24.05 --
-
-ifneq ($(TRACE),)
-	NIX = $(_NIX) --show-trace
-else
-	NIX = $(_NIX)
-endif
-
-ifneq ($(DRY),)
-	_DRY := --dry-run
-endif
+NIX := nix
+HM  := home-manager
 
 ###############################################################################
 
@@ -41,7 +29,7 @@ switch-nixos:
 
 .PHONY: switch-home
 switch-home:
-	$(HN) switch --flake .#$(USER)@$(HOSTNAME)
+	$(HM) switch --flake .#$(USER)@$(HOSTNAME)
 
 .PHONY: generate-hardware-config
 generate-hardware-config: hosts/$(HOSTNAME)/hardware.nix
@@ -52,7 +40,7 @@ build-nixos:
 
 .PHONY: build-home
 build-home:
-	$(HN) build --flake .#$(USER)@$(HOSTNAME)
+	$(HM) build --flake .#$(USER)@$(HOSTNAME)
 
 .PHONY: build
 build: build-nixos build-home
@@ -67,11 +55,11 @@ repl:
 
 .PHONY: clean
 clean:
-	nix-collect-garbage --delete-older-than $(PERIOD) $(_DRY)
+	nix-collect-garbage --delete-older-than $(PERIOD)
 
 .PHONY: clean-all
 clean-all:
-	nix-collect-garbage --delete-old $(_DRY)
+	nix-collect-garbage --delete-old
 
 ###############################################################################
 

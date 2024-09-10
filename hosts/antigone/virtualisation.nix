@@ -13,7 +13,7 @@
       runroot = "/run/containers/storage";
 
       options.zfs = {
-        fsname = config.storage.pools.system.datasets."podman".name;
+        fsname = config.storage.zpools.system.datasets.podman.name;
       };
     };
   };

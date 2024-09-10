@@ -5,9 +5,9 @@ let
 
   storageGroup = config.users.groups.storage;
 
-  systemDatasets = config.storage.pools.system.datasets;
-  storageDatasets = config.storage.pools.storage.datasets;
-  scratchDatasets = config.storage.pools.scratch.datasets;
+  systemDatasets = config.storage.zpools.system.datasets;
+  storageDatasets = config.storage.zpools.storage.datasets;
+  scratchDatasets = config.storage.zpools.scratch.datasets;
 
   antigoneId = "6YAFIOP-Y6TGT4V-FPT77ER-YZMJODJ-533JSKV-FJ5IFOW-QNVMVAV-32XR6AR";
   ifigeniaId = "VTWMAEV-B7AQPIC-5EPL3R7-NM2NWAE-5JHMFAN-WT6SKVI-7V4ITZO-ZVPH7AK";
