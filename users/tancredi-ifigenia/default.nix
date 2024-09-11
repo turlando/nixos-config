@@ -7,7 +7,7 @@ home-manager.lib.homeManagerConfiguration {
   };
   modules = [
     {
-      home.stateVersion = "23.11";
+      home.stateVersion = "24.05";
       home.username = "tancredi";
       home.homeDirectory = "/home/tancredi";
     }

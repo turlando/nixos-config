@@ -4,7 +4,7 @@ nixpkgs.lib.nixosSystem {
   system = flake-utils.lib.system.x86_64-linux;
   specialArgs = { inherit lib; };
   modules = [
-    { system.stateVersion = "23.11"; }
+    { system.stateVersion = "24.05"; }
     self.nixosModules.defaults
     self.nixosModules.ephemeral
     self.nixosModules.state
