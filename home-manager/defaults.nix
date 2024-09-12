@@ -1,16 +1,13 @@
 { lib, config, ... }:
 
 let
-  inherit (lib) mkIf mkOption types;
+  inherit (lib.modules) mkIf;
+  inherit (lib.options) mkEnableOption;
   inherit (lib.files) getFile;
 in
 
 {
-  options.environment.defaults.enable = mkOption {
-    type = types.bool;
-    default = false;
-    example = true;
-  };
+  options.environment.defaults.enable = mkEnableOption "defaults";
 
   config = mkIf config.environment.defaults.enable {
     programs.git = {

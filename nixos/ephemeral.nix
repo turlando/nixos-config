@@ -1,34 +1,15 @@
 { config, lib, pkgs, ... }:
 
 let
-  inherit (lib) mkIf mkMerge mkOption types;
   inherit (lib.attrsets) attrValues;
-
-  mkService = dataset:
-  let
-    snapshot = "${dataset.name}@${dataset.snapshot}";
-  in
-    mkIf config.services.ephemeral.enable {
-      "ephemeral@${dataset.name}" = {
-        description = "Rollback ZFS dataset ${dataset.name} to ${snapshot}";
-        wantedBy = [ "initrd.target" ];
-        before = [ "sysroot.mount" ];
-        after = [ "zfs-import.target" ];
-        path = with pkgs; [ zfs ];
-        unitConfig.DefaultDependencies = "no";
-        serviceConfig.Type = "oneshot";
-        script = "zfs rollback -r ${snapshot}";
-      };
-    };
+  inherit (lib.modules) mkIf mkMerge;
+  inherit (lib.options) mkOption mkEnableOption;
+  inherit (lib.types) types;
 in
 
 {
   options.services.ephemeral = {
-    enable = mkOption {
-      type = types.bool;
-      default = false;
-      example = true;
-    };
+    enable = mkEnableOption "ephemeral";
 
     datasets = mkOption {
       type = types.attrsOf (
@@ -36,17 +17,13 @@ in
           { name, ... }@attrs:
           {
             options = {
+              enable = mkEnableOption "ephemeral for dataset ${name}";
+
               name = mkOption {
                 type = types.str;
                 default = name;
                 readOnly = true;
                 visible = false;
-              };
-
-              enable = mkOption {
-                type = types.bool;
-                default = false;
-                example = true;
               };
 
               snapshot = mkOption {
@@ -70,6 +47,25 @@ in
     ];
 
     boot.initrd.systemd.services =
-      mkMerge (map mkService (attrValues config.services.ephemeral.datasets));
+      let
+        # Return the name of the snapshot dataset given an entry of
+        # services.ephemeral.datasets.
+        snapshot = dataset: "${dataset.name}@${dataset.snapshot}";
+
+        mkService = dataset:
+          mkIf config.services.ephemeral.enable {
+            "ephemeral@${dataset.name}" = {
+              description = "Rollback ZFS dataset ${dataset.name} to ${snapshot dataset}";
+              wantedBy = [ "initrd.target" ];
+              before = [ "sysroot.mount" ];
+              after = [ "zfs-import.target" ];
+              path = with pkgs; [ zfs ];
+              unitConfig.DefaultDependencies = "no";
+              serviceConfig.Type = "oneshot";
+              script = "zfs rollback -r ${snapshot dataset}";
+            };
+          };
+      in
+        mkMerge (map mkService (attrValues config.services.ephemeral.datasets));
   };
 }

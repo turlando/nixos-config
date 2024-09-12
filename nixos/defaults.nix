@@ -1,16 +1,13 @@
 { config, options, lib, pkgs, ... }:
 
 let
-  inherit (lib) mkIf mkOption types;
+  inherit (lib.modules) mkIf;
+  inherit (lib.options) mkEnableOption;
   inherit (lib.files) getSshKey readPassword;
 in
 
 {
-  options.environment.defaults.enable = mkOption {
-    type = types.bool;
-    default = false;
-    example = true;
-  };
+  options.environment.defaults.enable = mkEnableOption "defaults";
 
   config = mkIf config.environment.defaults.enable {
     nix.settings.experimental-features = [
