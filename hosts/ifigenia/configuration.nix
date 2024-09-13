@@ -93,12 +93,34 @@
     alsa.enable = true;
     alsa.support32Bit = true;
     pulse.enable = true;
+    wireplumber.extraConfig."10-bluez" = {
+      "monitor.bluez.properties" = {
+        # The SBC-XQ codec provides better sound quality for audio listening.
+        "bluez5.enable-sbc-xq" = true;
+        # The mSBC codec provides slightly better sound quality in calls than
+        # regular HFP/HSP.
+        "bluez5.enable-msbc" = true;
+        "bluez5.enable-hw-volume" = true;
+        "bluez5.headset-roles" = [ "hsp_hs" "hsp_ag" "hfp_hf" "hfp_ag" ];
+      };
+    };
   };
 
   xdg.portal.enable = true;
 
   # Allow GTK theming in KDE.
   programs.dconf.enable = true;
+
+  hardware.bluetooth = {
+    enable = true;
+    powerOnBoot = true;
+    settings = {
+      General = {
+        # Report devices battery status.
+		    Experimental = true;
+	    };
+    };
+  };
 
   # VirtualBox
   virtualisation.virtualbox.host.enable = true;

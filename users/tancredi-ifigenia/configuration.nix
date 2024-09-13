@@ -3,6 +3,9 @@
 {
   environment.defaults.enable = true;
 
+  # Enable Bluetooth headsets buttons support.
+  services.mpris-proxy.enable = true;
+
   programs.emacs.package = pkgs.emacs29-pgtk;
 
   programs.firefox = {
