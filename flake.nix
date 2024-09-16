@@ -30,6 +30,6 @@
     nixosConfigurations = import ./hosts (inputs // { inherit lib; });
     homeManagerModules = import ./home-manager;
     homeConfigurations = import ./users (inputs // { inherit lib; });
-    devShell = eachSystem (s: import ./shell.nix nixpkgs.legacyPackages.${s});
+    devShells = eachSystem (s: { default = import ./shell.nix nixpkgs.legacyPackages.${s}; });
   };
 }
