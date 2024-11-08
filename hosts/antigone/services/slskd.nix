@@ -12,7 +12,8 @@ let
 in
 
 {
-  networking.firewall.interfaces."eth0".allowedTCPPorts = [ soulseekNetPort ];
+  networking.firewall.interfaces.eth0.allowedTCPPorts = [ soulseekNetPort ];
+  networking.firewall.interfaces.wg0.allowedTCPPorts = [ httpPort ];
 
   containers = mkContainer {
     name = "slskd";

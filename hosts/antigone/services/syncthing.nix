@@ -3,6 +3,9 @@
 let
   inherit (lib.containers) dataPath mkContainer;
 
+  transferPort = 22000;
+  discoveryPort = 21027;
+
   storageGroup = config.users.groups.storage;
 
   systemDatasets = config.storage.zpools.system.datasets;
@@ -16,9 +19,9 @@ let
   tabletId = "RLGYY64-A45GLZF-I6SHORQ-4YQCNO6-U4NNPIS-BBUPTTG-QPCTXVW-RFQJYAO";
 in
 {
-  networking.firewall = {
-    allowedTCPPorts = [ 22000 ];
-    allowedUDPPorts = [ 21027 22000 ];
+  networking.firewall.interfaces.eth0 = {
+    allowedTCPPorts = [ transferPort ];
+    allowedUDPPorts = [ transferPort discoveryPort ];
   };
 
   containers = mkContainer {

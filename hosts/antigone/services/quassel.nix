@@ -3,7 +3,12 @@
 let
   inherit (lib.containers) dataPath mkContainer;
 in
+
 {
+  networking.firewall.interfaces.wg0.allowedTCPPorts = [
+    config.containers.quassel.config.services.quassel.portNumber
+  ];
+
   containers = mkContainer {
     name = "quassel";
     data = config.storage.zpools.system.datasets."services/quassel".mountPoint;
@@ -29,6 +34,7 @@ in
         services.quassel = {
           enable = true;
           dataDir = dataPath;
+          interfaces = [ "0.0.0.0" ];
         };
       };
   };
