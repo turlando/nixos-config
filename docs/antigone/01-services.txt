@@ -46,3 +46,13 @@ zfs create                    \
 mkdir -p /var/services/slskd
 mount -t zfs system/services/slskd /var/services/slskd
 
+# actual-budget
+# ~~~~~
+
+zfs create                        \
+    -o acltype=posixacl           \
+    -o mountpoint=legacy          \
+    system/services/actual-budget
+
+mkdir -p /var/services/actual-budget
+mount -t zfs system/services/actual-budget /var/services/actual-budget
