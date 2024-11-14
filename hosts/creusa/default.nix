@@ -2,7 +2,7 @@
 
 nixpkgs.lib.nixosSystem rec {
   system = flake-utils.lib.system.aarch64-linux;
-  specialArgs = { inherit lib; };
+  specialArgs = { inherit self lib; };
   modules = [
     { system.stateVersion = "24.05"; }
     self.nixosModules.defaults

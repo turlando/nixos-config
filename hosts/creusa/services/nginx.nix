@@ -12,7 +12,7 @@ in
     name = "nginx";
     data = systemDatasets."services/nginx".mountPoint;
     config =
-      { config, ... }:
+      { ... }:
       {
         system.stateVersion = "24.05";
 
@@ -36,6 +36,13 @@ in
             "dracma.us.to" = {
               enableACME = true;
               forceSSL = true;
+              locations."/" = {
+                proxyPass = let
+                  actualCfg = config.containers.actual-budget.config.services.actual-server;
+                in
+                  "http://${actualCfg.hostname}:${toString actualCfg.port}";
+                recommendedProxySettings = true;
+              };
             };
           };
         };

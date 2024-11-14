@@ -24,6 +24,7 @@
         "nix" = { mountPoint = "/nix"; };
         "state" = { mountPoint = "/var/state"; };
         "services" = { mountPoint = null; };
+        "services/actual-budget" = { mountPoint = "/var/services/actual-budget"; };
         "services/nginx" = { mountPoint = "/var/services/nginx"; };
         "home" = { mountPoint = null; };
         "home/tancredi" = { mountPoint = "/home/tancredi"; };
