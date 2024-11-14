@@ -11,5 +11,6 @@ nixpkgs.lib.nixosSystem rec {
     self.nixosModules.zpools
     ./configuration.nix
     ./hardware.nix
+    ./services
   ];
 }

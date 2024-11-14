@@ -23,6 +23,8 @@
         "root" = { mountPoint = "/"; };
         "nix" = { mountPoint = "/nix"; };
         "state" = { mountPoint = "/var/state"; };
+        "services" = { mountPoint = null; };
+        "services/nginx" = { mountPoint = "/var/services/nginx"; };
         "home" = { mountPoint = null; };
         "home/tancredi" = { mountPoint = "/home/tancredi"; };
       };
