@@ -19,7 +19,6 @@ in
         "services/quassel" = { mountPoint = "/var/services/quassel"; };
         "services/syncthing" = { mountPoint = "/var/services/syncthing"; };
         "services/slskd" = { mountPoint = "/var/services/slskd"; };
-        "services/actual-budget" = { mountPoint = "/var/services/actual-budget"; };
         "podman" = { mountPoint = null; };
         "home" = { mountPoint = null; };
         "home/tancredi" = { mountPoint = "/home/tancredi"; };
