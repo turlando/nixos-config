@@ -5,12 +5,14 @@ let
   inherit (lib.containers) dataPath mkContainer;
 
   systemDatasets = config.storage.zpools.system.datasets;
+  stateDir = toString config.environment.state;
 
   mkActualProxy = { name, hostName }: {
     "${hostName}" = {
       enableACME = true;
       forceSSL = true;
       locations."/" = {
+        recommendedProxySettings = true;
         proxyPass = let
           actualCfg = config.containers.
             "actual-budget-${name}"
@@ -18,7 +20,6 @@ let
           host = actualCfg.hostname;
           port = toString actualCfg.port;
         in "http://${host}:${port}";
-        recommendedProxySettings = true;
       };
     };
   };
@@ -29,14 +30,16 @@ in
 
   containers = mkContainer {
     name = "nginx";
-    data = systemDatasets."services/nginx".mountPoint;
+    mounts = [
+      "${stateDir}/var/lib/acme"
+    ];
     config =
       { ... }:
       {
         system.stateVersion = "24.05";
 
         fileSystems."/var/lib/acme" = {
-          device = "${dataPath}/acme";
+          device = "${stateDir}/var/lib/acme";
           options = [ "bind" ];
         };
 
@@ -45,7 +48,7 @@ in
           defaults = {
             email = "turlando@gmail.com";
             group = config.services.nginx.group;
-            webroot = "/var/lib/acme/acme-challenge";
+            webroot = "/tmp";
           };
         };
 

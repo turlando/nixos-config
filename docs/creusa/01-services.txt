@@ -8,19 +8,6 @@ zfs create          \
 
 mkdir -p /var/services
 
-# nginx
-# ~~~~~~~
-
-zfs create                  \
-    -o mountpoint=legacy    \
-    system/services/nginx
-
-mkdir -p /var/services/nginx
-mount -t zfs system/services/nginx /var/services/nginx
-
-mkdir -p /var/services/nginx/acme
-chown nobody:60 /var/services/nginx/acme # 60 is nginx gid
-
 # actual-budget
 # ~~~~~
 

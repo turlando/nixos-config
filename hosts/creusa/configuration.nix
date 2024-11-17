@@ -28,7 +28,6 @@
         "services/actual-budget/tancredi" = {
           mountPoint = "/var/services/actual-budget/tancredi";
         };
-        "services/nginx" = { mountPoint = "/var/services/nginx"; };
         "home" = { mountPoint = null; };
         "home/tancredi" = { mountPoint = "/home/tancredi"; };
       };
