@@ -62,6 +62,21 @@
     interval = "Fri *-*-* 02:00:00";
   };
 
+  services.sanoid = {
+    enable = true;
+    extraArgs = [ "--verbose" ];
+    datasets = let
+      systemDatasets = config.storage.zpools.system.datasets;
+      cfg = {
+        yearly = 0; monthly = 0; daily = 30; hourly = 0; frequently = 0;
+        autosnap = true; autoprune = true; recursive = false;
+      };
+      datasetName = dataset: "${dataset.pool.name}/${dataset.name}";
+    in {
+      "${datasetName systemDatasets."services/actual-budget/tancredi"}" = cfg;
+    };
+  };
+
   services.openssh = {
     enable = true;
     settings = {
