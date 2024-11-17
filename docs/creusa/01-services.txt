@@ -25,8 +25,13 @@ chown nobody:60 /var/services/nginx/acme # 60 is nginx gid
 # ~~~~~
 
 zfs create                        \
-    -o mountpoint=legacy          \
     system/services/actual-budget
 
-mkdir -p /var/services/actual-budget
-mount -t zfs system/services/actual-budget /var/services/actual-budget
+zfs create                                 \
+    -o mountpoint=legacy                   \
+    system/services/actual-budget/tancredi
+
+mkdir -p /var/services/actual-budget/tancredi
+mount -t zfs                                 \
+      system/services/actual-budget/tancredi \
+      /var/services/actual-budget/tancredi

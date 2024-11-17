@@ -1,8 +1,27 @@
 { config, lib, ... }:
 
 let
+  inherit (lib.modules) mkMerge;
   inherit (lib.containers) dataPath mkContainer;
+
   systemDatasets = config.storage.zpools.system.datasets;
+
+  mkActualProxy = { name, hostName }: {
+    "${hostName}" = {
+      enableACME = true;
+      forceSSL = true;
+      locations."/" = {
+        proxyPass = let
+          actualCfg = config.containers.
+            "actual-budget-${name}"
+            .config.services.actual-server;
+          host = actualCfg.hostname;
+          port = toString actualCfg.port;
+        in "http://${host}:${port}";
+        recommendedProxySettings = true;
+      };
+    };
+  };
 in
 
 {
@@ -32,19 +51,10 @@ in
 
         services.nginx = {
           enable = true;
-          virtualHosts = {
-            "dracma.us.to" = {
-              enableACME = true;
-              forceSSL = true;
-              locations."/" = {
-                proxyPass = let
-                  actualCfg = config.containers.actual-budget.config.services.actual-server;
-                in
-                  "http://${actualCfg.hostname}:${toString actualCfg.port}";
-                recommendedProxySettings = true;
-              };
-            };
-          };
+
+          virtualHosts = mkMerge [
+            ( mkActualProxy { name = "tancredi"; hostName = "dracma.us.to"; })
+          ];
         };
       };
   };
