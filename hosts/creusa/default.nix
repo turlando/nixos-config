@@ -5,6 +5,7 @@ nixpkgs.lib.nixosSystem rec {
   specialArgs = { inherit self lib; };
   modules = [
     { system.stateVersion = "24.05"; }
+    (nixpkgs + "/nixos/modules/profiles/qemu-guest.nix")
     self.nixosModules.defaults
     self.nixosModules.ephemeral
     self.nixosModules.state

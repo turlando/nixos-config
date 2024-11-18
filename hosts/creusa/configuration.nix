@@ -9,6 +9,8 @@
     device = "nodev";
   };
 
+  boot.kernelParams = [ "console=tty" ];
+
   fileSystems = {
     "/boot" = {
       device = "/dev/disk/by-partlabel/efi";
