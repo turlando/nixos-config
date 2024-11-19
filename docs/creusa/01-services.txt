@@ -22,3 +22,12 @@ mkdir -p /var/services/actual-budget/tancredi
 mount -t zfs                                 \
       system/services/actual-budget/tancredi \
       /var/services/actual-budget/tancredi
+
+zfs create                                       \
+    -o mountpoint=legacy                         \
+    system/services/actual-budget/savasta-bianca
+
+mkdir -p /var/services/actual-budget/savasta-bianca
+mount -t zfs                                       \
+      system/services/actual-budget/savasta-bianca \
+      /var/services/actual-budget/savasta-bianca
