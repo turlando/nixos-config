@@ -16,8 +16,8 @@
   hardware.cpu.intel.updateMicrocode = true;
 
   # GPU
-  hardware.opengl.enable = true;
-  hardware.opengl.extraPackages = with pkgs; [
+  hardware.graphics.enable = true;
+  hardware.graphics.extraPackages = with pkgs; [
     intel-vaapi-driver
     libvdpau-va-gl
     intel-media-driver
