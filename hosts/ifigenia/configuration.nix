@@ -111,6 +111,13 @@
   # Allow GTK theming in KDE.
   programs.dconf.enable = true;
 
+  hardware.graphics.enable = true;
+
+  hardware.intelgpu = {
+    loadInInitrd = true;
+    vaapiDriver = "intel-media-driver";
+  };
+
   hardware.bluetooth = {
     enable = true;
     powerOnBoot = true;
@@ -122,10 +129,12 @@
     };
   };
 
-  # VirtualBox
+  services.pcscd.enable = true;
+  environment.etc."pkcs11/modules/opensc-pkcs11".text = ''
+    module: ${pkgs.opensc}/lib/opensc-pkcs11.so
+  '';
+
   virtualisation.virtualbox.host.enable = true;
   users.extraGroups.vboxusers.members = with config.users.users;
     [ tancredi.name ];
-
-  environment.systemPackages = with pkgs; [ kio-fuse ];
 }
