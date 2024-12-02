@@ -14,11 +14,8 @@ let
         { pkgs, ... }:
         {
           imports = [ self.nixosModules.actual-server ];
-
-          system.stateVersion = "24.05";
-
+          system.stateVersion = "24.11";
           networking.hostName = "actual-budget-${name}";
-
           services.actual-server = {
             enable = true;
             package = self.packages.aarch64-linux.actual-server;

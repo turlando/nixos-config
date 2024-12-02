@@ -4,8 +4,7 @@ nixpkgs.lib.nixosSystem rec {
   system = flake-utils.lib.system.aarch64-linux;
   specialArgs = { inherit self lib; };
   modules = [
-    { system.stateVersion = "24.05"; }
-    (nixpkgs + "/nixos/modules/profiles/qemu-guest.nix")
+    { system.stateVersion = "24.11"; }
     self.nixosModules.defaults
     self.nixosModules.ephemeral
     self.nixosModules.state

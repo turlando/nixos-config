@@ -36,7 +36,7 @@ in
     config =
       { ... }:
       {
-        system.stateVersion = "24.05";
+        system.stateVersion = "24.11";
 
         fileSystems."/var/lib/acme" = {
           device = "${stateDir}/var/lib/acme";
@@ -54,7 +54,6 @@ in
 
         services.nginx = {
           enable = true;
-
           virtualHosts = mkMerge [
             (mkActualProxy { name = "tancredi"; hostName = "dracma.us.to"; })
             (mkActualProxy { name = "savasta-bianca"; hostName = "entrapta.us.to"; })
