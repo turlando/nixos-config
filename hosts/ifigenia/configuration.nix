@@ -134,6 +134,8 @@
     module: ${pkgs.opensc}/lib/opensc-pkcs11.so
   '';
 
+  programs.ssh.enableAskPassword = true;
+
   virtualisation.virtualbox.host.enable = true;
   users.extraGroups.vboxusers.members = with config.users.users;
     [ tancredi.name ];
