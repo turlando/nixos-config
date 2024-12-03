@@ -6,8 +6,8 @@ in
 
 {
   options.environment.state = mkOption {
-    type = types.path;
-    default = /var/state;
+    type = types.nonEmptyStr;
+    default = "/var/state";
     description = "Path to state directory";
   };
 }

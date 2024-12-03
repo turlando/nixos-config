@@ -24,7 +24,7 @@
       datasets = {
         "root" = { mountPoint = "/"; };
         "nix" = { mountPoint = "/nix"; };
-        "state" = { mountPoint = "/var/state"; };
+        "state" = { mountPoint = config.environment.state; };
         "services" = { mountPoint = null; };
         "services/actual-budget" = { mountPoint = null; };
         "services/actual-budget/tancredi" = {

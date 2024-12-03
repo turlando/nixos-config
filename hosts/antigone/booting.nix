@@ -31,17 +31,14 @@
   boot.initrd.kernelModules = [ "r8169" ];
   boot.initrd.network.enable = true;
 
-  boot.initrd.network.ssh = let
-    inherit (lib.files) readSshKey;
-    stateDir = config.environment.state;
-  in {
+  boot.initrd.network.ssh = {
     enable = true;
     port = 2222;
     hostKeys = [
-      (stateDir + "/etc/ssh-initrd/ssh_host_rsa_key")
-      (stateDir + "/etc/ssh-initrd/ssh_host_ed25519_key")
+      "${config.environment.state}/etc/ssh-initrd/ssh_host_rsa_key"
+      "${config.environment.state}/etc/ssh-initrd/ssh_host_ed25519_key"
     ];
-    authorizedKeys = [ (readSshKey "boot") ];
+    authorizedKeys = [ (lib.files.readSshKey "boot") ];
   };
 
   services.ephemeral = {

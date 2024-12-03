@@ -22,7 +22,7 @@
       datasets = {
         "root" = { mountPoint = "/"; };
         "nix" = { mountPoint = "/nix"; };
-        "state" = { mountPoint = "/var/state"; };
+        "state" = { mountPoint = config.environment.state; };
         "home" = { mountPoint = null; };
         "home/tancredi" = { mountPoint = "/home/tancredi"; };
         "swap" = { mountPoint = null; };
@@ -76,7 +76,7 @@
   networking.networkmanager.enable = true;
 
   environment.etc."NetworkManager/system-connections" = {
-    source = "${toString config.environment.state}/NetworkManager/system-connections/";
+    source = "${config.environment.state}/NetworkManager/system-connections/";
   };
 
   environment.defaults.enable = true;

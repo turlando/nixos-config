@@ -1,10 +1,9 @@
 { self, config, pkgs, ... }:
 
 let
-  statePath = config.storage.zpools.system.datasets."state".mountPoint;
   notifyPkg = self.packages.x86_64-linux.telegram-send;
   notifyCmd = "${notifyPkg}/bin/telegram-send";
-  notifyCfg = "${statePath}/etc/telegram-send.ini";
+  notifyCfg = "${config.environment.state}/etc/telegram-send.ini";
 
   notify = from: subject: message:
     pkgs.writeShellScript "notify.sh" ''

@@ -46,7 +46,7 @@ in
         (attr: updateManyAttrsByPath
           [ {
             path = [ "path" ];
-            update = p: "${toString stateDir}/${p}";
+            update = p: "${stateDir}/${p}";
           } ]
           attr)
         default;

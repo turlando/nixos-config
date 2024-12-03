@@ -5,7 +5,6 @@ let
   inherit (lib.containers) dataPath mkContainer;
 
   systemDatasets = config.storage.zpools.system.datasets;
-  stateDir = toString config.environment.state;
 
   mkActualProxy = { name, hostName }: {
     "${hostName}" = {
@@ -31,7 +30,7 @@ in
   containers = mkContainer {
     name = "nginx";
     mounts = [
-      "${stateDir}/var/lib/acme"
+      "${config.environment.state}/var/lib/acme"
     ];
     config =
       { ... }:
@@ -39,7 +38,7 @@ in
         system.stateVersion = "24.11";
 
         fileSystems."/var/lib/acme" = {
-          device = "${stateDir}/var/lib/acme";
+          device = "${config.environment.state}/var/lib/acme";
           options = [ "bind" ];
         };
 

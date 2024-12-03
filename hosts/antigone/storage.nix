@@ -14,7 +14,7 @@ in
       datasets = {
         "root" = { mountPoint = "/"; };
         "nix" = { mountPoint = "/nix"; };
-        "state" = { mountPoint = "/var/state"; };
+        "state" = { mountPoint = config.environment.state; };
         "services" = { mountPoint = null; };
         "services/quassel" = { mountPoint = "/var/services/quassel"; };
         "services/syncthing" = { mountPoint = "/var/services/syncthing"; };
