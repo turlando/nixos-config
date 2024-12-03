@@ -1,7 +1,7 @@
 { lib, pkgs, config, ... }:
 
 let
-  inherit (lib) mkEnableOption mkOption mkPackageOptionMD types;
+  inherit (lib) mkEnableOption mkOption mkPackageOption types;
 in
 {
   disabledModules = [ "services/web-apps/slskd.nix" ];
@@ -12,7 +12,7 @@ in
     rotateLogs = mkEnableOption
       "enable an unit and timer that will rotate logs in dataDir/logs";
 
-    package = mkPackageOptionMD pkgs "slskd" { };
+    package = mkPackageOption pkgs "slskd" { };
 
     dataDir = mkOption {
       type = types.str;

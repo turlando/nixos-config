@@ -7,7 +7,7 @@ nixpkgs.lib.nixosSystem rec {
     pkgs-unstable = import nixpkgs-unstable { inherit system; };
   };
   modules = [
-    { system.stateVersion = "23.11"; }
+    { system.stateVersion = "24.11"; }
     self.nixosModules.defaults
     self.nixosModules.ephemeral
     self.nixosModules.state
