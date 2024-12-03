@@ -79,12 +79,7 @@ in
     environment.systemPackages = with pkgs; [
       pciutils
       usbutils
-
       smartmontools
-
-      zsh
-      grml-zsh-config
-
       tmux
       gnumake
       git
