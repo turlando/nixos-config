@@ -8,11 +8,6 @@ zfs create          \
 
 mkdir -p /var/services
 
-# Podman containers
-# ~~~~~~~~~~~~~~~~~
-
-zfs create system/podman
-
 # Quassel
 # ~~~~~~~
 

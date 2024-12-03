@@ -17,7 +17,6 @@ nixpkgs.lib.nixosSystem rec {
     ./booting.nix
     ./networking.nix
     ./storage.nix
-    ./virtualisation.nix
     ./alerting.nix
     ./services
   ];
