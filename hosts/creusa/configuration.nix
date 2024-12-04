@@ -33,6 +33,9 @@
         "services/actual-budget/savasta-bianca" = {
           mountPoint = "/var/services/actual-budget/savasta-bianca";
         };
+        "services/actual-budget/mammoliti-alessandra" = {
+          mountPoint = "/var/services/actual-budget/mammoliti-alessandra";
+        };
         "home" = { mountPoint = null; };
         "home/tancredi" = { mountPoint = "/home/tancredi"; };
       };
@@ -80,6 +83,7 @@
     in {
       "${datasetName systemDatasets."services/actual-budget/tancredi"}" = cfg;
       "${datasetName systemDatasets."services/actual-budget/savasta-bianca"}" = cfg;
+      "${datasetName systemDatasets."services/actual-budget/mammoliti-alessandra"}" = cfg;
     };
   };
 
