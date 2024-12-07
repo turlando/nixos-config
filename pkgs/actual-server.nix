@@ -2,13 +2,13 @@
 
 stdenv.mkDerivation rec {
   name = "actual-server";
-  version = "24.11.0";
+  version = "24.12.0";
 
   src = fetchFromGitHub {
     owner = "actualbudget";
     repo = "actual-server";
     rev = "v${version}";
-    sha256 = "sha256-GwtJ42dBJXrOBIxwdrSvNeqQCl91m1XrtS3RBpEuZX0=";
+    sha256 = "sha256-qCATfpYjDlR2LaalkF0/b5tD4HDE4aNDrLvTC4g0ctY=";
   };
 
   nativeBuildInputs = with pkgs; [
@@ -20,7 +20,7 @@ stdenv.mkDerivation rec {
     yarn-berry
   ];
 
-  yarnOfflineCache = pkgs.stdenvNoCC.mkDerivation {
+  yarnOfflineCache = stdenvNoCC.mkDerivation {
     name = "${name}-deps";
     inherit src;
     nativeBuildInputs = with pkgs; [ yarn-berry ];
@@ -58,7 +58,7 @@ stdenv.mkDerivation rec {
     dontInstall = true;
 
     outputHashAlgo = "sha256";
-    outputHash = "sha256-JAkbPepZSaOk+Ex5L+KyjR1Jd52tLBhCaIO/TsSvSuw=";
+    outputHash = "sha256-hk2uUdg77lTm8e8WmLjYWzNinre0ag/BHc+knl/Q1xo=";
     outputHashMode = "recursive";
   };
 
