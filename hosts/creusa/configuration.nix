@@ -42,6 +42,8 @@
     };
   };
 
+  zramSwap.enable = true;
+
   services.ephemeral = {
     enable = true;
     datasets = {
