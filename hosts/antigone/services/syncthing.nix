@@ -5,6 +5,7 @@ let
 
   transferPort = 22000;
   discoveryPort = 21027;
+  guiPort = 8383;
 
   storageGroup = config.users.groups.storage;
 
@@ -22,6 +23,10 @@ in
   networking.firewall.interfaces.eth0 = {
     allowedTCPPorts = [ transferPort ];
     allowedUDPPorts = [ transferPort discoveryPort ];
+  };
+
+  networking.firewall.interfaces.wg0 = {
+    allowedTCPPorts = [ guiPort ];
   };
 
   containers = mkContainer {
@@ -49,7 +54,7 @@ in
         services.syncthing = {
           enable = true;
           configDir = dataPath;
-          guiAddress = "127.0.0.1:8383";
+          guiAddress = "0.0.0.0:${toString guiPort}";
           openDefaultPorts = true;
 
           settings.devices = {
