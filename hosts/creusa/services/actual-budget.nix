@@ -30,6 +30,5 @@ in
   containers = mkMerge [
     (mkActualContainer { name = "tancredi"; port = 5100; })
     (mkActualContainer { name = "savasta-bianca"; port = 5101; })
-    (mkActualContainer { name = "mammoliti-alessandra"; port = 5102; })
   ];
 }

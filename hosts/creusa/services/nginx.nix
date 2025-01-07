@@ -56,7 +56,6 @@ in
           virtualHosts = mkMerge [
             (mkActualProxy { name = "tancredi"; hostName = "dracma.us.to"; })
             (mkActualProxy { name = "savasta-bianca"; hostName = "entrapta.us.to"; })
-            (mkActualProxy { name = "mammoliti-alessandra"; hostName = "cosedibb.us.to"; })
           ];
         };
       };

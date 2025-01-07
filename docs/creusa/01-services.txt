@@ -29,11 +29,3 @@ mkdir -p /var/services/actual-budget/savasta-bianca
 mount -t zfs                                       \
       system/services/actual-budget/savasta-bianca \
       /var/services/actual-budget/savasta-bianca
-
-zfs create                                            \
-    -o mountpoint=legacy                              \
-    system/services/actual-budget/mammoliti-alessandra
-mkdir -p /var/services/actual-budget/mammoliti-alessandra
-mount -t zfs                                             \
-      system/services/actual-budget/mammoliti-alessandra \
-      /var/services/actual-budget/mammoliti-alessandra
