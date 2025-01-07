@@ -2,13 +2,13 @@
 
 stdenv.mkDerivation rec {
   name = "actual-server";
-  version = "24.12.0";
+  version = "25.1.0";
 
   src = fetchFromGitHub {
     owner = "actualbudget";
     repo = "actual-server";
     rev = "v${version}";
-    sha256 = "sha256-qCATfpYjDlR2LaalkF0/b5tD4HDE4aNDrLvTC4g0ctY=";
+    sha256 = "sha256-zpZNITXd9QOJNRz8RbAuHH1hrrWPEGsrROGWJuYXqrc=";
   };
 
   nativeBuildInputs = with pkgs; [
@@ -58,7 +58,7 @@ stdenv.mkDerivation rec {
     dontInstall = true;
 
     outputHashAlgo = "sha256";
-    outputHash = "sha256-hk2uUdg77lTm8e8WmLjYWzNinre0ag/BHc+knl/Q1xo=";
+    outputHash = "sha256-zP6dHdSjq9HMOrRr9oDC6igDYEmzqsH/XofOM3zdBtY=";
     outputHashMode = "recursive";
   };
 
