@@ -1,5 +1,5 @@
 {
-  actual-server = import ./actual-server.nix;
+  actual = import ./actual.nix;
   defaults = import ./defaults.nix;
   ephemeral = import ./ephemeral.nix;
   slskd = import ./slskd.nix;

@@ -15,7 +15,7 @@ let
         proxyPass = let
           actualCfg = config.containers.
             "actual-budget-${name}"
-            .config.services.actual-server;
+            .config.services.actual;
           host = actualCfg.hostname;
           port = toString actualCfg.port;
         in "http://${host}:${port}";

@@ -1,114 +1,117 @@
-{ pkgs, stdenv, stdenvNoCC, fetchFromGitHub, ... }:
-
-stdenv.mkDerivation rec {
-  name = "actual-server";
-  version = "25.1.0";
-
+{
+  lib,
+  stdenv,
+  stdenvNoCC,
+  fetchFromGitHub,
+  makeWrapper,
+  cacert,
+  gitMinimal,
+  nodejs_20,
+  yarn,
+  nixosTests,
+  nix-update-script,
+}:
+let
+  version = "25.3.0";
   src = fetchFromGitHub {
     owner = "actualbudget";
-    repo = "actual-server";
-    rev = "v${version}";
-    sha256 = "sha256-zpZNITXd9QOJNRz8RbAuHH1hrrWPEGsrROGWJuYXqrc=";
+    repo = "actual";
+    tag = "v${version}";
+    hash = "sha256-nKHdyb9CvR5apc+ZHgEYqc/4N3/V2ReWrhwT+eh2Ti0=";
   };
 
-  nativeBuildInputs = with pkgs; [
-    nodejs
-    python3
-    jq
-    moreutils
-    makeWrapper
-    yarn-berry
-  ];
+  yarn_20 = yarn.override { nodejs = nodejs_20; };
 
-  yarnOfflineCache = stdenvNoCC.mkDerivation {
-    name = "${name}-deps";
+  # We cannot use fetchYarnDeps because that doesn't support yarn2/berry
+  # lockfiles (see https://github.com/NixOS/nixpkgs/issues/254369)
+  offlineCache = stdenvNoCC.mkDerivation {
+    name = "actual-server-${version}-offline-cache";
     inherit src;
-    nativeBuildInputs = with pkgs; [ yarn-berry ];
 
-    NODE_EXTRA_CA_CERTS = "${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt";
+    nativeBuildInputs = [
+      cacert # needed for git
+      gitMinimal # needed to download git dependencies
+      yarn_20
+    ];
 
-    supportedArchitectures = builtins.toJSON {
-      os = [ "darwin" "linux" ];
-      cpu = [ "arm" "arm64" "ia32" "x64" ];
-      libc = [ "glibc" "musl" ];
+    SUPPORTED_ARCHITECTURES = builtins.toJSON {
+      os = [
+        "darwin"
+        "linux"
+      ];
+      cpu = [
+        "arm"
+        "arm64"
+        "ia32"
+        "x64"
+      ];
+      libc = [
+        "glibc"
+        "musl"
+      ];
     };
-
-    configurePhase = ''
-      runHook preConfigure
-
-      export HOME="$NIX_BUILD_TOP"
-      export YARN_ENABLE_TELEMETRY=0
-
-      yarn config set enableGlobalCache false
-      yarn config set cacheFolder $out
-      yarn config set supportedArchitectures --json "$supportedArchitectures"
-
-      runHook postConfigure
-    '';
 
     buildPhase = ''
       runHook preBuild
 
-      mkdir -p $out
-      yarn install --immutable --mode skip-build
+      export HOME=$(mktemp -d)
+      yarn config set enableTelemetry 0
+      yarn config set cacheFolder $out
+      yarn config set --json supportedArchitectures "$SUPPORTED_ARCHITECTURES"
+      yarn workspaces focus @actual-app/sync-server --production
 
       runHook postBuild
     '';
 
-    dontInstall = true;
+    installPhase = ''
+      runHook preInstall
+
+      mkdir -p $out
+      cp -r ./node_modules $out/node_modules
+
+      runHook postInstall
+    '';
+    dontFixup = true;
 
     outputHashAlgo = "sha256";
-    outputHash = "sha256-zP6dHdSjq9HMOrRr9oDC6igDYEmzqsH/XofOM3zdBtY=";
     outputHashMode = "recursive";
+    outputHash = {
+      x86_64-linux = "sha256-71OaB2UjqBaPXATx+KW5U+66puh93yRkZFzyqh/YNOA=";
+      aarch64-linux = "sha256-RoTQAfKtj61ten/+NLrLAxpAohKspyG+4vZhSdPn+14=";
+      aarch64-darwin = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+      x86_64-darwin = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+    }.${stdenv.hostPlatform.system}
+      or (throw "Unsupported system: ${stdenv.hostPlatform.system}");
   };
+in
+stdenv.mkDerivation {
+  pname = "actual-server";
+  inherit version src;
 
-  patchPhase = ''
-    sed -i '1i#!${pkgs.nodejs-slim}/bin/node' app.js
-  '';
-
-  configurePhase = ''
-    runHook preConfigure
-
-    export HOME="$NIX_BUILD_TOP"
-    export YARN_ENABLE_TELEMETRY=0
-    export npm_config_nodedir=${pkgs.nodejs-slim}
-
-    yarn config set enableGlobalCache false
-    yarn config set cacheFolder $yarnOfflineCache
-
-    runHook postConfigure
-  '';
-
-  buildPhase = ''
-    runHook preBuild
-
-    yarn install --immutable --immutable-cache
-    yarn build
-    yarn workspaces focus --all --production
-
-    runHook postBuild
-  '';
+  nativeBuildInputs = [
+    makeWrapper
+    yarn_20
+  ];
 
   installPhase = ''
     runHook preInstall
 
-    mkdir -p $out/{bin,lib}
+    mkdir -p $out/{bin,lib,lib/actual,lib/actual/packages}
+    cp -r ${offlineCache}/node_modules/ $out/lib/actual
+    cp -r packages/sync-server $out/lib/actual/packages
 
-    mkdir $out/lib/actual
-    cp -r package.json app.js src migrations node_modules $out/lib/actual/
-
-    chmod +x $out/lib/actual/app.js
-
-    makeWrapper $out/lib/actual/app.js $out/bin/actual --chdir $out/lib/actual
+    makeWrapper ${lib.getExe nodejs_20} "$out/bin/actual-server" \
+      --add-flags "$out/lib/actual/packages/sync-server/app.js" \
+      --set NODE_PATH "$out/node_modules"
 
     runHook postInstall
   '';
 
-  fixupPhase = ''
-    runHook preFixup
-
-    patchShebangs $out/lib
-
-    runHook postFixup
-  '';
+  meta = {
+    changelog = "https://actualbudget.org/docs/releases";
+    description = "Super fast privacy-focused app for managing your finances";
+    homepage = "https://actualbudget.org/";
+    mainProgram = "actual-server";
+    license = lib.licenses.mit;
+  };
 }

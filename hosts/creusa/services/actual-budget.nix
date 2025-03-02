@@ -13,10 +13,10 @@ let
       config =
         { pkgs, ... }:
         {
-          imports = [ self.nixosModules.actual-server ];
+          imports = [ self.nixosModules.actual ];
           system.stateVersion = "24.11";
           networking.hostName = "actual-budget-${name}";
-          services.actual-server = {
+          services.actual  = {
             enable = true;
             package = self.packages.aarch64-linux.actual-server;
             dataDir = dataPath;
