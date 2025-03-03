@@ -12,12 +12,12 @@
   nix-update-script,
 }:
 let
-  version = "25.3.0";
+  version = "25.3.1";
   src = fetchFromGitHub {
     owner = "actualbudget";
     repo = "actual";
     tag = "v${version}";
-    hash = "sha256-nKHdyb9CvR5apc+ZHgEYqc/4N3/V2ReWrhwT+eh2Ti0=";
+    hash = "sha256-UZ2Z1tkMbGJwka//cIC0aG1KCcTSxUPLzctEaOhnKQA=";
   };
 
   yarn_20 = yarn.override { nodejs = nodejs_20; };
@@ -76,8 +76,8 @@ let
     outputHashAlgo = "sha256";
     outputHashMode = "recursive";
     outputHash = {
-      x86_64-linux = "sha256-71OaB2UjqBaPXATx+KW5U+66puh93yRkZFzyqh/YNOA=";
-      aarch64-linux = "sha256-RoTQAfKtj61ten/+NLrLAxpAohKspyG+4vZhSdPn+14=";
+      x86_64-linux = "sha256-me0v+RuoleOKFRyJ7iyLTKRnV2Cz2Q1MLc/SE2sSSH8=";
+      aarch64-linux = "sha256-djE2lt/o/7kd7ci2TW3mhjSptD3etChbvtdbiWqp/wo=";
       aarch64-darwin = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
       x86_64-darwin = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
     }.${stdenv.hostPlatform.system}
