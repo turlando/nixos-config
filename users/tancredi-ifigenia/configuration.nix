@@ -6,7 +6,7 @@
   # Enable Bluetooth headsets buttons support.
   services.mpris-proxy.enable = true;
 
-  programs.emacs.package = pkgs.emacs29-pgtk;
+  programs.emacs.package = pkgs.emacs-pgtk;
 
   programs.firefox = {
     enable = true;
