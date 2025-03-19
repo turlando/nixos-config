@@ -36,8 +36,12 @@
 
 ;;;; Editing
 
-(setq-default fill-column 80
-              indent-tabs-mode nil)
+(setq-default
+ fill-column 80
+ indent-tabs-mode nil)
+
+(use-package editorconfig
+  :delight)
 
 
 ;;;; Behaviour
@@ -103,6 +107,8 @@
 (use-package nix-mode
   :mode "\\.nix\\'")
 
+(use-package go-mode)
+
 
 ;;;; Appearance
 
@@ -137,6 +143,8 @@
 
   (evil-mode 1)
   (evil-collection-init)
+
+  (editorconfig-mode 1)
 
   ;; Deactivate builtin modes enabled by default when running with X support.
   (when (display-graphic-p)
