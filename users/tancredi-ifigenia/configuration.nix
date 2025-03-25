@@ -64,6 +64,8 @@
   };
 
   home.packages = with pkgs; [
+    podman
+
     sshfs
 
     source-code-pro

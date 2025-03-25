@@ -23,6 +23,7 @@
         "root" = { mountPoint = "/"; };
         "nix" = { mountPoint = "/nix"; };
         "state" = { mountPoint = config.environment.state; };
+        "podman" = { mountPoint = "/var/lib/containers/storage"; };
         "home" = { mountPoint = null; };
         "home/tancredi" = { mountPoint = "/home/tancredi"; };
         "swap" = { mountPoint = null; };
@@ -136,7 +137,19 @@
 
   programs.ssh.enableAskPassword = true;
 
-  virtualisation.virtualbox.host.enable = true;
+  virtualisation = {
+    virtualbox.host.enable = true;
+    containers.enable = true;
+    podman = {
+      enable = true;
+      dockerSocket.enable = true;
+      defaultNetwork.settings.dns_enabled = true;
+    };
+  };
+
   users.extraGroups.vboxusers.members = with config.users.users;
+    [ tancredi.name ];
+
+  users.extraGroups.podman.members = with config.users.users;
     [ tancredi.name ];
 }
