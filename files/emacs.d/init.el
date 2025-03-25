@@ -120,6 +120,8 @@
 (use-package nix-mode
   :mode "\\.nix\\'")
 
+(use-package yaml-mode)
+
 (use-package rustic
   :ensure t)
 
