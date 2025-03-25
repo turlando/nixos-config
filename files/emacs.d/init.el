@@ -40,6 +40,19 @@
  fill-column 80
  indent-tabs-mode nil)
 
+(use-package lsp-mode
+  :init
+  :hook ((lsp-mode . lsp-enable-which-key-integration))
+  :commands (lsp lsp-deferred)
+  :custom
+  (lsp-headerline-breadcrumb-enable nil))
+
+(use-package lsp-ui
+  :commands lsp-ui-mode)
+
+(use-package lsp-ivy
+  :commands lsp-ivy-workspace-symbol)
+
 (use-package editorconfig
   :delight)
 
@@ -95,7 +108,7 @@
 (use-package evil-collection
   :after evil
   :custom
-  (evil-collection-mode-list '(ivy whick-key))
+  (evil-collection-mode-list '(ivy whick-key lsp-ui-imenu))
   (evil-collection-want-unimpaired-p nil))
 
 
@@ -106,6 +119,9 @@
 
 (use-package nix-mode
   :mode "\\.nix\\'")
+
+(use-package rustic
+  :ensure t)
 
 (use-package go-mode)
 
