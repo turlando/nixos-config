@@ -2,5 +2,5 @@
 
 {
   environment.defaults.enable = true;
-  programs.emacs.package = pkgs.emacs29-nox;
+  programs.emacs.package = pkgs.emacs30-nox;
 }
