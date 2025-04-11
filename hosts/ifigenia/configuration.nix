@@ -23,7 +23,7 @@
         "root" = { mountPoint = "/"; };
         "nix" = { mountPoint = "/nix"; };
         "state" = { mountPoint = config.environment.state; };
-        "podman" = { mountPoint = "/var/lib/containers/storage"; };
+        "docker" = { mountPoint = "/var/lib/docker"; };
         "home" = { mountPoint = null; };
         "home/tancredi" = { mountPoint = "/home/tancredi"; };
         "swap" = { mountPoint = null; };
@@ -139,17 +139,15 @@
 
   virtualisation = {
     virtualbox.host.enable = true;
-    containers.enable = true;
-    podman = {
+    docker = {
       enable = true;
-      dockerSocket.enable = true;
-      defaultNetwork.settings.dns_enabled = true;
+      storageDriver = "zfs";
     };
   };
 
   users.extraGroups.vboxusers.members = with config.users.users;
     [ tancredi.name ];
 
-  users.extraGroups.podman.members = with config.users.users;
+  users.extraGroups.docker.members = with config.users.users;
     [ tancredi.name ];
 }

@@ -59,7 +59,7 @@ zfs create               \
 zfs create               \
     -o acltype=posixacl  \
     -o mountpoint=legacy \
-    system/podman
+    system/docker
 
 zfs create               \
     system/home
