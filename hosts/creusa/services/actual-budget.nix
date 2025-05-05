@@ -1,4 +1,4 @@
-{ self, config, lib, ... }:
+{ self, config, lib, pkgs-unstable, ... }:
 
 let
   inherit (lib.modules) mkMerge;
@@ -18,7 +18,7 @@ let
           networking.hostName = "actual-budget-${name}";
           services.actual  = {
             enable = true;
-            package = self.packages.aarch64-linux.actual-server;
+            package = pkgs-unstable.actual-server;
             dataDir = dataPath;
             port = port;
           };

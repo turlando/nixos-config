@@ -1,11 +1,8 @@
-{ self, lib, nixpkgs, nixpkgs-unstable, flake-utils, ... }:
+{ self, lib, nixpkgs, flake-utils, ... }:
 
 nixpkgs.lib.nixosSystem rec {
-  system = flake-utils.lib.system.aarch64-linux;
-  specialArgs = {
-    inherit self lib;
-    pkgs-unstable = nixpkgs-unstable.legacyPackages.${system};
-  };
+  system = flake-utils.lib.system.x86_64-linux;
+  specialArgs = { inherit self lib; };
   modules = [
     { system.stateVersion = "24.11"; }
     self.nixosModules.defaults
