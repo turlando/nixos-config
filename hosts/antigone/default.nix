@@ -4,7 +4,7 @@ nixpkgs.lib.nixosSystem rec {
   system = flake-utils.lib.system.x86_64-linux;
   specialArgs = {
     inherit self lib;
-    pkgs-unstable = import nixpkgs-unstable { inherit system; };
+    pkgs-unstable = nixpkgs-unstable.legacyPackages.${system};
   };
   modules = [
     { system.stateVersion = "24.11"; }
