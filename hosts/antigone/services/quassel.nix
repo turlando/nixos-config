@@ -15,7 +15,7 @@ in
     config =
       { pkgs, ... }:
       {
-        system.stateVersion = "24.11";
+        system.stateVersion = "25.05";
 
         environment.systemPackages = [
           ## So that I can run:
