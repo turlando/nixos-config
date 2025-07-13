@@ -35,7 +35,7 @@ in
     config =
       { ... }:
       {
-        system.stateVersion = "24.11";
+        system.stateVersion = "25.05";
 
         fileSystems."/var/lib/acme" = {
           device = "${config.environment.state}/var/lib/acme";

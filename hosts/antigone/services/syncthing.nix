@@ -41,7 +41,7 @@ in
     config =
       { config, pkgs, ... }:
       {
-        system.stateVersion = "24.11";
+        system.stateVersion = "25.05";
 
         users.groups = {
           storage = storageGroup;

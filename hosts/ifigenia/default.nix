@@ -4,7 +4,7 @@ nixpkgs.lib.nixosSystem {
   system = flake-utils.lib.system.x86_64-linux;
   specialArgs = { inherit lib; };
   modules = [
-    { system.stateVersion = "24.11"; }
+    { system.stateVersion = "25.05"; }
     nixos-hardware.nixosModules.lenovo-thinkpad-x250
     self.nixosModules.defaults
     self.nixosModules.ephemeral

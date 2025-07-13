@@ -14,7 +14,7 @@ let
         { pkgs, ... }:
         {
           imports = [ self.nixosModules.actual ];
-          system.stateVersion = "24.11";
+          system.stateVersion = "25.05";
           networking.hostName = "actual-budget-${name}";
           services.actual  = {
             enable = true;

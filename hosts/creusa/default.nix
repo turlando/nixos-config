@@ -7,7 +7,7 @@ nixpkgs.lib.nixosSystem rec {
     pkgs-unstable = nixpkgs-unstable.legacyPackages.${system};
   };
   modules = [
-    { system.stateVersion = "24.11"; }
+    { system.stateVersion = "25.05"; }
     self.nixosModules.defaults
     self.nixosModules.ephemeral
     self.nixosModules.state

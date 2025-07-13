@@ -27,7 +27,7 @@ in
       {
         imports = [ self.nixosModules.slskd ];
 
-        system.stateVersion = "24.11";
+        system.stateVersion = "25.05";
 
         networking.firewall.allowedTCPPorts = [ soulseekNetPort httpPort ];
 
