@@ -10,12 +10,16 @@ let
       data = config.storage.zpools.system.datasets.
         "services/actual-budget/${name}"
         .mountPoint;
+
       config =
         { pkgs, ... }:
         {
+          disabledModules = [ "services/web-apps/actual.nix" ];
           imports = [ self.nixosModules.actual ];
+
           system.stateVersion = "25.05";
           networking.hostName = "actual-budget-${name}";
+
           services.actual  = {
             enable = true;
             package = pkgs-unstable.actual-server;
