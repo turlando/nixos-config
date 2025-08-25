@@ -1,0 +1,3 @@
+{
+  ephemeral = import ./ephemeral.nix;
+}

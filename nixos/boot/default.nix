@@ -1,0 +1,3 @@
+{
+  silent = import ./silent.nix;
+}
