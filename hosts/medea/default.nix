@@ -19,6 +19,7 @@ nixpkgs.lib.nixosSystem {
 
     self.nixosModules.users.root
     self.nixosModules.users.tancredi
+    self.nixosModules.users.luminovo
 
     ./configuration.nix
     ./disko.nix
