@@ -134,6 +134,13 @@
               acltype = "posixacl";
             };
           };
+          "home/luminovo" = {
+            type = "zfs_fs";
+            mountpoint = "/home/luminovo";
+            options = {
+              acltype = "posixacl";
+            };
+          };
         };
       };
     };

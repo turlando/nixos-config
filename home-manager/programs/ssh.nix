@@ -10,6 +10,7 @@ in
     compiler4-luminovo.enable = mkEnableOption "";
     creusa.enable = mkEnableOption "";
     github.enable = mkEnableOption "";
+    gitlab-luminovo.enable = mkEnableOption "";
   };
 
   config.programs.ssh.matchBlocks = mkMerge [
@@ -43,6 +44,14 @@ in
         hostname = "github.com";
         user = "git";
         identityFile = config.age.secrets.ssh-key-github.path;
+      };
+    })
+
+    (mkIf cfg.gitlab-luminovo.enable {
+      "gitlab.com" = {
+        hostname = "gitlab.com";
+        user = "git";
+        identityFile = config.age.secrets.ssh-key-gitlab-luminovo.path;
       };
     })
   ];
