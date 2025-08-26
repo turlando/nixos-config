@@ -38,6 +38,10 @@ nixos-install host agenix:
     {{NIXOS_INSTALL}} --flake .#{{host}} --root /mnt --no-root-password
 
 [group("nixos")]
+disko-apply host=HOSTNAME:
+    {{DISKO}} --flake '.#{{host}}' --mode format,mount
+
+[group("nixos")]
 nixos-build host=HOSTNAME:
     nix build '.#nixosConfigurations.{{host}}.config.system.build.toplevel'
 
