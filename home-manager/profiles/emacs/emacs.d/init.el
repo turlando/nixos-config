@@ -1,0 +1,672 @@
+;;; init.el --- Init                                 -*- lexical-binding: t; -*-
+
+;;; Commentary:
+;;; Code:
+
+;;;; Core / Bootstrap
+
+(require 'minimal-init)
+(require 'turlando-utils)
+
+;;;; UI / Appearance
+
+;; Font configuration
+(use-package emacs
+  :ensure nil
+  :init
+  (when (display-graphic-p)
+    (set-face-attribute 'default nil :font "Source Code Pro-10")))
+
+(use-package delight
+  :demand t)
+
+(use-package ultra-scroll
+  :custom
+  (scroll-conservatively 3)
+  (scroll-margin 0)
+  :config
+  (ultra-scroll-mode 1))
+
+(use-package spacemacs-theme
+  :demand t
+  :config
+  (load-theme 'spacemacs-dark t)
+  :custom
+  (spacemacs-theme-org-agenda-height nil)
+  (spacemacs-theme-org-height nil))
+
+(use-package emacs
+  :ensure nil
+  :config
+  (column-number-mode 1))
+
+(use-package which-key
+  :delight
+  :demand t
+  :config
+  (which-key-mode 1)
+  :custom
+  (which-key-idle-delay 0.3)
+  (which-key-sort-order 'which-key-key-order-alpha)
+  (which-key-add-column-padding 2)
+  (which-key-max-display-columns 3))
+
+(use-package transient)
+
+;;;; Modal Editing
+
+(use-package evil
+  :demand t
+  :init
+  (setq evil-want-integration t
+        evil-want-keybinding nil
+        evil-want-C-u-scroll t
+        evil-want-C-i-jump nil
+        evil-respect-visual-line-mode nil
+        evil-undo-system 'undo-redo)
+  :config
+  (evil-mode 1)
+  (global-set-key (kbd "<escape>") 'keyboard-escape-quit))
+
+(use-package evil-collection
+  :after evil
+  :config
+  (evil-collection-init)
+  :custom
+  (evil-collection-want-unimpaired-p nil))
+
+;;;; Keybindings
+
+(use-package general
+  :demand t
+  :after evil
+  :config
+  (general-evil-setup)
+
+  (general-create-definer turlando/universal-leader
+    :states '(normal visual emacs)
+    :prefix "SPC"
+    :global-prefix "M-m"
+    :non-normal-prefix "M-m"
+    :keymaps 'override)
+
+  (general-create-definer turlando/buffer-leader
+    :states '(normal visual emacs)
+    :prefix "SPC b"
+    :global-prefix "M-m b"
+    :non-normal-prefix "M-m b"
+    :keymaps 'override)
+  (turlando/universal-leader
+    "b" '(:ignore t :wk "buffers"))
+
+  (general-create-definer turlando/emacs-leader
+    :states '(normal visual emacs)
+    :prefix "SPC e"
+    :global-prefix "M-m e"
+    :non-normal-prefix "M-m e"
+    :keymaps 'override)
+  (turlando/universal-leader
+    "e" '(:ignore t :wk "emacs"))
+
+  (general-create-definer turlando/file-leader
+    :states '(normal visual emacs)
+    :prefix "SPC f"
+    :global-prefix "M-m f"
+    :non-normal-prefix "M-m f"
+    :keymaps 'override)
+  (turlando/universal-leader
+    "f" '(:ignore t :wk "files"))
+
+  (general-create-definer turlando/git-leader
+    :states '(normal visual emacs)
+    :prefix "SPC g"
+    :global-prefix "M-m g"
+    :non-normal-prefix "M-m g"
+    :keymaps 'override)
+  (turlando/universal-leader
+    "g" '(:ignore t :wk "git"))
+
+  (general-create-definer turlando/help-leader
+    :states '(normal visual emacs)
+    :prefix "SPC h"
+    :global-prefix "M-m h"
+    :non-normal-prefix "M-m h"
+    :keymaps 'override)
+  (turlando/universal-leader
+    "h" '(:ignore t :wk "help"))
+
+  (general-create-definer turlando/jump-leader
+    :states '(normal visual emacs)
+    :prefix "SPC j"
+    :global-prefix "M-m j"
+    :non-normal-prefix "M-m j"
+    :keymaps 'override)
+  (turlando/universal-leader
+    "j" '(:ignore t :wk "jump"))
+
+  (general-create-definer turlando/parens-leader
+    :states '(normal visual emacs)
+    :prefix "SPC k"
+    :global-prefix "M-m k"
+    :non-normal-prefix "M-m k"
+    :keymaps 'override)
+  (turlando/universal-leader
+    "k" '(:ignore t :wk "smartparens"))
+
+  (general-create-definer turlando/project-leader
+    :states '(normal visual emacs)
+    :prefix "SPC p"
+    :global-prefix "M-m p"
+    :non-normal-prefix "M-m p"
+    :keymaps 'override)
+  (turlando/universal-leader
+    "p" '(:ignore t :wk "projects"))
+
+  (general-create-definer turlando/toggle-leader
+    :states '(normal visual emacs)
+    :prefix "SPC t"
+    :global-prefix "M-m t"
+    :non-normal-prefix "M-m t"
+    :keymaps 'override)
+  (turlando/universal-leader
+    "t" '(:ignore t :wk "toggles"))
+
+  (general-create-definer turlando/window-leader
+    :states '(normal visual emacs)
+    :prefix "SPC w"
+    :global-prefix "M-m w"
+    :non-normal-prefix "M-m w"
+    :keymaps 'override)
+  (turlando/universal-leader
+    "w" '(:ignore t :wk "windows"))
+
+  (general-create-definer turlando/text-leader
+    :states '(normal visual emacs)
+    :prefix "SPC x"
+    :global-prefix "M-m x"
+    :non-normal-prefix "M-m x"
+    :keymaps 'override)
+  (turlando/universal-leader
+    "x" '(:ignore t :wk "text"))
+
+  (general-create-definer turlando/major-leader
+    :states '(normal visual emacs)
+    :prefix ","
+    :global-prefix "M-m m"
+    :non-normal-prefix "M-m m"
+    :keymaps 'override)
+  (turlando/universal-leader
+    "m" '(:ignore t :wk "major mode")))
+
+(use-package emacs
+  :ensure nil
+  :general
+  (turlando/universal-leader
+    "SPC" '(execute-extended-command :wk "M-x")
+    ";"   '(eval-expression :wk "eval expression")
+    "u"   '(universal-argument :wk "universal arg")))
+
+;;;; Navigation
+
+;; File operations
+(use-package emacs
+  :ensure nil
+  :general
+  (turlando/file-leader
+    "f" '(counsel-find-file :wk "find file")
+    "r" '(counsel-recentf :wk "recent files")
+    "L" '(counsel-locate :wk "locate")
+    "s" '(save-buffer :wk "save file")
+    "S" '(evil-write-all :wk "save all")
+    "d" '(dired-jump :wk "dired")
+    "F" '(find-file-at-point :wk "find at point")
+    "c" '(turlando/copy-file :wk "copy file")
+    "R" '(turlando/rename-file :wk "rename file")
+    "D" '(turlando/delete-file :wk "delete file")
+    "y" '(turlando/copy-file-path :wk "copy file path")))
+
+;; Buffer management
+(use-package emacs
+  :ensure nil
+  :general
+  (turlando/buffer-leader
+    "b" '(counsel-switch-buffer :wk "switch buffer")
+    "d" '(kill-current-buffer :wk "kill buffer")
+    "k" '(kill-buffer :wk "kill buffer...")
+    "x" '(kill-buffer-and-window :wk "kill buffer + window")
+    "p" '(previous-buffer :wk "previous buffer")
+    "n" '(next-buffer :wk "next buffer")
+    "u" '(evil-switch-to-windows-last-buffer :wk "last buffer")
+    "r" '(revert-buffer :wk "revert buffer")
+    "y" '(turlando/copy-whole-buffer :wk "copy buffer")
+    "Y" '(turlando/copy-buffer-path :wk "copy buffer path")
+    "i" '(ibuffer :wk "ibuffer")
+    "s" '(basic-save-buffer :wk "save buffer")))
+
+;; Window management
+(use-package emacs
+  :ensure nil
+  :demand t
+  :config
+  (transient-define-prefix
+    turlando/window-transient ()
+    [["Split"
+      ("h" "horizontally" split-window-below :transient t)
+      ("v" "vertically" split-window-right :transient t)]
+     ["Navigate"
+      ("j" "down" windmove-down :transient t)
+      ("k" "up" windmove-up :transient t)
+      ("l" "right" windmove-right :transient t)
+      ("h" "left" windmove-left :transient t)]
+     ["Resize"
+      ("H" "shrink horizontal" shrink-window-horizontally :transient t)
+      ("L" "enlarge horizontal" enlarge-window-horizontally :transient t)
+      ("J" "shrink vertical" shrink-window :transient t)
+      ("K" "enlarge vertical" enlarge-window :transient t)]
+     ["Actions"
+      ("d" "delete" delete-window :transient nil)
+      ("D" "delete others" delete-other-windows :transient nil)
+      ("=" "balance" balance-windows :transient t)
+      ("u" "winner undo" winner-undo :transient t)
+      ("r" "winner redo" winner-redo :transient t)]])
+  :general
+  (turlando/window-leader
+    "." '(turlando/window-transient :wk "transient")
+    "w" '(other-window :wk "other window")
+    "d" '(delete-window :wk "delete window")
+    "D" '(delete-other-windows :wk "delete other windows")
+    "h" '(split-window-below :wk "split below")
+    "v" '(split-window-right :wk "split right")
+    "u" '(winner-undo :wk "winner undo")
+    "r" '(winner-redo :wk "winner redo")
+    "b" '(turlando/switch-to-minibuffer :wk "switch to minibuffer")))
+
+(use-package winner
+  :config (winner-mode 1)
+  :general
+  (turlando/window-leader
+    :keymaps 'winner-mode-map
+    "u" '(winner-undo :which-key "Undo Layout")
+    "r" '(winner-redo :which-key "Redo Layout")))
+
+(use-package ivy
+  :delight
+  :config (ivy-mode 1)
+  :custom
+  (ivy-use-virtual-buffers t)
+  (ivy-count-format "(%d/%d) ")
+  (ivy-height 15)
+  (ivy-wrap t)
+  (ivy-initial-inputs-alist nil)
+  :bind
+  (:map
+   ivy-minibuffer-map
+   ("C-l" . ivy-alt-done)
+   ("C-h" . ivy-backward-delete-char)
+   ("C-j" . ivy-next-line)
+   ("C-k" . ivy-previous-line))
+  :bind
+  (:map
+   ivy-switch-buffer-map
+   ("C-l" . ivy-alt-done)
+   ("C-k" . ivy-previous-line)
+   ("C-d" . ivy-switch-buffer-kill)))
+
+(use-package counsel
+  :delight
+  :config (counsel-mode 1))
+
+(use-package swiper
+  :after ivy
+  :general
+  (turlando/buffer-leader
+    "s" '(swiper :wk "search buffer")
+    "i" '(swiper-isearch :wk "search buffer (isearch)")
+    "I" '(swiper-all :wk "search all buffers")))
+
+(use-package amx
+  :config
+  (amx-mode 1))
+
+(use-package dired
+  :custom
+  (dired-listing-switches "-alh")
+  (dired-dwim-target t)
+  (dired-recursive-deletes 'always)
+  (dired-recursive-copies 'always)
+  :general
+  (turlando/major-leader
+    :keymaps 'dired-mode-map
+    "h" '(dired-hide-details-mode :wk "toggle details")
+    "s" '(dired-sort-toggle-or-edit :wk "sort")
+    "." '(dired-omit-mode :wk "toggle omit")))
+
+(use-package dired-x
+  :after dired
+  :config
+  (setq dired-omit-files "^\\.[^.]\\|^#\\|~$"))
+
+(use-package helpful
+  :custom
+  (counsel-describe-function-function #'helpful-callable)
+  (counsel-describe-variable-function #'helpful-variable)
+  :bind
+  (([remap describe-function] . helpful-callable)
+   ([remap describe-command] . helpful-command)
+   ([remap describe-key] . helpful-key)
+   ([remap describe-variable] . helpful-variable))
+  :general
+  (turlando/help-leader
+    "f" '(helpful-callable :wk "describe function")
+    "v" '(helpful-variable :wk "describe variable")
+    "k" '(helpful-key :wk "describe key")
+    "m" '(helpful-macro :wk "describe macro")
+    "p" '(helpful-at-point :wk "at point")))
+
+(use-package projectile
+  :delight
+  :config
+  (projectile-mode 1)
+  :custom
+  (projectile-completion-system 'ivy)
+  (projectile-switch-project-action #'projectile-dired)
+  (projectile-enable-caching t)
+  (projectile-indexing-method 'alien)
+  (projectile-project-search-path '("~/Projects"))
+  :general
+  (turlando/project-leader
+    "f" '(counsel-projectile-find-file :wk "find file")
+    "p" '(counsel-projectile-switch-project :wk "switch project")
+    "b" '(counsel-projectile-switch-to-buffer :wk "switch buffer")
+    "d" '(projectile-dired :wk "dired")
+    "k" '(projectile-kill-buffers :wk "kill buffers")
+    "c" '(projectile-compile-project :wk "compile")
+    "t" '(projectile-test-project :wk "test")
+    "r" '(projectile-run-project :wk "run")
+    "I" '(projectile-invalidate-cache :wk "invalidate cache")))
+
+(use-package counsel-projectile
+  :after (counsel projectile)
+  :config
+  (counsel-projectile-mode 1))
+
+;;;; Editing
+
+(use-package emacs
+  :ensure nil
+  :config
+  (show-paren-mode 1)
+  (delete-selection-mode 1)
+  (electric-pair-mode 1)
+  (global-auto-revert-mode 1))
+
+(use-package recentf
+  :config
+  (recentf-mode 1))
+
+(use-package saveplace
+  :config
+  (save-place-mode 1))
+
+(use-package savehist
+  :config
+  (savehist-mode 1))
+
+(use-package emacs
+  :ensure nil
+  :general
+  (turlando/text-leader
+    "u" '(upcase-region :wk "upcase")
+    "l" '(downcase-region :wk "downcase")
+    "c" '(capitalize-region :wk "capitalize")
+    "r" '(reverse-region :wk "reverse")
+    "s" '(sort-lines :wk "sort lines")
+    "d" '(delete-duplicate-lines :wk "delete duplicates")
+    "t" '(transpose-words :wk "transpose words")))
+
+(use-package emacs
+  :ensure nil
+  :general
+  (turlando/toggle-leader
+    "n" '(display-line-numbers-mode :wk "line numbers")
+    "f" '(display-fill-column-indicator-mode :wk "fill column")
+    "F" '(auto-fill-mode :wk "auto fill")
+    "w" '(whitespace-mode :wk "whitespace")
+    "h" '(hl-line-mode :wk "highlight line")))
+
+(use-package company
+  :delight
+  :hook (after-init . global-company-mode)
+  :custom
+  (company-idle-delay 0.1)
+  (company-minimum-prefix-length 2)
+  (company-selection-wrap-around t)
+  (company-tooltip-align-annotations t)
+  (company-frontends '(company-pseudo-tooltip-frontend
+                       company-echo-metadata-frontend))
+  :bind
+  (:map
+   company-active-map
+   ("C-j" . company-select-next)
+   ("C-k" . company-select-previous)
+   ("C-l" . company-complete-selection)
+   ("<tab>" . company-complete-common-or-cycle)))
+
+(use-package expand-region
+  :general
+  (turlando/universal-leader
+    "v" '(er/expand-region :wk "expand region")))
+
+(use-package smartparens
+  :after transient
+  :delight
+  :custom
+  (sp-base-key-bindings 'paredit)
+  (sp-autoskip-closing-pair 'always)
+  (sp-hybrid-kill-entire-symbol nil)
+  :config
+  (smartparens-global-mode 1)
+  (show-smartparens-global-mode 1)
+  (transient-define-prefix
+    turlando/smartparens-transient ()
+    [["Wrap"
+      ("w" "wrap" sp-wrap-round :transient t)
+      ("W" "unwrap" sp-unwrap-sexp :transient t)]
+     ["Slurp"
+      ("s" "slurp forward" sp-backward-slurp-sexp :transient t)
+      ("S" "slurp backward" sp-forward-slurp-sexp :transient t)]
+     ["Barf"
+      ("b" "barf forward" sp-forward-barf-sexp :transient t)
+      ("B" "barf backward" sp-backward-barf-sexp :transient t)]])
+  :general
+  (turlando/parens-leader
+    "." '(turlando/smartparens-transient :wk "transient")
+    "w" '(sp-wrap-round :wk "wrap")
+    "W" '(sp-unwrap-sexp :wk "unwrap")
+    "s" '(sp-forward-slurp-sexp :wk "slurp forward")
+    "S" '(sp-backward-slurp-sexp :wk "slurp backward")
+    "b" '(sp-forward-barf-sexp :wk "barf forward")
+    "B" '(sp-backward-barf-sexp :wk "barf backward")
+    "r" '(sp-raise-sexp :wk "raise")
+    "t" '(sp-transpose-sexp :wk "transpose")
+    "k" '(sp-kill-sexp :wk "kill sexp")
+    "c" '(sp-copy-sexp :wk "copy sexp")))
+
+(use-package avy
+  :general
+  (turlando/jump-leader
+   "c" '(avy-goto-char :wk "jump to char")
+   "C" '(avy-goto-char-timer :wk "jump to char (timer)")
+   "w" '(avy-goto-word-1 :wk "jump to word")
+   "l" '(avy-goto-line :wk "jump to line")))
+
+(use-package editorconfig
+  :delight
+  :config
+  (editorconfig-mode 1))
+
+(use-package highlight-indent-guides
+  :delight
+  :custom
+  (highlight-indent-guides-method 'bitmap)
+  (highlight-indent-guides-responsive 'top)
+  :general
+  (turlando/toggle-leader
+    "i" '(highlight-indent-guides-mode :wk "indent guides")))
+
+(use-package aggressive-indent
+  :delight
+  :custom
+  (aggressive-indent-excluded-modes '(html-mode markdown-mode))
+  :general
+  (turlando/toggle-leader
+    "I" '(aggressive-indent-mode :wk "aggressive indent")))
+
+(use-package flycheck
+  :delight
+  :hook (after-init . global-flycheck-mode)
+  :custom
+  (flycheck-display-errors-delay 0.2)
+  (flycheck-idle-change-delay 0.5)
+  (flycheck-indication-mode 'left-fringe))
+
+(use-package flymake
+  :general
+  (turlando/major-leader
+    :keymaps 'flymake-mode-map
+    "e"   '(:ignore t :wk "errors")
+    "en" '(flymake-goto-next-error :wk "next error")
+    "ep" '(flymake-goto-prev-error :wk "previous error")
+    "eb" '(flymake-show-buffer-diagnostics :wk "buffer diagnostics")
+    "ep" '(flymake-show-project-diagnostics :wk "project diagnostics")))
+
+(use-package xref
+  :general
+  (turlando/jump-leader
+   :keymaps 'prog-mode-map
+   "b" '(xref-go-back :wk "back")
+   "n" '(xref-go-forward :wk "back")
+   "s" '(xref-find-apropos :wk "symbol")
+   "d" '(xref-find-definitions :wk "definition")
+   "D" '(xref-find-definitions-other-window :wk "definition other window")
+   "r" '(xref-find-references :wk "references")))
+
+;;;; Programming
+
+(use-package eldoc
+  :delight
+  :custom
+  (eldoc-idle-delay 0.1)
+  (eldoc-echo-area-use-multiline-p nil)
+  :general
+  (turlando/help-leader
+    :predicate 'eldoc-mode
+    "h" '(eldoc-doc-buffer :wk "documentation")))
+
+(use-package eglot
+  :hook
+  (eglot-managed-mode . flymake-mode)
+  :custom
+  (eglot-autoshutdown t)
+  (eglot-confirm-server-initiated-edits nil)
+  (eglot-extend-to-xref t)
+  :general
+  (turlando/emacs-leader
+   :keymaps 'eglot-mode-map
+   "l"   '(:ignore t :wk "language server")
+   "lr"  '(eglot-reconnect :wk "reconnect / restart server")
+   "ls"  '(eglot-shutdown :wk "shutdown server")
+   "ld"  '(lsp-describe-session :wk "describe session"))
+  (turlando/jump-leader
+   :keymaps 'eglot-mode-map
+   "i" '(eglot-find-implementation :wk "implementation")
+   "t" '(eglot-find-typeDefinition :wk "type definition"))
+  (turlando/major-leader
+    :keymaps '(eglot-mode-map evil-visual-state-map)
+    "=" '(eglot-format :wk "format region"))
+  (turlando/major-leader
+    :keymaps '(eglot-mode-map evil-normal-state-map)
+    "=" '(eglot-format-buffer :wk "format buffer"))
+  (turlando/major-leader
+    :keymaps 'eglot-mode-map
+    "a" '(eglot-code-actions :wk "code actions")
+    "r" '(eglot-rename :wk "rename"))
+  (turlando/toggle-leader
+    :keymaps 'eglot-mode-map
+    "l" '(eglot-inlay-hints-mode :wk "LSP hints")))
+
+(use-package just-mode)
+
+(use-package nix-mode
+  :mode "\\.nix\\'"
+  :hook (nix-mode . eglot-ensure)
+  :general
+  (turlando/major-leader
+    :keymaps 'nix-mode-map
+    "f" '(nix-format-buffer :wk "format buffer")))
+
+(use-package rust-mode
+  :general
+  (turlando/major-leader
+    :keymaps 'rust-mode-map
+    "m" '(rust-toggle-mutability :wk "mut")))
+
+(use-package rustic
+  :mode ("\\.rs\\'" . rustic-mode)
+  :hook (rustic-mode . eglot-ensure)
+  :custom
+  (rustic-format-on-save t)
+  (rustic-lsp-client 'eglot)
+  :general
+  (turlando/major-leader
+    :keymaps 'rustic-mode-map
+    "c"   '(:ignore t :wk "cargo")
+    "cc"  '(rustic-compile :wk "compile")
+    "cb"  '(rustic-cargo-build :wk "build")
+    "cr"  '(rustic-cargo-run :wk "run")
+    "cl"  '(rustic-cargo-clippy :wk "clippy")
+    "ck"  '(rustic-cargo-check :wk "check")
+    "cf"  '(rustic-cargo-fmt :wk "fmt")
+    "t"   '(:ignore t :wk "test")
+    "ta"  '(rustic-cargo-test :wk "test all project")
+    "tt"  '(rustic-cargo-current-test :wk "test current function")))
+
+(use-package typescript-ts-mode
+  :ensure nil
+  :mode (("\\.ts\\'" . typescript-ts-mode)
+         ("\\.tsx\\'" . tsx-ts-mode)))
+
+(use-package yaml-ts-mode
+  :ensure nil
+  :mode "\\.ya?ml\\'")
+
+;;;; Version Control
+
+(use-package magit
+  :custom
+  (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1)
+  :general
+  (turlando/git-leader
+    "s" '(magit-status :wk "status")
+    "b" '(magit-blame-addition :wk "blame")
+    "c" '(magit-clone :wk "clone")
+    "f" '(magit-find-file :wk "find file")
+    "l" '(magit-log-current :wk "log current")
+    "L" '(magit-log-all :wk "log all")
+    "d" '(magit-diff-dwim :wk "diff")))
+
+(use-package git-gutter
+  :delight
+  :hook (prog-mode . git-gutter-mode)
+  :custom
+  (git-gutter:update-interval 0.5)
+  :general
+  (turlando/git-leader
+    "n" '(git-gutter:next-hunk :wk "next hunk")
+    "p" '(git-gutter:previous-hunk :wk "previous hunk")
+    "r" '(git-gutter:revert-hunk :wk "revert hunk")
+    "g" '(git-gutter:popup-hunk :wk "show hunk"))
+  (turlando/toggle-leader
+    "g" '(git-gutter-mode :wk "git gutter")))
+
+;;; init.el ends here

@@ -1,4 +1,4 @@
-{ ... }:
+{ pkgs, ... }:
 
 {
   home.stateVersion = "25.05";
@@ -24,4 +24,7 @@
   programs.mozilla-settings.enable = true;
   programs.mozilla-settings.firefox = [ "tancredi" ];
   programs.mozilla-settings.thunderbird = [ "tancredi" ];
+
+  programs.emacs.enable = true;
+  programs.emacs.package = pkgs.emacs-pgtk;
 }
