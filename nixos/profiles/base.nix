@@ -22,7 +22,6 @@ in {
       boot.loader.systemd-boot.configurationLimit = 10;
       boot.loader.efi.canTouchEfiVariables = false;
 
-      boot.kernelPackages = pkgs.linuxPackages_6_15;
       boot.initrd.systemd.enable = true;
       boot.tmp.useTmpfs = true;
 
