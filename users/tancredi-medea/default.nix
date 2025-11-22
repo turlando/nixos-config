@@ -21,6 +21,7 @@ in home-manager.lib.homeManagerConfiguration {
     self.homeManagerModules.profiles.base
     self.homeManagerModules.profiles.emacs
     self.homeManagerModules.profiles.graphical
+    self.homeManagerModules.profiles.libvirt
 
     ./configuration.nix
   ];

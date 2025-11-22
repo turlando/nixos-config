@@ -137,11 +137,29 @@
               acltype = "posixacl";
             };
           };
+
           "home/luminovo" = {
             type = "zfs_fs";
             mountpoint = "/home/luminovo";
             options = {
               acltype = "posixacl";
+            };
+          };
+
+          "libvirt" = {
+            type = "zfs_fs";
+            options = {
+              canmount = "off";
+            };
+          };
+
+          "libvirt/tersicore" = {
+            type = "zfs_volume";
+            size = "128G";
+            options = {
+              volblocksize = "16K";
+              primarycache = "metadata";
+              sync = "disabled";
             };
           };
         };

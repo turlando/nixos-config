@@ -27,4 +27,8 @@
 
   programs.emacs.enable = true;
   programs.emacs.package = pkgs.emacs-pgtk;
+
+  home.packages = [
+    pkgs.kdePackages.krdc
+  ];
 }

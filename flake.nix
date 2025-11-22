@@ -25,6 +25,11 @@
     nixos-hardware.url = "github:NixOS/nixos-hardware";
 
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
+
+    nixvirt = {
+      url = "github:AshleyYakeley/NixVirt/v0.6.0";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {

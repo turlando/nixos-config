@@ -193,6 +193,27 @@
         "type": "github"
       }
     },
+    "nixvirt": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1748140003,
+        "narHash": "sha256-DNBZmuk1YRM2PmwbHzVdXumRjCUzQkMarg4iI/37rOQ=",
+        "owner": "AshleyYakeley",
+        "repo": "NixVirt",
+        "rev": "5dfe108fd859b122f9a96981cb6bc12297653d6c",
+        "type": "github"
+      },
+      "original": {
+        "owner": "AshleyYakeley",
+        "ref": "v0.6.0",
+        "repo": "NixVirt",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "agenix": "agenix",
@@ -201,7 +222,8 @@
         "flake-utils": "flake-utils",
         "home-manager": "home-manager_2",
         "nixos-hardware": "nixos-hardware",
-        "nixpkgs": "nixpkgs"
+        "nixpkgs": "nixpkgs",
+        "nixvirt": "nixvirt"
       }
     },
     "systems": {
