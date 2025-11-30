@@ -1,7 +1,7 @@
 { lib, pkgs, ... }:
 
 {
-  home.stateVersion = "25.05";
+  home.stateVersion = "25.11";
   home.username = "luminovo";
   home.homeDirectory = "/home/luminovo";
 

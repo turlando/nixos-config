@@ -1,4 +1,4 @@
-{ pkgs }:
+{ ovmf }:
 
 {
   name = "Tersicore";
@@ -56,19 +56,20 @@
     type = "hvm";
     arch = "x86_64";
     machine = "pc-q35-9.2";
-    firmware = "efi";
+
+    # firmware = "efi" causes libvirt to auto-detect firmware, which conflicts
+    # with explicit loader/nvram paths and fails in NixOS 25.11.
+    #firmware = "efi";
 
     loader = {
       readonly = true;
       secure = true;
       type = "pflash";
-      # path = pkgs.OVMFFull.firmware;
-      path = "${pkgs.qemu}/share/qemu/edk2-x86_64-secure-code.fd";
+      path = ovmf.firmware;
     };
 
     nvram = {
-      # template = pkgs.OVMFFull.variables;
-      template = "${pkgs.qemu}/share/qemu/edk2-i386-vars.fd";
+      template = ovmf.variablesMs;
       templateFormat = "raw";
       format = "raw";
       path = "/var/lib/libvirt/qemu/nvram/Tersicore_VARS.fd";
@@ -94,8 +95,8 @@
       avic = { state = true; };
     };
 
-  vmport = { state = false; };
-  smm = { state = true; };
+    vmport = { state = false; };
+    smm = { state = true; };
   };
 
   clock = {

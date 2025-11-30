@@ -1,9 +1,14 @@
-{ pkgs, nixvirt, ... }:
+{ config, pkgs, nixvirt, ... }:
 
 {
   virtualisation.libvirt.connections."qemu:///system" = {
     domains = [
-      { definition = nixvirt.lib.domain.writeXML (import ./domain-tersicore.nix { inherit pkgs; }); }
+      {
+        definition = nixvirt.lib.domain.writeXML
+          (import ./domain-tersicore.nix {
+            ovmf = pkgs.OVMFFull;
+          });
+      }
     ];
 
     networks = [
