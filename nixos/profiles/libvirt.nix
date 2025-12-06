@@ -1,16 +1,23 @@
+{ nixvirt }:
 { pkgs, ... }:
 {
-  virtualisation.libvirt = {
-    enable = true;
-    swtpm.enable = true;
-  };
+  imports = [
+    nixvirt.nixosModules.default
+  ];
 
-  virtualisation.libvirtd = {
-    qemu = {
-      package = pkgs.qemu_kvm;
-      vhostUserPackages = [ pkgs.virtiofsd ];
+  config = {
+    virtualisation.libvirt = {
+      enable = true;
+      swtpm.enable = true;
     };
-  };
 
-  virtualisation.spiceUSBRedirection.enable = true;
+    virtualisation.libvirtd = {
+      qemu = {
+        package = pkgs.qemu_kvm;
+        vhostUserPackages = [ pkgs.virtiofsd ];
+      };
+    };
+
+    virtualisation.spiceUSBRedirection.enable = true;
+  };
 }

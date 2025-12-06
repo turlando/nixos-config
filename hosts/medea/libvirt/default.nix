@@ -1,4 +1,7 @@
-{ config, pkgs, nixvirt, ... }:
+{ nixvirt }:
+{ config, pkgs, ... }:
+
+# At this point nixvirt modules should already been imported.
 
 {
   virtualisation.libvirt.connections."qemu:///system" = {

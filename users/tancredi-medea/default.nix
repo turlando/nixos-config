@@ -1,22 +1,14 @@
-{ self, agenix, emacs-overlay, home-manager, nixpkgs, ... }:
+{ self, agenix, home-manager, nixpkgs, ... }:
 
-let
-  system = "x86_64-linux";
-in home-manager.lib.homeManagerConfiguration {
+home-manager.lib.homeManagerConfiguration {
   pkgs = import nixpkgs {
-    inherit system;
-    overlays = [
-      emacs-overlay.overlays.default
-    ];
+    system = "x86_64-linux";
   };
 
   modules = [
-    agenix.homeManagerModules.default
-
+    (self.homeManagerModules.secrets { inherit agenix; })
     self.homeManagerModules.programs.mozilla-settings
     self.homeManagerModules.programs.ssh
-
-    self.homeManagerModules.secrets
 
     self.homeManagerModules.profiles.base
     self.homeManagerModules.profiles.emacs
