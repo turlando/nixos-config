@@ -6,9 +6,10 @@ home-manager.lib.homeManagerConfiguration {
   };
 
   modules = [
+    self.homeManagerModules.modules.programs.mozilla-settings
+    self.homeManagerModules.modules.programs.ssh
+
     (self.homeManagerModules.secrets { inherit agenix; })
-    self.homeManagerModules.programs.mozilla-settings
-    self.homeManagerModules.programs.ssh
 
     self.homeManagerModules.profiles.base
     self.homeManagerModules.profiles.emacs

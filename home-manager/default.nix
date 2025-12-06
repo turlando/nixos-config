@@ -1,5 +1,5 @@
 {
   profiles = import ./profiles;
-  programs = import ./programs;
+  modules = import ./modules;
   secrets = import ./secrets;
 }

@@ -6,9 +6,9 @@ nixpkgs.lib.nixosSystem {
   modules = [
     nixos-hardware.nixosModules.framework-amd-ai-300-series
 
-    self.nixosModules.boot.silent
-    self.nixosModules.environment.persistence
-    self.nixosModules.i18n.extra-locale
+    self.nixosModules.modules.boot.silent
+    self.nixosModules.modules.environment.persistence
+    self.nixosModules.modules.i18n.extra-locale
 
     (self.nixosModules.secrets { inherit agenix; })
 
