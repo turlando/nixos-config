@@ -1,7 +1,7 @@
 { config, lib, ... }:
 
 let
-  inherit (lib) mkIf mkEnableOption mkOption types;
+  inherit (lib) mkIf mkEnableOption;
 in {
   options.boot.silent.enable = mkEnableOption ''
     Enable a graphical silent boot.

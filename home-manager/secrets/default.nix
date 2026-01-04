@@ -1,5 +1,5 @@
 { agenix }:
-{ config, lib, ... }: {
+{ ... }: {
   imports = [
     agenix.homeManagerModules.default
   ];

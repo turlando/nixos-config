@@ -25,7 +25,7 @@ in {
 
   config = mkIf cfg.enable {
     programs.firefox.profiles = lib.listToAttrs (map (name: {
-      name = name;
+      inherit name;
       value.settings = {
         "extensions.pocket.enabled" = false;
         "browser.newtabpage.activity-stream.showSponsoredTopSites" = false;
@@ -34,7 +34,7 @@ in {
     }) cfg.firefox);
     
     programs.thunderbird.profiles = lib.listToAttrs (map (name: {
-      name = name;
+      inherit name;
       value.settings = {
         "widget.use-xdg-desktop-portal.file-picker" = 1;
       };

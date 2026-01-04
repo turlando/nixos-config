@@ -1,5 +1,5 @@
 { nixvirt }:
-{ config, pkgs, ... }:
+{ pkgs, ... }:
 
 # At this point nixvirt modules should already been imported.
 

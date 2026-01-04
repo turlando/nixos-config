@@ -28,7 +28,6 @@
   };
 
   outputs = {
-    self,
     flake-utils,
     nixpkgs,
     ...
@@ -41,11 +40,6 @@
   // flake-utils.lib.eachDefaultSystem (system: let
     pkgs = import nixpkgs { inherit system; };
   in {
-    checks = {
-      statix = pkgs.statix;
-      deadnix = pkgs.deadnix;
-    };
-    formatter = pkgs.alejandra;
     devShells = import ./shells (inputs // { inherit pkgs system; });
   });
 }

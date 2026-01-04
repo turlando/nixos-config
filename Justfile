@@ -3,6 +3,7 @@
 set quiet := true
 
 AGENIX := "agenix"
+DEADNIX := "deadnix"
 DISKO := "disko"
 HOME_MANAGER := "home-manager"
 JUST := "just"
@@ -12,6 +13,7 @@ NIX_GC := "nix-collect-garbage"
 NIXOS_GENERATE_CONFIG := "nixos-generate-config"
 NIXOS_INSTALL := "nixos-install"
 NIXOS_REBUILD := "nixos-rebuild"
+STATIX := "statix"
 
 AGENIX_IDENTITY := "/etc/agenix/key"
 AGENIX_NIXOS_SECRETS_DIR := "nixos/secrets"
@@ -32,7 +34,8 @@ update:
 # Check flake for errors
 [group("flake")]
 check:
-    {{NIX}} flake check
+    {{DEADNIX}}
+    {{STATIX}} check
 
 # Remove Nix store generations older than specified time
 [group("nix")]

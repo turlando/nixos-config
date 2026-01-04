@@ -6,8 +6,10 @@ let
   home-manager-pkgs = home-manager.packages.${system};
 in pkgs.mkShell {
   packages = [
+    pkgs.deadnix
     pkgs.just
     pkgs.nixd
+    pkgs.statix
     agenix-pkgs.default
     disko-pkgs.default
     home-manager-pkgs.default
