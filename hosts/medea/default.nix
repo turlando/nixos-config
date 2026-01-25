@@ -15,6 +15,7 @@ nixpkgs.lib.nixosSystem {
     self.nixosModules.profiles.base
     self.nixosModules.profiles.graphical
     self.nixosModules.profiles.zfs
+    self.nixosModules.profiles.clamav
     (self.nixosModules.profiles.libvirt { inherit nixvirt; })
 
     self.nixosModules.users.root
