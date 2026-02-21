@@ -10,7 +10,7 @@ let
 in
 {
   options.security.run0 = {
-    enable = mkEnableOption "run0 with Polkit AUTH_KEEP";
+    enable = mkEnableOption "run0 with Polkit credential caching";
 
     package = mkOption {
       type = types.package;
@@ -24,7 +24,7 @@ in
       example = [ "wheel" "admins" ];
       description = ''
         Unix groups whose members may elevate with run0 and have their
-        authentication cached (AUTH_KEEP).
+        authentication cached (AUTH_ADMIN_KEEP).
       '';
     };
   };
@@ -39,8 +39,8 @@ in
 
     security.polkit.extraConfig = ''
       polkit.addRule(function (action, subject) {
-        if (action.id == "org.freedesktop.systemd1.run" && (${groupExpr})) {
-          return polkit.Result.AUTH_KEEP;
+        if (action.id == "org.freedesktop.systemd1.manage-units" && (${groupExpr})) {
+          return polkit.Result.AUTH_ADMIN_KEEP;
         }
       });
     '';
