@@ -1,22 +1,14 @@
-{ agenix }:
-{ ... }:
-
+_:
 {
-  imports = [
-    agenix.nixosModules.default
-  ];
+  environment.persistence.paths = [ "/etc/agenix" ];
 
-  config = {
-    environment.persistence.paths = [ "/etc/agenix" ];
+  age = {
+    identityPaths = [ "/etc/agenix/key" ];
 
-    age = {
-      identityPaths = [ "/etc/agenix/key" ];
-
-      secrets = {
-        users-luminovo-password.file = ./users-luminovo-password.age;
-        users-root-password.file = ./users-root-password.age;
-        users-tancredi-password.file = ./users-tancredi-password.age;
-      };
+    secrets = {
+      users-luminovo-password.file = ./users-luminovo-password.age;
+      users-root-password.file = ./users-root-password.age;
+      users-tancredi-password.file = ./users-tancredi-password.age;
     };
   };
 }
