@@ -1,4 +1,5 @@
 {
-  mozilla-settings = import ./mozilla-settings.nix;
+  firefox = import ./firefox.nix;
   ssh = import ./ssh.nix;
+  thunderbird = import ./thunderbird.nix;
 }

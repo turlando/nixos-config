@@ -13,16 +13,14 @@
   programs.firefox.profiles.luminovo = {
     id = 0;
     isDefault = true;
+    enableCustomDefaults = true;
   };
 
   programs.thunderbird.enable = true;
   programs.thunderbird.profiles.luminovo = {
     isDefault = true;
+    enableCustomDefaults = true;
   };
-
-  programs.mozilla-settings.enable = true;
-  programs.mozilla-settings.firefox = [ "luminovo" ];
-  programs.mozilla-settings.thunderbird = [ "luminovo" ];
 
   programs.emacs.enable = true;
   programs.emacs.package = pkgs.emacs-pgtk;

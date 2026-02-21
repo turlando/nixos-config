@@ -8,8 +8,9 @@ home-manager.lib.homeManagerConfiguration {
   modules = [
     agenix.homeManagerModules.default
 
-    self.homeManagerModules.modules.programs.mozilla-settings
     self.homeManagerModules.modules.programs.ssh
+    self.homeManagerModules.modules.programs.firefox
+    self.homeManagerModules.modules.programs.thunderbird
 
     self.homeManagerModules.secrets
 

@@ -14,16 +14,14 @@
   programs.firefox.profiles.tancredi = {
     id = 0;
     isDefault = true;
+    enableCustomDefaults = true;
   };
 
   programs.thunderbird.enable = true;
   programs.thunderbird.profiles.tancredi = {
     isDefault = true;
+    enableCustomDefaults = true;
   };
-
-  programs.mozilla-settings.enable = true;
-  programs.mozilla-settings.firefox = [ "tancredi" ];
-  programs.mozilla-settings.thunderbird = [ "tancredi" ];
 
   programs.emacs.enable = true;
   programs.emacs.package = pkgs.emacs-pgtk;
