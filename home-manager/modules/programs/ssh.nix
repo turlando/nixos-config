@@ -41,23 +41,7 @@ in
         hostname = "81.56.74.151";
         port = 13022;
         user = "tancredi";
-        identityFile = config.age.secrets.ssh-key-tancredi.path;
-      };
-    })
-
-    (mkIf cfg.compiler4-luminovo.enable {
-      "compiler4.luminovo.com" = {
-        hostname = "148.251.132.243";
-        user = "tancredi";
-        identityFile = config.age.secrets.ssh-key-tancredi.path;
-      };
-    })
-
-    (mkIf cfg.creusa.enable {
-      "creusa" = {
-        hostname = "78.47.53.181";
-        user = "tancredi";
-        identityFile = config.age.secrets.ssh-key-tancredi.path;
+        identityFile = config.age.secrets.ssh-key-antigone-tancredi.path;
       };
     })
 
@@ -73,7 +57,15 @@ in
       "gitlab.com" = {
         hostname = "gitlab.com";
         user = "git";
-        identityFile = config.age.secrets.ssh-key-gitlab-luminovo.path;
+        identityFile = config.age.secrets.ssh-key-luminovo-gitlab.path;
+      };
+    })
+
+    (mkIf cfg.compiler4-luminovo.enable {
+      "compiler4.luminovo.com" = {
+        hostname = "148.251.132.243";
+        user = "tancredi";
+        identityFile = config.age.secrets.ssh-key-luminovo-compilers.path;
       };
     })
   ];

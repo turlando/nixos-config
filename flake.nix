@@ -32,6 +32,7 @@
     nixpkgs,
     ...
   }@inputs: {
+    lib = import ./lib { inherit (nixpkgs) lib; };
     nixosModules = import ./nixos;
     nixosConfigurations = import ./hosts inputs;
     homeManagerModules = import ./home-manager;
@@ -41,5 +42,6 @@
     pkgs = import nixpkgs { inherit system; };
   in {
     devShells = import ./shells (inputs // { inherit pkgs system; });
+    checks = { tests = (import ./tests { inherit pkgs; }).run-all; };
   });
 }

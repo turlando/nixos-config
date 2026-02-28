@@ -1,4 +1,5 @@
 {
+  age = import ./age.nix;
   base = import ./base.nix;
   clamav = import ./clamav.nix;
   graphical = import ./graphical.nix;

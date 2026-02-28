@@ -4,6 +4,7 @@ nixpkgs.lib.nixosSystem {
   system = "x86_64-linux";
 
   specialArgs = {
+    lib-age = self.lib.age;
     nixvirt-lib = nixvirt.lib;
   };
 
@@ -17,13 +18,12 @@ nixpkgs.lib.nixosSystem {
     self.nixosModules.modules.environment.persistence
     self.nixosModules.modules.i18n.extra-locale
 
-    self.nixosModules.secrets
-
     self.nixosModules.profiles.base
-    self.nixosModules.profiles.graphical
+    self.nixosModules.profiles.age
     self.nixosModules.profiles.zfs
-    self.nixosModules.profiles.clamav
     self.nixosModules.profiles.libvirt
+    self.nixosModules.profiles.clamav
+    self.nixosModules.profiles.graphical
 
     ./hardware.nix
     ./configuration.nix

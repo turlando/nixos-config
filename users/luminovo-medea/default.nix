@@ -5,6 +5,11 @@ home-manager.lib.homeManagerConfiguration {
     system = "x86_64-linux";
   };
 
+  extraSpecialArgs = {
+    lib-age = self.lib.age;
+    nixosConfiguration = self.nixosConfigurations.medea.config;
+  };
+
   modules = [
     agenix.homeManagerModules.default
 
@@ -12,9 +17,8 @@ home-manager.lib.homeManagerConfiguration {
     self.homeManagerModules.modules.programs.firefox
     self.homeManagerModules.modules.programs.thunderbird
 
-    self.homeManagerModules.secrets
-
     self.homeManagerModules.profiles.base
+    self.homeManagerModules.profiles.age
     self.homeManagerModules.profiles.emacs
     self.homeManagerModules.profiles.graphical
 
