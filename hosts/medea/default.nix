@@ -25,13 +25,10 @@ nixpkgs.lib.nixosSystem {
     self.nixosModules.profiles.clamav
     self.nixosModules.profiles.libvirt
 
-    self.nixosModules.users.root
-    self.nixosModules.users.tancredi
-    self.nixosModules.users.luminovo
-
-    ./configuration.nix
     ./hardware.nix
+    ./configuration.nix
     ./disko.nix
+    ./users.nix
     ./libvirt
   ];
 }
