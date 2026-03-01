@@ -1,14 +1,27 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 
 {
   home.stateVersion = "25.11";
   home.username = "tancredi";
   home.homeDirectory = "/home/tancredi";
 
-  programs.ssh.enable = true;
-  programs.ssh.hosts.antigone.enable = true;
-  programs.ssh.hosts.creusa.enable = true;
-  programs.ssh.hosts.github.enable = true;
+  programs.ssh = {
+    enable = true;
+    enableDefaultConfig = false;
+    matchBlocks = {
+      "github.com" = {
+        hostname = "github.com";
+        user = "git";
+        identityFile = config.age.secrets.ssh-key-github.path;
+      };
+      "antigone" = {
+        hostname = "81.56.74.151";
+        port = 13022;
+        user = "tancredi";
+        identityFile = config.age.secrets.ssh-key-antigone-tancredi.path;
+      };
+    };
+  };
 
   programs.firefox.enable = true;
   programs.firefox.profiles.tancredi = {

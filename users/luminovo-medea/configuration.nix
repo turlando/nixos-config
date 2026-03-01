@@ -1,13 +1,26 @@
-{ lib, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 
 {
   home.stateVersion = "25.11";
   home.username = "luminovo";
   home.homeDirectory = "/home/luminovo";
 
-  programs.ssh.enable = true;
-  programs.ssh.hosts.compiler4-luminovo.enable = true;
-  programs.ssh.hosts.gitlab-luminovo.enable = true;
+  programs.ssh = {
+    enable = true;
+    enableDefaultConfig = false;
+    matchBlocks = {
+      "gitlab.com" = {
+        hostname = "gitlab.com";
+        user = "git";
+        identityFile = config.age.secrets.ssh-key-luminovo-gitlab.path;
+      };
+      "compiler4.luminovo.com" = {
+        hostname = "148.251.132.243";
+        user = "tancredi";
+        identityFile = config.age.secrets.ssh-key-luminovo-compilers.path;
+      };
+    };   
+  };
 
   programs.firefox.enable = true;
   programs.firefox.profiles.luminovo = {
