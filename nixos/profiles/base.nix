@@ -11,7 +11,9 @@
   boot.loader.efi.canTouchEfiVariables = false;
 
   boot.initrd.systemd.enable = true;
+
   boot.tmp.useTmpfs = true;
+  zramSwap.enable = true;
 
   users.mutableUsers = false;
 
