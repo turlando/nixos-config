@@ -83,8 +83,8 @@ disko-apply host=HOSTNAME:
     disko --flake '.#{{host}}' --mode format,mount
 
 # Generate an SSH ed25519 key pair for a new host
-[group("secrets")]
-secrets-keygen name:
+[group("agenix")]
+age-keygen name:
     #!/usr/bin/env bash
     set -euo pipefail
     ssh-keygen -t ed25519 -C "{{name}}" -f "{{name}}_key" -N ""
@@ -92,8 +92,8 @@ secrets-keygen name:
     cat "{{name}}_key.pub"
 
 # Install agenix key to /mnt during system installation
-[group("secrets")]
-secrets-install-key key_dir dest="/mnt/etc/agenix":
+[group("agenix")]
+age-install-key key_dir dest="/mnt/etc/agenix":
     #!/usr/bin/env bash
     set -euo pipefail
     if [[ ! -f "{{key_dir}}/key" ]] || [[ ! -f "{{key_dir}}/key.pub" ]]; then
@@ -105,37 +105,38 @@ secrets-install-key key_dir dest="/mnt/etc/agenix":
     install -m 644 "{{key_dir}}/key.pub" "{{dest}}/key.pub"
 
 # Create or edit an age-encrypted secret
-[group("secrets")]
-secrets-edit name identity=SECRETS_IDENTITY:
+[group("agenix")]
+age-edit name identity=SECRETS_IDENTITY:
     #!/usr/bin/env bash
     set -euo pipefail
     cd "{{SECRETS_DIR}}"
     agenix --identity {{identity}} --edit "{{name}}.age"
 
 # Decrypt and print a secret to stdout
-[group("secrets")]
-secrets-read name identity=SECRETS_IDENTITY:
+[group("agenix")]
+age-read name identity=SECRETS_IDENTITY:
     #!/usr/bin/env bash
     set -euo pipefail
     cd "{{SECRETS_DIR}}"
     agenix --identity {{identity}} --decrypt "{{name}}.age"
 
 # Re-encrypt all secrets with current keys
-[group("secrets")]
-secrets-rekey identity=SECRETS_IDENTITY:
+[group("agenix")]
+age-rekey identity=SECRETS_IDENTITY:
     #!/usr/bin/env bash
     set -euo pipefail
     cd "{{SECRETS_DIR}}"
     agenix --identity {{identity}} --rekey
 
 # Set or update a user password
-[group("secrets")]
-secrets-passwd user identity=SECRETS_IDENTITY:
+[group("agenix")]
+age-passwd name identity=SECRETS_IDENTITY:
     #!/usr/bin/env bash
     set -euo pipefail
     cd "{{SECRETS_DIR}}"
-    echo -n "Enter password for {{user}}: "
-    read -s password
+    AGE_FILE="user-password-{{name}}.age"
+    echo -n "Enter password for $AGE_FILE: "
+    read -s PASSWORD
     echo
-    hash=$(echo "$password" | mkpasswd -m sha-512 -s)
-    echo "$hash" | agenix --identity {{identity}} --edit "users-{{user}}-password.age"
+    HASH=$(echo "$PASSWORD" | mkpasswd -m sha-512 -s)
+    echo "$HASH" | agenix --identity {{identity}} --edit "$AGE_FILE"
