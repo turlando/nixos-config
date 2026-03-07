@@ -4,6 +4,7 @@ set quiet := true
 HOSTNAME := `hostname`
 USER := `whoami`
 
+INFRA_DIR := "infra"
 SECRETS_DIR := "secrets"
 SECRETS_IDENTITY := "/etc/agenix/key"
 
@@ -52,6 +53,21 @@ nixos-install host:
     #   - nixos-generate-config
     nixos-install --flake .#{{host}} --root /mnt --no-root-password
 
+
+# Deploy NixOS to a new remote host via nixos-anywhere
+[group("nixos")]
+nixos-install-remote host key remote=host:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    TEMP=$(mktemp -d)
+    trap 'rm -rf "$TEMP"' EXIT
+    install -d -m 755 "$TEMP/var/state/etc/agenix"
+    install -m 600 "{{key}}" "$TEMP/var/state/etc/agenix/key"
+    nix run github:nix-community/nixos-anywhere -- \
+      --extra-files "$TEMP" \
+      --flake ".#{{host}}" \
+      root@{{remote}}
+
 # Build NixOS configuration without activating
 [group("nixos")]
 nixos-build host=HOSTNAME:
@@ -61,6 +77,11 @@ nixos-build host=HOSTNAME:
 [group("nixos")]
 nixos-switch host=HOSTNAME:
     nixos-rebuild switch --flake .#{{host}}
+
+# Build and activate NixOS configuration to a remote host
+[group("nixos")]
+nixos-switch-remote host remote=host user="root":
+    nixos-rebuild switch --flake .#{{host}} --target-host root@{{remote}}
 
 # Build home-manager configuration without activating
 [group("home-manager")]
@@ -81,6 +102,18 @@ disko-wipe host=HOSTNAME:
 [group("disko")]
 disko-apply host=HOSTNAME:
     disko --flake '.#{{host}}' --mode format,mount
+
+# Apply disko changes (format and mount) on a remote host
+[group("disko")]
+disko-apply-remote host remote=host:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    SCRIPT=$(
+        nix build --no-link --print-out-paths \
+            '.#nixosConfigurations.{{host}}.config.system.build.formatMount'
+    )
+    nix copy --to ssh://root@{{remote}} "$SCRIPT"
+    ssh root@{{remote}} "$SCRIPT/bin/disko-format-mount"
 
 # Generate an SSH ed25519 key pair for a new host
 [group("agenix")]
@@ -133,10 +166,41 @@ age-rekey identity=SECRETS_IDENTITY:
 age-passwd name identity=SECRETS_IDENTITY:
     #!/usr/bin/env bash
     set -euo pipefail
-    cd "{{SECRETS_DIR}}"
+    AGE_KEY=$(realpath "{{identity}}")
     AGE_FILE="user-password-{{name}}.age"
     echo -n "Enter password for $AGE_FILE: "
     read -s PASSWORD
     echo
     HASH=$(echo "$PASSWORD" | mkpasswd -m sha-512 -s)
-    echo "$HASH" | agenix --identity {{identity}} --edit "$AGE_FILE"
+    cd "{{SECRETS_DIR}}"
+    echo "$HASH" | agenix --identity "$AGE_KEY" --edit "$AGE_FILE"
+
+# Generate Terranix config as Terraform JSON
+[group("infra")]
+infra-build:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    TF_CONFIG=$(nix build '.#terraform-config' --no-link --print-out-paths)
+    install -m660 "$TF_CONFIG" "{{INFRA_DIR}}/config.tf.json"
+
+# Preview infrastructure changes
+[group("infra")]
+infra-plan: infra-build
+    #!/usr/bin/env bash
+    set -euo pipefail
+    HETZNER_TOKEN_PERSONAL=$(just age-read hetzner-api-token-personal)
+    tofu \
+        -chdir="{{INFRA_DIR}}" \
+        plan \
+        -var="hetzner_token_personal=$HETZNER_TOKEN_PERSONAL"
+
+# Apply infrastructure changes
+[group("infra")]
+infra-apply: infra-build
+    #!/usr/bin/env bash
+    set -euo pipefail
+    HETZNER_TOKEN_PERSONAL=$(just age-read hetzner-api-token-personal)
+    tofu \
+        -chdir="{{INFRA_DIR}}" \
+        apply \
+        -var="hetzner_token_personal=$HETZNER_TOKEN_PERSONAL"

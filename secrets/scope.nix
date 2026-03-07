@@ -1,4 +1,8 @@
 {
+  # Scope for secrets used by OpenTofu.
+  #
+  infra = "infra";
+
   # Scope for secrets to be available at the host level and exposed
   # through the Agenix NixOS module.
   #

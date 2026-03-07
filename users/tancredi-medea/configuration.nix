@@ -9,16 +9,21 @@
     enable = true;
     enableDefaultConfig = false;
     matchBlocks = {
-      "github.com" = {
-        hostname = "github.com";
-        user = "git";
-        identityFile = config.age.secrets.ssh-key-github.path;
-      };
       "antigone" = {
         hostname = "81.56.74.151";
         port = 13022;
         user = "tancredi";
         identityFile = config.age.secrets.ssh-key-antigone-tancredi.path;
+      };
+      "creusa" = {
+        hostname = "46.225.229.141";
+        user = "root";
+        identityFile = config.age.secrets.ssh-key-creusa-root.path;
+      };
+      "github.com" = {
+        hostname = "github.com";
+        user = "git";
+        identityFile = config.age.secrets.ssh-key-github.path;
       };
     };
   };

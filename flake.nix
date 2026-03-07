@@ -21,8 +21,15 @@
 
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
 
+    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
+
     nixvirt = {
       url = "github:AshleyYakeley/NixVirt/v0.6.0";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    terranix = {
+      url = "github:terranix/terranix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -30,6 +37,7 @@
   outputs = {
     flake-utils,
     nixpkgs,
+    nixpkgs-unstable,
     ...
   }@inputs: {
     lib = import ./lib { inherit (nixpkgs) lib; };
@@ -40,8 +48,14 @@
   }
   // flake-utils.lib.eachDefaultSystem (system: let
     pkgs = import nixpkgs { inherit system; };
+    pkgs-unstable = import nixpkgs-unstable { inherit system; };
   in {
-    devShells = import ./shells (inputs // { inherit pkgs system; });
-    checks = { tests = (import ./tests { inherit pkgs; }).run-all; };
+    checks = {
+      tests = (import ./tests { inherit pkgs; }).run-all;
+    };
+    devShells = import ./shells (inputs // { inherit system pkgs pkgs-unstable; });
+    packages = {
+      terraform-config = import ./infra (inputs // { inherit system; });
+    };
   });
 }

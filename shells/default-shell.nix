@@ -1,4 +1,4 @@
-{ pkgs, agenix, disko, home-manager, system, ... }:
+{ system, pkgs, pkgs-unstable, agenix, disko, home-manager, ... }:
 
 let
   agenix-pkgs = agenix.packages.${system};
@@ -10,6 +10,7 @@ in pkgs.mkShell {
     pkgs.just
     pkgs.nixd
     pkgs.statix
+    (pkgs-unstable.opentofu.withPlugins (p: [ p.hetznercloud_hcloud ]))
     agenix-pkgs.default
     disko-pkgs.default
     home-manager-pkgs.default

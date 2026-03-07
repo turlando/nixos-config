@@ -52,10 +52,17 @@ in {
       [ "d ${cfg.stateDir} 0755 root root -" ]
       ++ lib.lists.unique (lib.concatMap mkTmpfilesRules cfg.paths);
 
-    # Bind mounts redirect the listed paths to their persistent counterparts
-    # under cfg.stateDir. systemd.mount units then mount cfg.stateDir + path
-    # over the original path early in the boot process. However, systemd does
-    # NOT create the source directories automatically; they must already exist.
-    fileSystems = builtins.listToAttrs (builtins.map mkBindMount cfg.paths);
+    fileSystems =
+      # The stateDir filesystem (e.g. /var/state) must be mounted in the initrd
+      # so that it is available when the neededForBoot bind mounts are processed.
+      # Without this, bind mounts fail because their source paths do not exist yet.
+      { ${cfg.stateDir}.neededForBoot = true; }
+      //
+      # Bind mounts redirect the listed paths to their persistent counterparts
+      # under cfg.stateDir. systemd.mount units then mount cfg.stateDir + path
+      # over the original path early in the boot process. However, systemd does
+      # NOT create the source directories automatically; they must already exist.
+      builtins.listToAttrs (builtins.map mkBindMount cfg.paths)
+    ;
   };
 }

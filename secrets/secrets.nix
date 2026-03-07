@@ -21,8 +21,20 @@ in
     scope = with scope; [ nixos ];
   };
 
+  # Login password for root UNIX user on creusa.
+  "user-password-creusa-root.age" = {
+    publicKeys = with keys; [ creusa ];
+    scope = with scope; [ nixos ];
+  };
+
   # SSH key for user tancredi on antigone from medea.
   "ssh-key-antigone-tancredi.age" = {
+    publicKeys = with keys; [ medea ];
+    scope = with scope; [ tancredi ];
+  };
+
+  # SSH key for user root on creusa from medea.
+  "ssh-key-creusa-root.age" = {
     publicKeys = with keys; [ medea ];
     scope = with scope; [ tancredi ];
   };
@@ -43,5 +55,11 @@ in
   "ssh-key-luminovo-compilers.age" = {
     publicKeys = with keys; [ medea ];
     scope = with scope; [ luminovo ];
+  };
+
+  # Hetzner API token for project Personal.
+  "hetzner-api-token-personal.age" = {
+    publicKeys = with keys; [ medea ];
+    scope = with scope; [ infra ];
   };
 }
