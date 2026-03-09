@@ -1,10 +1,13 @@
-{ self, agenix, disko, nixpkgs, ... }:
+{ self, agenix, disko, nixpkgs, nixpkgs-unstable, ... }:
 
 nixpkgs.lib.nixosSystem {
   system = "x86_64-linux";
 
   specialArgs = {
     lib-age = self.lib.age;
+    pkgs-unstable = import nixpkgs-unstable {
+      system = "x86_64-linux";
+    };
   };
 
   modules = [
@@ -22,5 +25,6 @@ nixpkgs.lib.nixosSystem {
     ./hardware.nix
     ./disko.nix
     ./configuration.nix
+    ./containers
   ];
 }

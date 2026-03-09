@@ -114,6 +114,13 @@
             acltype = "posixacl";
           };
         };
+
+        "containers" = {
+          type = "zfs_fs";
+          options = {
+            canmount = "off";
+          };
+        };
       };
     };
   };
