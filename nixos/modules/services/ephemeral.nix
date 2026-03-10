@@ -1,28 +1,25 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, ... }:
 
 let
   inherit (lib) mkEnableOption mkIf mkMerge mkOption types;
 
   snapshotName = dataset: "${dataset.name}@${dataset.snapshot}";
+  escapeUnitName = builtins.replaceStrings ["/"] ["-"];
 
   mkDatasetService = dataset:
     mkIf (config.services.ephemeral.enable && dataset.enable) {
-      "ephemeral@${dataset.name}" = {
+      "ephemeral@${escapeUnitName dataset.name}" = {
         description = ''
           Rollback ZFS dataset ${dataset.name} to ${snapshotName dataset}
         '';
         wantedBy = [ "initrd.target" ];
         before = [ "sysroot.mount" ];
         after = [ "zfs-import.target" ];
-        path = [ pkgs.zfs ];
         unitConfig.DefaultDependencies = "no";
         serviceConfig = {
           Type = "oneshot";
           ExecStart = [
-            # Check that the snapshot exists
-            "@${pkgs.zfs}/bin/zfs zfs list -t snapshot ${snapshotName dataset}"
-            # Roll back
-            "@${pkgs.zfs}/bin/zfs zfs rollback -r ${snapshotName dataset}"
+            "@/bin/zfs zfs rollback -r ${snapshotName dataset}"
           ];
         };
       };
