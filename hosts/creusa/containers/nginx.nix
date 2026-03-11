@@ -1,4 +1,4 @@
-{ config, ... }:
+{ self, config, ... }:
 {
   disko.devices.zpool.creusa.datasets = {
     "containers/nginx" = {
@@ -63,8 +63,18 @@
     in
       { ... }:
       {
+        imports = [
+          self.nixosModules.modules.services.journald
+        ];
+
         system.stateVersion = "25.11";
         environment.etc."machine-id".text = "a57b69a7ef72b1aa85c104a969af4c02";
+
+        services.journald.settings = {
+          SystemMaxUse = "256M";
+          SystemMaxFileSize = "32M";
+          MaxRetentionSec = "1month";
+        };
 
         security.acme = {
           acceptTerms = true;

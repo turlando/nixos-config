@@ -4,10 +4,11 @@ nixpkgs.lib.nixosSystem {
   system = "x86_64-linux";
 
   specialArgs = {
-    lib-age = self.lib.age;
+    inherit self;
     pkgs-unstable = import nixpkgs-unstable {
       system = "x86_64-linux";
     };
+    lib-age = self.lib.age;
   };
 
   modules = [
@@ -16,6 +17,7 @@ nixpkgs.lib.nixosSystem {
 
     self.nixosModules.modules.environment.persistence
     self.nixosModules.modules.services.ephemeral
+    self.nixosModules.modules.services.journald
 
     self.nixosModules.profiles.base
     self.nixosModules.profiles.age

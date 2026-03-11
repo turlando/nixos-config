@@ -1,4 +1,4 @@
-{ config, pkgs-unstable, ... }:
+{ self, config, pkgs-unstable, ... }:
 {
   disko.devices.zpool.creusa.datasets = {
     "containers/actual-budget" = {
@@ -66,11 +66,18 @@
         ];
 
         imports = [
+          self.nixosModules.modules.services.journald
           "${pkgs-unstable.path}/nixos/modules/services/web-apps/actual.nix"
         ];
 
         system.stateVersion = "25.11";
         environment.etc."machine-id".text = "849157410a3041bcf9f3427e69af5832";
+
+        services.journald.settings = {
+          SystemMaxUse = "256M";
+          SystemMaxFileSize = "32M";
+          MaxRetentionSec = "1month";
+        };
 
         users.groups.actual = {};
         users.users.actual = {

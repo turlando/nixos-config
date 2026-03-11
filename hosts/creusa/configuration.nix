@@ -10,6 +10,12 @@
   services.ephemeral.enable = true;
   services.ephemeral.datasets."creusa/nixos/ROOT".enable = true;
 
+  services.journald.settings = {
+    SystemMaxUse = "256M";
+    SystemMaxFileSize = "32M";
+    MaxRetentionSec = "1month";
+  };
+
   users.users.root = {
     hashedPasswordFile = config.age.secrets.user-password-creusa-root.path;
     openssh.authorizedKeys.keys = [
