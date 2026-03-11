@@ -1,6 +1,6 @@
 { pkgs, ... }:
 {
-  boot.kernelPackages = pkgs.linuxPackages_6_18;
+  boot.kernelPackages = pkgs.linuxPackages_6_19;
   boot.zfs.package = pkgs.zfs_2_4;
 
   services.zfs.autoScrub.enable = true;
