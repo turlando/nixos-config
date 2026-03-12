@@ -16,6 +16,7 @@ nixpkgs.lib.nixosSystem {
 
     self.nixosModules.modules.boot.silent
     self.nixosModules.modules.environment.persistence
+    self.nixosModules.modules.hardware.framework
     self.nixosModules.modules.i18n.extra-locale
 
     self.nixosModules.profiles.base
