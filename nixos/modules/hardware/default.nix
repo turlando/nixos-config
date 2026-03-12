@@ -1,0 +1,3 @@
+{
+  framework = import ./framework.nix;
+}
