@@ -25,6 +25,7 @@ nixpkgs.lib.nixosSystem {
     self.nixosModules.profiles.libvirt
     self.nixosModules.profiles.clamav
     self.nixosModules.profiles.graphical
+    self.nixosModules.profiles.smartcard
 
     ./hardware.nix
     ./configuration.nix

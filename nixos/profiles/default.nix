@@ -5,5 +5,6 @@
   graphical = import ./graphical.nix;
   libvirt = import ./libvirt.nix;
   openssh-server = import ./openssh-server.nix;
+  smartcard = import ./smartcard.nix;
   zfs = import ./zfs.nix;
 }

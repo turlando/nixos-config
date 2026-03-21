@@ -29,6 +29,7 @@
   };
 
   programs.firefox.enable = true;
+  programs.firefox.enableSmartCardSupport = true;
   programs.firefox.profiles.tancredi = {
     id = 0;
     isDefault = true;
