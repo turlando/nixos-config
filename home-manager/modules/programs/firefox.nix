@@ -8,7 +8,7 @@ in {
       mkEnableOption "smart card support via OpenSC PKCS#11";
 
     profiles = mkOption {
-      type = types.attrsOf (types.submodule {
+      type = types.attrsOf (types.submodule ({ config, ... }: {
         options.enableCustomDefaults =
           mkEnableOption "custom default Firefox settings";
 
@@ -19,7 +19,7 @@ in {
             "widget.use-xdg-desktop-portal.file-picker" = 1;
           };
         };
-      });
+      }));
     };
   };
 
