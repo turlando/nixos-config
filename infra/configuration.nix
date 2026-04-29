@@ -1,4 +1,4 @@
-{ nixosConfigurations, ... }:
+{ ... }:
 
 let
   ref = s: "\${${s}}";
@@ -9,10 +9,6 @@ let
 
   creusa = {
     location = hetzner-locations.eu-central-nuremberg;
-    ssh-public-key =
-      builtins.elemAt
-        nixosConfigurations.creusa.config.users.users.root.openssh.authorizedKeys.keys
-        0;
   };
 in
 {
@@ -33,11 +29,6 @@ in
     token = ref "var.hetzner_token_personal";
   };
 
-  resource.hcloud_ssh_key.creusa-root = {
-    name = "creusa-root";
-    public_key = creusa.ssh-public-key;
-  };
-
   resource.hcloud_primary_ip.creusa = {
     name = "creusa-ipv4";
     type = "ipv4";
@@ -51,11 +42,17 @@ in
     server_type = "cx23";
     inherit (creusa) location;
     image = "ubuntu-24.04";
-    ssh_keys = [ (ref "hcloud_ssh_key.creusa-root.id") ];
     public_net = {
       ipv4_enabled = true;
       ipv4 = ref "hcloud_primary_ip.creusa.id";
       ipv6_enabled = false;
+    };
+    # ssh_keys and image were applied via cloud-init at creation. creusa
+    # now runs NixOS via nixos-anywhere, so Hetzner cannot push changes
+    # to either; both attributes are ForceNew on the provider, so
+    # ignoring drift here prevents accidental destroy/recreate.
+    lifecycle = {
+      ignore_changes = [ "ssh_keys" "image" ];
     };
   };
 }

@@ -1,10 +1,7 @@
-{ self, system, terranix, ... }:
+{ system, terranix, ... }:
 
-terranix.lib.terranixConfiguration  {
+terranix.lib.terranixConfiguration {
   inherit system;
-  extraArgs = {
-    inherit (self) nixosConfigurations;
-  };
   modules = [
     ./configuration.nix
   ];
