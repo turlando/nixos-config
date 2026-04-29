@@ -28,7 +28,7 @@ let
   dir = "/secrets";
 in
 {
-  testFiltersByKeyAndScope = {
+  test_filters_by_key_and_scope = {
     expr = lib-age.mkSecrets {
       key = "k1";
       scope = "nixos";
@@ -40,7 +40,7 @@ in
     };
   };
 
-  testUserScope = {
+  test_user_scope = {
     expr = lib-age.mkSecrets {
       key = "k1";
       scope = "alice";
@@ -52,7 +52,7 @@ in
     };
   };
 
-  testMultiScopeSecret = {
+  test_multi_scope_secret = {
     expr = lib-age.mkSecrets {
       key = "k2";
       scope = "alice";
@@ -64,7 +64,7 @@ in
     };
   };
 
-  testUserScopesAreIsolated = {
+  test_user_scopes_are_isolated = {
     expr = lib-age.mkSecrets {
       key = "k1";
       scope = "bob";
@@ -76,7 +76,7 @@ in
     };
   };
 
-  testNoMatches = {
+  test_no_matches = {
     expr = lib-age.mkSecrets {
       key = "nope";
       scope = "nixos";
