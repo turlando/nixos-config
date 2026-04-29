@@ -19,6 +19,13 @@
 
     nixos-hardware.url = "github:NixOS/nixos-hardware";
 
+    nix-unit = {
+      url = "github:nix-community/nix-unit";
+      # Follows nixpkgs-unstable (not nixpkgs) because nix-unit needs
+      # pkgs.nixVersions.nixComponents_2_34, which is unstable-only.
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
+
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
 
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -45,14 +52,12 @@
     nixosConfigurations = import ./hosts inputs;
     homeManagerModules = import ./home-manager;
     homeConfigurations = import ./users inputs;
+    tests = import ./tests { inherit (nixpkgs) lib; };
   }
   // flake-utils.lib.eachDefaultSystem (system: let
     pkgs = import nixpkgs { inherit system; };
     pkgs-unstable = import nixpkgs-unstable { inherit system; };
   in {
-    checks = {
-      tests = (import ./tests { inherit pkgs; }).run-all;
-    };
     devShells = import ./shells (inputs // { inherit system pkgs pkgs-unstable; });
     packages = {
       terraform-config = import ./infra (inputs // { inherit system; });

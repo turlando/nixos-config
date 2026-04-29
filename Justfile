@@ -17,10 +17,10 @@ default:
 update:
     nix flake update
 
-# Run test suite
+# Run unit tests via nix-unit
 [group("flake")]
 test:
-    nix flake check
+    nix-unit --flake .#tests
 
 # Run linters
 [group("flake")]

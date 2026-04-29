@@ -1,6 +1,8 @@
-{ lib-age }:
+{ lib }:
 
 let
+  lib-age = import ../../lib/age.nix { inherit lib; };
+
   secrets = {
     "a.age" = {
       publicKeys = [ "k1" ];

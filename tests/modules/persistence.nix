@@ -33,7 +33,7 @@ let
 
   eval = userCfg: (lib.evalModules {
     modules = [
-      ../nixos/modules/environment/persistence.nix
+      ../../nixos/modules/environment/persistence.nix
       stubs
       userCfg
     ];
