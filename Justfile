@@ -168,12 +168,16 @@ age-passwd name identity=SECRETS_IDENTITY:
     set -euo pipefail
     AGE_KEY=$(realpath "{{identity}}")
     AGE_FILE="user-password-{{name}}.age"
-    echo -n "Enter password for $AGE_FILE: "
+    printf 'Enter password for %s: ' "$AGE_FILE"
     read -s PASSWORD
     echo
-    HASH=$(echo "$PASSWORD" | mkpasswd -m sha-512 -s)
+    if [ -z "$PASSWORD" ]; then
+        echo "Error: password must not be empty" >&2
+        exit 1
+    fi
+    HASH=$(printf '%s' "$PASSWORD" | mkpasswd -m sha-512 -s)
     cd "{{SECRETS_DIR}}"
-    echo "$HASH" | agenix --identity "$AGE_KEY" --edit "$AGE_FILE"
+    printf '%s\n' "$HASH" | agenix --identity "$AGE_KEY" --edit "$AGE_FILE"
 
 # Generate Terranix config as Terraform JSON
 [group("infra")]
