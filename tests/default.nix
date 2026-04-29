@@ -3,6 +3,9 @@
 let
   lib-age = import ../lib/age.nix { inherit (pkgs) lib; };
   age-tests = import ./age.nix { inherit lib-age; };
+  persistence-tests = import ./persistence.nix { inherit (pkgs) lib; };
+
+  all-tests = age-tests // persistence-tests;
 
   check = { tests }:
     let
@@ -22,6 +25,6 @@ let
 in
 {
   run-all = check {
-    tests = age-tests;
+    tests = all-tests;
   };
 }
