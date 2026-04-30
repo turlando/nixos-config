@@ -130,10 +130,7 @@ age-read name identity=SECRETS_IDENTITY:
 # Re-encrypt all secrets with current keys
 [group("agenix")]
 age-rekey identity=SECRETS_IDENTITY:
-    #!/usr/bin/env bash
-    set -euo pipefail
-    cd "{{SECRETS_DIR}}"
-    agenix --identity {{identity}} --rekey
+    nix run .#age-rekey -- "{{identity}}"
 
 # Set or update a user password
 [group("agenix")]
