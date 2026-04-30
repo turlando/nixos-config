@@ -101,14 +101,7 @@ disko-apply host=HOSTNAME:
 # Apply disko changes (format and mount) on a remote host
 [group("disko")]
 disko-apply-remote host remote=host:
-    #!/usr/bin/env bash
-    set -euo pipefail
-    SCRIPT=$(
-        nix build --no-link --print-out-paths \
-            '.#nixosConfigurations.{{host}}.config.system.build.formatMount'
-    )
-    nix copy --to ssh://root@{{remote}} "$SCRIPT"
-    ssh root@{{remote}} "$SCRIPT/bin/disko-format-mount"
+    nix run .#disko-apply-remote -- "{{host}}" "{{remote}}"
 
 # Generate an SSH ed25519 key pair for a new host
 [group("agenix")]
