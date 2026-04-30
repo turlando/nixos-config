@@ -120,10 +120,7 @@ age-install-key key_dir dest="/mnt/etc/agenix":
 # Create or edit an age-encrypted secret
 [group("agenix")]
 age-edit name identity=SECRETS_IDENTITY:
-    #!/usr/bin/env bash
-    set -euo pipefail
-    cd "{{SECRETS_DIR}}"
-    agenix --identity {{identity}} --edit "{{name}}.age"
+    nix run .#age-edit -- "{{name}}" "{{identity}}"
 
 # Decrypt and print a secret to stdout
 [group("agenix")]
