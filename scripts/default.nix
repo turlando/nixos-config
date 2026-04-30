@@ -3,6 +3,7 @@ inputs:
 let
   scripts = {
     age-passwd = import ./age-passwd.nix inputs;
+    nixos-install-remote = import ./nixos-install-remote.nix inputs;
   };
 
   apps = builtins.mapAttrs

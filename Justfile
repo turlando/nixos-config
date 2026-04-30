@@ -61,16 +61,7 @@ nixos-install host:
 # Deploy NixOS to a new remote host via nixos-anywhere
 [group("nixos")]
 nixos-install-remote host key remote=host:
-    #!/usr/bin/env bash
-    set -euo pipefail
-    TEMP=$(mktemp -d)
-    trap 'rm -rf "$TEMP"' EXIT
-    install -d -m 755 "$TEMP/var/state/etc/agenix"
-    install -m 600 "{{key}}" "$TEMP/var/state/etc/agenix/key"
-    nix run github:nix-community/nixos-anywhere -- \
-      --extra-files "$TEMP" \
-      --flake ".#{{host}}" \
-      root@{{remote}}
+    nix run .#nixos-install-remote -- "{{host}}" "{{key}}" "{{remote}}"
 
 # Build NixOS configuration without activating
 [group("nixos")]
