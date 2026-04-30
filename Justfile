@@ -136,29 +136,14 @@ age-passwd name identity=SECRETS_IDENTITY:
 # Generate Terranix config as Terraform JSON
 [group("infra")]
 infra-build:
-    #!/usr/bin/env bash
-    set -euo pipefail
-    TF_CONFIG=$(nix build '.#terraform-config' --no-link --print-out-paths)
-    install -m660 "$TF_CONFIG" "{{INFRA_DIR}}/config.tf.json"
+    nix run .#infra-build
 
 # Preview infrastructure changes
 [group("infra")]
 infra-plan: infra-build
-    #!/usr/bin/env bash
-    set -euo pipefail
-    HETZNER_TOKEN_PERSONAL=$(just age-read hetzner-api-token-personal)
-    tofu \
-        -chdir="{{INFRA_DIR}}" \
-        plan \
-        -var="hetzner_token_personal=$HETZNER_TOKEN_PERSONAL"
+    nix run .#infra-tofu -- plan
 
 # Apply infrastructure changes
 [group("infra")]
 infra-apply: infra-build
-    #!/usr/bin/env bash
-    set -euo pipefail
-    HETZNER_TOKEN_PERSONAL=$(just age-read hetzner-api-token-personal)
-    tofu \
-        -chdir="{{INFRA_DIR}}" \
-        apply \
-        -var="hetzner_token_personal=$HETZNER_TOKEN_PERSONAL"
+    nix run .#infra-tofu -- apply

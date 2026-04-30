@@ -58,7 +58,7 @@
     pkgs = import nixpkgs { inherit system; };
     pkgs-unstable = import nixpkgs-unstable { inherit system; };
   in {
-    apps = (import ./scripts (inputs // { inherit system pkgs; })).apps;
+    inherit (import ./scripts (inputs // { inherit system pkgs pkgs-unstable; })) apps;
     devShells = import ./shells (inputs // { inherit system pkgs pkgs-unstable; });
     packages = {
       terraform-config = import ./infra (inputs // { inherit system; });
