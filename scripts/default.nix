@@ -4,6 +4,7 @@ let
   scripts = {
     age-edit = import ./age-edit.nix inputs;
     age-install-key = import ./age-install-key.nix inputs;
+    age-keygen = import ./age-keygen.nix inputs;
     age-passwd = import ./age-passwd.nix inputs;
     age-read = import ./age-read.nix inputs;
     age-rekey = import ./age-rekey.nix inputs;

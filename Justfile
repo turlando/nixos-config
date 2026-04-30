@@ -106,11 +106,7 @@ disko-apply-remote host remote=host:
 # Generate an SSH ed25519 key pair for a new host
 [group("agenix")]
 age-keygen name:
-    #!/usr/bin/env bash
-    set -euo pipefail
-    ssh-keygen -t ed25519 -C "{{name}}" -f "{{name}}_key" -N ""
-    echo "Add this public key to {{SECRETS_DIR}}/keys.nix:"
-    cat "{{name}}_key.pub"
+    nix run .#age-keygen -- "{{name}}"
 
 # Install agenix key to /mnt during system installation
 [group("agenix")]
