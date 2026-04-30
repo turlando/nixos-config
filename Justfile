@@ -4,10 +4,6 @@ set quiet := true
 HOSTNAME := `hostname`
 USER := `whoami`
 
-INFRA_DIR := "infra"
-SECRETS_DIR := "secrets"
-SECRETS_IDENTITY := "/etc/agenix/key"
-
 # List all available recipes
 default:
   just --list
@@ -115,22 +111,22 @@ age-install-key key_dir dest="/mnt/etc/agenix":
 
 # Create or edit an age-encrypted secret
 [group("agenix")]
-age-edit name identity=SECRETS_IDENTITY:
+age-edit name identity="":
     nix run .#age-edit -- "{{name}}" "{{identity}}"
 
 # Decrypt and print a secret to stdout
 [group("agenix")]
-age-read name identity=SECRETS_IDENTITY:
+age-read name identity="":
     nix run .#age-read -- "{{name}}" "{{identity}}"
 
 # Re-encrypt all secrets with current keys
 [group("agenix")]
-age-rekey identity=SECRETS_IDENTITY:
+age-rekey identity="":
     nix run .#age-rekey -- "{{identity}}"
 
 # Set or update a user password
 [group("agenix")]
-age-passwd name identity=SECRETS_IDENTITY:
+age-passwd name identity="":
     nix run .#age-passwd -- "{{name}}" "{{identity}}"
 
 # Generate Terranix config as Terraform JSON
