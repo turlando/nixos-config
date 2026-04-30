@@ -26,6 +26,11 @@
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
 
+    nixos-anywhere = {
+      url = "github:nix-community/nixos-anywhere";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
 
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";

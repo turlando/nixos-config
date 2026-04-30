@@ -1,4 +1,4 @@
-{ self, pkgs, ... }:
+{ self, system, pkgs, nixos-anywhere, ... }:
 
 let
   # nixos-anywhere with --extra-files needs the agenix identity placed
@@ -12,6 +12,9 @@ in
 
 pkgs.writeShellApplication {
   name = "nixos-install-remote";
+  runtimeInputs = [
+    nixos-anywhere.packages.${system}.default
+  ];
   text = ''
     if [ "$#" -lt 2 ] || [ "$#" -gt 3 ]; then
       echo "Usage: nixos-install-remote <host> <identity-key> [remote]" >&2
@@ -40,7 +43,7 @@ pkgs.writeShellApplication {
     install -d -m 755 "$TEMP${keyTargetDir}"
     install -m 600 "$KEY" "$TEMP${keyTargetDir}/key"
 
-    nix run github:nix-community/nixos-anywhere -- \
+    nixos-anywhere \
       --extra-files "$TEMP" \
       --flake ".#$HOST" \
       "root@$REMOTE"
