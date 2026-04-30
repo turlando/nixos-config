@@ -1,13 +1,13 @@
-{ system, pkgs, ... }@inputs:
+{ self, system, pkgs, ... }:
 
 let
-  # Build the Terranix-generated config at script-build time. The
-  # store path is interpolated below as a literal, so running the
-  # script does no nix evaluation — it just copies the frozen JSON
-  # into place. When infra/configuration.nix changes, this derivation
-  # rebuilds, and `nix run .#infra-build` picks up the new path on
-  # the next invocation.
-  tfConfig = import ../infra (inputs // { inherit system; });
+  # Read the Terranix-generated config from the flake's own packages
+  # output. The store path is interpolated below as a literal, so
+  # running the script does no nix evaluation — it just copies the
+  # frozen JSON into place. When infra/configuration.nix changes,
+  # this derivation rebuilds, and `nix run .#infra-build` picks up
+  # the new path on the next invocation.
+  tfConfig = self.packages.${system}.terraform-config;
 in
 
 pkgs.writeShellApplication {
