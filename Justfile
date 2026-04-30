@@ -115,15 +115,7 @@ age-keygen name:
 # Install agenix key to /mnt during system installation
 [group("agenix")]
 age-install-key key_dir dest="/mnt/etc/agenix":
-    #!/usr/bin/env bash
-    set -euo pipefail
-    if [[ ! -f "{{key_dir}}/key" ]] || [[ ! -f "{{key_dir}}/key.pub" ]]; then
-        echo "Error: {{key_dir}} must contain both 'key' and 'key.pub' files"
-        exit 1
-    fi
-    mkdir -p "{{dest}}"
-    install -m 600 "{{key_dir}}/key" "{{dest}}/key"
-    install -m 644 "{{key_dir}}/key.pub" "{{dest}}/key.pub"
+    nix run .#age-install-key -- "{{key_dir}}" "{{dest}}"
 
 # Create or edit an age-encrypted secret
 [group("agenix")]
