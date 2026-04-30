@@ -4,6 +4,12 @@ let
   # Default secrets directory (relative to this file)
   defaultSecretsPath = ../secrets;
 
+  # Filesystem location where each host stores its agenix identity.
+  # Consumers: nixos/profiles/age.nix and scripts that need to decrypt
+  # secrets locally.
+  keyDir       = "/etc/agenix";
+  identityFile = "${keyDir}/key";
+
   # Default secrets and keys
   allSecrets = import (defaultSecretsPath + "/secrets.nix");
   keys       = import (defaultSecretsPath + "/keys.nix");
@@ -59,6 +65,8 @@ let
 in
 {
   inherit
+    keyDir
+    identityFile
     keys
     scope
     mkSecrets;

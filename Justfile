@@ -168,20 +168,7 @@ age-rekey identity=SECRETS_IDENTITY:
 # Set or update a user password
 [group("agenix")]
 age-passwd name identity=SECRETS_IDENTITY:
-    #!/usr/bin/env bash
-    set -euo pipefail
-    AGE_KEY=$(realpath "{{identity}}")
-    AGE_FILE="user-password-{{name}}.age"
-    printf 'Enter password for %s: ' "$AGE_FILE"
-    read -s PASSWORD
-    echo
-    if [ -z "$PASSWORD" ]; then
-        echo "Error: password must not be empty" >&2
-        exit 1
-    fi
-    HASH=$(printf '%s' "$PASSWORD" | mkpasswd -m sha-512 -s)
-    cd "{{SECRETS_DIR}}"
-    printf '%s\n' "$HASH" | agenix --identity "$AGE_KEY" --edit "$AGE_FILE"
+    nix run .#age-passwd -- "{{name}}" "{{identity}}"
 
 # Generate Terranix config as Terraform JSON
 [group("infra")]

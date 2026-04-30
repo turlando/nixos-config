@@ -1,8 +1,8 @@
-_:
+inputs:
 
 let
   scripts = {
-    # writeShellApplication scripts will be added here.
+    age-passwd = import ./age-passwd.nix inputs;
   };
 
   apps = builtins.mapAttrs

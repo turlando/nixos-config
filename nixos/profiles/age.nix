@@ -1,10 +1,10 @@
 { config, lib-age, ... }:
 
 {
-  environment.persistence.paths = [ "/etc/agenix" ];
+  environment.persistence.paths = [ lib-age.keyDir ];
 
   age = {
-    identityPaths = [ "/etc/agenix/key" ];   
+    identityPaths = [ lib-age.identityFile ];
     secrets = lib-age.mkSecrets {
       key   = lib-age.keys.${config.networking.hostName};
       scope = lib-age.scope.nixos;
