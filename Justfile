@@ -128,10 +128,7 @@ age-edit name identity=SECRETS_IDENTITY:
 # Decrypt and print a secret to stdout
 [group("agenix")]
 age-read name identity=SECRETS_IDENTITY:
-    #!/usr/bin/env bash
-    set -euo pipefail
-    cd "{{SECRETS_DIR}}"
-    agenix --identity {{identity}} --decrypt "{{name}}.age"
+    nix run .#age-read -- "{{name}}" "{{identity}}"
 
 # Re-encrypt all secrets with current keys
 [group("agenix")]
