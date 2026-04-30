@@ -19,7 +19,7 @@
         user = "tancredi";
         identityFile = config.age.secrets.ssh-key-luminovo-compilers.path;
       };
-    };   
+    };
   };
 
   programs.firefox.enable = true;
