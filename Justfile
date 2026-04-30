@@ -24,9 +24,13 @@ test:
 
 # Run linters
 [group("flake")]
+lint:
+    deadnix && statix check
+
+# Verify flake outputs build
+[group("flake")]
 check:
-    deadnix
-    statix check
+    nix flake check
 
 # Remove Nix store generations older than specified time
 [group("nix")]
