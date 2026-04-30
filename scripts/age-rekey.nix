@@ -2,6 +2,7 @@
 
 pkgs.writeShellApplication {
   name = "age-rekey";
+  meta.description = "Re-encrypt all agenix secrets with the current set of public keys";
   runtimeInputs = [
     agenix.packages.${system}.default
   ];

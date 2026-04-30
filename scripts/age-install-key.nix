@@ -9,6 +9,7 @@ in
 
 pkgs.writeShellApplication {
   name = "age-install-key";
+  meta.description = "Install agenix identity (key + key.pub) into a target directory";
   text = ''
     if [ "$#" -lt 1 ] || [ "$#" -gt 2 ]; then
       echo "Usage: age-install-key <key-dir> [dest]" >&2

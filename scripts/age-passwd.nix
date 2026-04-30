@@ -2,6 +2,7 @@
 
 pkgs.writeShellApplication {
   name = "age-passwd";
+  meta.description = "Prompt for a password and store its sha-512 hash as an agenix secret";
   runtimeInputs = [
     pkgs.coreutils
     pkgs.mkpasswd

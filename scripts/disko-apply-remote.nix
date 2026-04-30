@@ -17,6 +17,7 @@ in
 
 pkgs.writeShellApplication {
   name = "disko-apply-remote";
+  meta.description = "Format and mount disks on a remote host (non-destructive)";
   runtimeInputs = [ pkgs.openssh ];
   text = ''
     if [ "$#" -lt 1 ] || [ "$#" -gt 2 ]; then

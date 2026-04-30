@@ -12,6 +12,7 @@ in
 
 pkgs.writeShellApplication {
   name = "nixos-install-remote";
+  meta.description = "Install NixOS to a remote host via nixos-anywhere, seeding the agenix key";
   runtimeInputs = [
     nixos-anywhere.packages.${system}.default
   ];

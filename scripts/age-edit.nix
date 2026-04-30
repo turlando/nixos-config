@@ -2,6 +2,7 @@
 
 pkgs.writeShellApplication {
   name = "age-edit";
+  meta.description = "Decrypt an agenix secret in $EDITOR and re-encrypt on save";
   runtimeInputs = [
     agenix.packages.${system}.default
   ];

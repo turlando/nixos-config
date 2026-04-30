@@ -15,7 +15,11 @@ let
   };
 
   apps = builtins.mapAttrs
-    (name: drv: { type = "app"; program = "${drv}/bin/${name}"; })
+    (name: drv: {
+      type = "app";
+      program = "${drv}/bin/${name}";
+      meta = drv.meta or {};
+    })
     scripts;
 in
 {

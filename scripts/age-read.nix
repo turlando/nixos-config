@@ -2,6 +2,7 @@
 
 pkgs.writeShellApplication {
   name = "age-read";
+  meta.description = "Decrypt an agenix secret and print it to stdout";
   runtimeInputs = [
     agenix.packages.${system}.default
   ];

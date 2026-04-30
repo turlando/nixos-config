@@ -6,6 +6,7 @@ in
 
 pkgs.writeShellApplication {
   name = "infra-tofu";
+  meta.description = "Run tofu against the infra config, decrypting the Hetzner API token first";
   runtimeInputs = [
     (pkgs-unstable.opentofu.withPlugins (p: [ p.hetznercloud_hcloud ]))
     age-read

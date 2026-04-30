@@ -2,6 +2,7 @@
 
 pkgs.writeShellApplication {
   name = "age-keygen";
+  meta.description = "Generate an ed25519 SSH keypair for a new agenix host";
   runtimeInputs = [
     pkgs.openssh
   ];

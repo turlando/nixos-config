@@ -12,6 +12,7 @@ in
 
 pkgs.writeShellApplication {
   name = "infra-build";
+  meta.description = "Generate the Terranix config as config.tf.json under ./infra";
   text = ''
     INFRA_DIR="''${INFRA_DIR:-$PWD/infra}"
 
