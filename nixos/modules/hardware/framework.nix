@@ -7,17 +7,17 @@ let
 
   tool = "${cfg.package}/bin/framework_tool --driver portio";
 
+  # SoC threshold is appended to charge-current-limit and charge-rate-limit
+  # commands when set; pulled out here to avoid duplicating it on each.
+  socSuffix = optionalString (cfg.chargingLimitSoc != null)
+    " ${toString cfg.chargingLimitSoc}";
+
   # Each setting is a separate invocation.
-  commands =
-    optional (cfg.chargeLimit != null)
-      "${tool} --charge-limit ${toString cfg.chargeLimit}"
-    ++ optional (cfg.chargeCurrentLimit != null)
-      ("${tool} --charge-current-limit ${toString cfg.chargeCurrentLimit}"
-        + optionalString (cfg.chargingLimitSoc != null) " ${toString cfg.chargingLimitSoc}")
-    ++ optional (cfg.chargeRateLimit != null)
-      ("${tool} --charge-rate-limit ${toString cfg.chargeRateLimit}"
-        + optionalString (cfg.chargingLimitSoc != null) " ${toString cfg.chargingLimitSoc}")
-    ;
+  commands = lib.flatten [
+    (optional (cfg.chargeLimit        != null) "${tool} --charge-limit ${toString cfg.chargeLimit}")
+    (optional (cfg.chargeCurrentLimit != null) "${tool} --charge-current-limit ${toString cfg.chargeCurrentLimit}${socSuffix}")
+    (optional (cfg.chargeRateLimit    != null) "${tool} --charge-rate-limit ${toString cfg.chargeRateLimit}${socSuffix}")
+  ];
 in
 {
   options.hardware.framework = {
