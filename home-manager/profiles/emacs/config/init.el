@@ -321,7 +321,6 @@
   :general
   (turlando/buffer-leader
     "s" '(swiper :wk "search buffer")
-    "i" '(swiper-isearch :wk "search buffer (isearch)")
     "I" '(swiper-all :wk "search all buffers")))
 
 (use-package amx
@@ -522,15 +521,9 @@
   (turlando/toggle-leader
     "I" '(aggressive-indent-mode :wk "aggressive indent")))
 
-(use-package flycheck
-  :delight
-  :hook (after-init . global-flycheck-mode)
-  :custom
-  (flycheck-display-errors-delay 0.2)
-  (flycheck-idle-change-delay 0.5)
-  (flycheck-indication-mode 'left-fringe))
-
 (use-package flymake
+  :delight
+  :hook (emacs-lisp-mode . flymake-mode)
   :general
   (turlando/major-leader
     :keymaps 'flymake-mode-map
@@ -538,7 +531,7 @@
     "en" '(flymake-goto-next-error :wk "next error")
     "ep" '(flymake-goto-prev-error :wk "previous error")
     "eb" '(flymake-show-buffer-diagnostics :wk "buffer diagnostics")
-    "ep" '(flymake-show-project-diagnostics :wk "project diagnostics")))
+    "eP" '(flymake-show-project-diagnostics :wk "project diagnostics")))
 
 (use-package xref
   :general
@@ -605,12 +598,6 @@
     :keymaps 'nix-mode-map
     "f" '(nix-format-buffer :wk "format buffer")))
 
-(use-package rust-mode
-  :general
-  (turlando/major-leader
-    :keymaps 'rust-mode-map
-    "m" '(rust-toggle-mutability :wk "mut")))
-
 (use-package rustic
   :mode ("\\.rs\\'" . rustic-mode)
   :hook (rustic-mode . eglot-ensure)
@@ -620,6 +607,7 @@
   :general
   (turlando/major-leader
     :keymaps 'rustic-mode-map
+    "m"   '(rust-toggle-mutability :wk "mut")
     "c"   '(:ignore t :wk "cargo")
     "cc"  '(rustic-compile :wk "compile")
     "cb"  '(rustic-cargo-build :wk "build")

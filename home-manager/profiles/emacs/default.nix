@@ -14,7 +14,6 @@ _:
       evil
       evil-collection
       expand-region
-      flycheck
       general
       git-gutter
       helpful
