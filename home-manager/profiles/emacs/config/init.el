@@ -233,9 +233,9 @@
   :ensure nil
   :general
   (turlando/file-leader
-    "f" '(counsel-find-file :wk "find file")
-    "r" '(counsel-recentf :wk "recent files")
-    "L" '(counsel-locate :wk "locate")
+    "f" '(find-file :wk "find file")
+    "r" '(consult-recent-file :wk "recent files")
+    "L" '(consult-locate :wk "locate")
     "s" '(save-buffer :wk "save file")
     "S" '(evil-write-all :wk "save all")
     "d" '(dired-jump :wk "dired")
@@ -250,7 +250,7 @@
   :ensure nil
   :general
   (turlando/buffer-leader
-    "b" '(counsel-switch-buffer :wk "switch buffer")
+    "b" '(consult-buffer :wk "switch buffer")
     "d" '(kill-current-buffer :wk "kill buffer")
     "k" '(kill-buffer :wk "kill buffer...")
     "x" '(kill-buffer-and-window :wk "kill buffer + window")
@@ -309,43 +309,42 @@
     "u" '(winner-undo :which-key "Undo Layout")
     "r" '(winner-redo :which-key "Redo Layout")))
 
-(use-package ivy
-  :delight
-  :config (ivy-mode 1)
+(use-package vertico
+  :demand t
   :custom
-  (ivy-use-virtual-buffers t)
-  (ivy-count-format "(%d/%d) ")
-  (ivy-height 15)
-  (ivy-wrap t)
-  (ivy-initial-inputs-alist nil)
+  (vertico-cycle t)
+  (vertico-count 15)
+  :config
+  (require 'vertico-directory)
+  (vertico-mode 1)
   :bind
-  (:map
-   ivy-minibuffer-map
-   ("C-l" . ivy-alt-done)
-   ("C-h" . ivy-backward-delete-char)
-   ("C-j" . ivy-next-line)
-   ("C-k" . ivy-previous-line))
+  (:map vertico-map
+        ("C-j" . vertico-next)
+        ("C-k" . vertico-previous)
+        ("C-l" . vertico-insert)
+        ("C-h" . vertico-directory-delete-char)))
+
+(use-package orderless
+  :demand t
+  :custom
+  (completion-styles '(orderless basic))
+  (completion-category-overrides '((file (styles basic partial-completion)))))
+
+(use-package marginalia
+  :demand t
+  :config
+  (marginalia-mode 1))
+
+(use-package consult
+  :demand t
+  :custom
+  (consult-project-function (lambda (_) (projectile-project-root)))
   :bind
-  (:map
-   ivy-switch-buffer-map
-   ("C-l" . ivy-alt-done)
-   ("C-k" . ivy-previous-line)
-   ("C-d" . ivy-switch-buffer-kill)))
-
-(use-package counsel
-  :delight
-  :config (counsel-mode 1))
-
-(use-package swiper
-  :after ivy
+  ("C-x b" . consult-buffer)
   :general
   (turlando/buffer-leader
-    "s" '(swiper :wk "search buffer")
-    "I" '(swiper-all :wk "search all buffers")))
-
-(use-package amx
-  :config
-  (amx-mode 1))
+    "s" '(consult-line :wk "search buffer")
+    "I" '(consult-line-multi :wk "search all buffers")))
 
 (use-package dired
   :custom
@@ -366,9 +365,6 @@
   (setq dired-omit-files "^\\.[^.]\\|^#\\|~$"))
 
 (use-package helpful
-  :custom
-  (counsel-describe-function-function #'helpful-callable)
-  (counsel-describe-variable-function #'helpful-variable)
   :bind
   (([remap describe-function] . helpful-callable)
    ([remap describe-command] . helpful-command)
@@ -383,34 +379,29 @@
     "p" '(helpful-at-point :wk "at point")))
 
 (use-package projectile
+  :demand t
   :delight
   :config
   (projectile-mode 1)
   :custom
-  (projectile-completion-system 'ivy)
+  (projectile-completion-system 'default)
   (projectile-switch-project-action #'projectile-dired)
   (projectile-enable-caching t)
   (projectile-indexing-method 'alien)
   (projectile-project-search-path '("~/Projects"))
   :general
   (turlando/project-leader
-    "f" '(counsel-projectile-find-file :wk "find file")
-    "p" '(counsel-projectile-switch-project :wk "switch project")
-    "b" '(counsel-projectile-switch-to-buffer :wk "switch buffer")
+    "f" '(projectile-find-file :wk "find file")
+    "p" '(projectile-switch-project :wk "switch project")
+    "b" '(projectile-switch-to-buffer :wk "switch buffer")
     "d" '(projectile-dired :wk "dired")
     "k" '(projectile-kill-buffers :wk "kill buffers")
     "c" '(projectile-compile-project :wk "compile")
     "t" '(projectile-test-project :wk "test")
     "r" '(projectile-run-project :wk "run")
-    "I" '(projectile-invalidate-cache :wk "invalidate cache")))
-
-(use-package counsel-projectile
-  :after (counsel projectile)
-  :config
-  (counsel-projectile-mode 1)
-  :general
+    "I" '(projectile-invalidate-cache :wk "invalidate cache"))
   (turlando/search-leader
-    "p" '(counsel-projectile-rg :wk "search project")))
+    "p" '(consult-ripgrep :wk "search project")))
 
 ;;;; Editing
 

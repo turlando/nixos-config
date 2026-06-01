@@ -6,11 +6,9 @@
   programs.emacs = {
     extraPackages = epkgs: with epkgs; [
       aggressive-indent
-      amx
       avy
       company
-      counsel
-      counsel-projectile
+      consult
       delight
       editorconfig
       evil
@@ -22,10 +20,11 @@
       git-gutter
       helpful
       highlight-indent-guides
-      ivy
       just-mode
       magit
+      marginalia
       nix-mode
+      orderless
       projectile
       rustic
       smartparens
@@ -36,6 +35,7 @@
         p.tree-sitter-yaml
       ]))
       ultra-scroll
+      vertico
       which-key
       yaml-mode
     ];
