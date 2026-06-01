@@ -34,14 +34,15 @@
   hardware.bluetooth.enable = true;
   hardware.bluetooth.settings.General.Experimental = true;
 
-  services.displayManager.sddm.enable = true;
-  services.displayManager.sddm.wayland.enable = true;
-
+  services.displayManager.plasma-login-manager.enable = true;
   services.desktopManager.plasma6.enable = true;
+
   programs.dconf.enable = true;
+
   environment.plasma6.excludePackages = [
     # Comment out this line if you use KDE Connect
     pkgs.kdePackages.plasma-browser-integration
+
     # Unneeded if you use Thunderbird, etc.
     pkgs.kdePackages.kdepim-runtime
   ];

@@ -1,29 +1,29 @@
 { config, pkgs, ... }:
 
 {
-  home.stateVersion = "25.11";
+  home.stateVersion = "26.05";
   home.username = "tancredi";
   home.homeDirectory = "/home/tancredi";
 
   programs.ssh = {
     enable = true;
     enableDefaultConfig = false;
-    matchBlocks = {
+    settings = {
       "antigone" = {
-        hostname = "81.56.74.151";
-        port = 13022;
-        user = "tancredi";
-        identityFile = config.age.secrets.ssh-key-antigone-tancredi.path;
+        HostName = "81.56.74.151";
+        Port = 13022;
+        User = "tancredi";
+        IdentityFile = config.age.secrets.ssh-key-antigone-tancredi.path;
       };
       "creusa" = {
-        hostname = "46.225.229.141";
-        user = "root";
-        identityFile = config.age.secrets.ssh-key-creusa-root.path;
+        HostName = "46.225.229.141";
+        User = "root";
+        IdentityFile = config.age.secrets.ssh-key-creusa-root.path;
       };
       "github.com" = {
-        hostname = "github.com";
-        user = "git";
-        identityFile = config.age.secrets.ssh-key-github.path;
+        HostName = "github.com";
+        User = "git";
+        IdentityFile = config.age.secrets.ssh-key-github.path;
       };
     };
   };

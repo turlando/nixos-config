@@ -1,5 +1,5 @@
 {
-  system.stateVersion = "25.11";
+  system.stateVersion = "26.05";
 
   networking.hostName = "medea";
   networking.hostId = "e8d8a1f8";

@@ -1,6 +1,6 @@
 { config, ... }:
 {
-  system.stateVersion = "25.11";
+  system.stateVersion = "26.05";
 
   networking.hostName = "creusa";
   networking.hostId = "4bf5d147";

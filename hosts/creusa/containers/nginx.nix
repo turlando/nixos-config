@@ -67,7 +67,7 @@
           self.nixosModules.modules.services.journald
         ];
 
-        system.stateVersion = "25.11";
+        system.stateVersion = "26.05";
         environment.etc."machine-id".text = "a57b69a7ef72b1aa85c104a969af4c02";
 
         services.journald.settings = {

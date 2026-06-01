@@ -70,7 +70,7 @@
           "${pkgs-unstable.path}/nixos/modules/services/web-apps/actual.nix"
         ];
 
-        system.stateVersion = "25.11";
+        system.stateVersion = "26.05";
         environment.etc."machine-id".text = "849157410a3041bcf9f3427e69af5832";
 
         services.journald.settings = {
