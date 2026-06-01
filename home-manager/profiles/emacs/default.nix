@@ -1,6 +1,8 @@
-_:
+{ pkgs, ... }:
 
 {
+  home.packages = [ pkgs.ripgrep ];
+
   programs.emacs = {
     extraPackages = epkgs: with epkgs; [
       aggressive-indent
@@ -13,6 +15,8 @@ _:
       editorconfig
       evil
       evil-collection
+      evil-commentary
+      evil-surround
       expand-region
       general
       git-gutter

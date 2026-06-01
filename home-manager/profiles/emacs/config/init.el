@@ -75,6 +75,17 @@
   :custom
   (evil-collection-want-unimpaired-p nil))
 
+(use-package evil-surround
+  :after evil
+  :config
+  (global-evil-surround-mode 1))
+
+(use-package evil-commentary
+  :after evil
+  :delight
+  :config
+  (evil-commentary-mode 1))
+
 ;;;; Keybindings
 
 (use-package general
@@ -161,6 +172,15 @@
     :keymaps 'override)
   (turlando/universal-leader
     "p" '(:ignore t :wk "projects"))
+
+  (general-create-definer turlando/search-leader
+    :states '(normal visual emacs)
+    :prefix "SPC s"
+    :global-prefix "M-m s"
+    :non-normal-prefix "M-m s"
+    :keymaps 'override)
+  (turlando/universal-leader
+    "s" '(:ignore t :wk "search"))
 
   (general-create-definer turlando/toggle-leader
     :states '(normal visual emacs)
@@ -387,7 +407,10 @@
 (use-package counsel-projectile
   :after (counsel projectile)
   :config
-  (counsel-projectile-mode 1))
+  (counsel-projectile-mode 1)
+  :general
+  (turlando/search-leader
+    "p" '(counsel-projectile-rg :wk "search project")))
 
 ;;;; Editing
 
