@@ -346,6 +346,21 @@
     "s" '(consult-line :wk "search buffer")
     "I" '(consult-line-multi :wk "search all buffers")))
 
+(use-package embark
+  :custom
+  (embark-prompter 'embark-completing-read-prompter)
+  :bind
+  (("C-." . embark-act)
+   ("M-." . embark-dwim)
+   ("C-h B" . embark-bindings))
+  :general
+  (turlando/help-leader
+    "B" '(embark-bindings :wk "embark bindings")))
+
+(use-package embark-consult
+  :after (embark consult)
+  :hook (embark-collect-mode . consult-preview-at-point-mode))
+
 (use-package dired
   :custom
   (dired-listing-switches "-alh")

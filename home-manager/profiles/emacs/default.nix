@@ -11,6 +11,8 @@
       consult
       delight
       editorconfig
+      embark
+      embark-consult
       evil
       evil-collection
       evil-commentary
