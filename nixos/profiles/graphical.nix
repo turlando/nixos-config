@@ -45,6 +45,9 @@
 
     # Unneeded if you use Thunderbird, etc.
     pkgs.kdePackages.kdepim-runtime
+
+    pkgs.kdePackages.elisa
+    pkgs.kdePackages.khelpcenter
   ];
 
   environment.persistence.paths = [
