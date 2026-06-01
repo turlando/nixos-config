@@ -38,16 +38,12 @@ _:
     ];
   };
 
-  home.file.".emacs.d/lisp/minimal-early-init.el" = {
-    source = ./emacs.d/lisp/minimal-early-init.el;
-  };
-  home.file.".emacs.d/lisp/minimal-init.el" = {
-    source = ./emacs.d/lisp/minimal-init.el;
-  };
-  home.file.".emacs.d/lisp/turlando-utils.el" = {
-    source = ./emacs.d/lisp/turlando-utils.el;
-  };
-
-  home.file.".emacs.d/early-init.el" = { source = ./emacs.d/early-init.el; };
-  home.file.".emacs.d/init.el" = { source = ./emacs.d/init.el; };
+  xdg.configFile."emacs/early-init.el".source = ./config/early-init.el;
+  xdg.configFile."emacs/init.el".source = ./config/init.el;
+  xdg.configFile."emacs/lisp/minimal-early-init.el".source =
+    ./config/lisp/minimal-early-init.el;
+  xdg.configFile."emacs/lisp/minimal-init.el".source =
+    ./config/lisp/minimal-init.el;
+  xdg.configFile."emacs/lisp/turlando-utils.el".source =
+    ./config/lisp/turlando-utils.el;
 }
