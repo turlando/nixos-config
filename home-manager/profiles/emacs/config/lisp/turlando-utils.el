@@ -64,11 +64,13 @@
             (when (fboundp 'recentf-add-file)
               (recentf-add-file new-name)
               (recentf-remove-if-non-kept filename))
-            (when (and (fboundp 'projectile-project-p)
-                       (projectile-project-p))
-              (call-interactively #'projectile-invalidate-cache))
             (message "File '%s' successfully renamed to '%s'"
                      name (file-name-nondirectory new-name))))))))
+
+(defun turlando/consult-ripgrep-at-point ()
+  "Search project with ripgrep, prefilled with the symbol at point."
+  (interactive)
+  (consult-ripgrep nil (thing-at-point 'symbol t)))
 
 (defun turlando/delete-file ()
   "Remove file connected to current buffer and kill buffer."

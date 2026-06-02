@@ -28,7 +28,6 @@
       marginalia
       nix-mode
       orderless
-      projectile
       rustic
       smartparens
       spacemacs-theme

@@ -337,14 +337,15 @@
 
 (use-package consult
   :demand t
-  :custom
-  (consult-project-function (lambda (_) (projectile-project-root)))
   :bind
   ("C-x b" . consult-buffer)
   :general
   (turlando/buffer-leader
     "s" '(consult-line :wk "search buffer")
-    "I" '(consult-line-multi :wk "search all buffers")))
+    "I" '(consult-line-multi :wk "search all buffers"))
+  (turlando/search-leader
+    "p" '(consult-ripgrep :wk "search project")
+    "h" '(turlando/consult-ripgrep-at-point :wk "search project at point")))
 
 (use-package embark
   :custom
@@ -393,30 +394,19 @@
     "m" '(helpful-macro :wk "describe macro")
     "p" '(helpful-at-point :wk "at point")))
 
-(use-package projectile
-  :demand t
-  :delight
-  :config
-  (projectile-mode 1)
+(use-package project
+  :ensure nil
   :custom
-  (projectile-completion-system 'default)
-  (projectile-switch-project-action #'projectile-dired)
-  (projectile-enable-caching t)
-  (projectile-indexing-method 'alien)
-  (projectile-project-search-path '("~/Projects"))
+  (project-switch-commands #'project-dired)
   :general
   (turlando/project-leader
-    "f" '(projectile-find-file :wk "find file")
-    "p" '(projectile-switch-project :wk "switch project")
-    "b" '(projectile-switch-to-buffer :wk "switch buffer")
-    "d" '(projectile-dired :wk "dired")
-    "k" '(projectile-kill-buffers :wk "kill buffers")
-    "c" '(projectile-compile-project :wk "compile")
-    "t" '(projectile-test-project :wk "test")
-    "r" '(projectile-run-project :wk "run")
-    "I" '(projectile-invalidate-cache :wk "invalidate cache"))
-  (turlando/search-leader
-    "p" '(consult-ripgrep :wk "search project")))
+    "f" '(project-find-file :wk "find file")
+    "p" '(project-switch-project :wk "switch project")
+    "b" '(project-switch-to-buffer :wk "switch buffer")
+    "d" '(project-dired :wk "dired")
+    "k" '(project-kill-buffers :wk "kill buffers")
+    "c" '(project-compile :wk "compile")
+    "F" '(project-forget-project :wk "forget project")))
 
 ;;;; Editing
 
