@@ -214,9 +214,7 @@
     :prefix ","
     :global-prefix "M-m m"
     :non-normal-prefix "M-m m"
-    :keymaps 'override)
-  (turlando/universal-leader
-    "m" '(:ignore t :wk "major mode")))
+    :keymaps 'override))
 
 (use-package emacs
   :ensure nil
@@ -260,8 +258,7 @@
     "r" '(revert-buffer :wk "revert buffer")
     "y" '(turlando/copy-whole-buffer :wk "copy buffer")
     "Y" '(turlando/copy-buffer-path :wk "copy buffer path")
-    "i" '(ibuffer :wk "ibuffer")
-    "s" '(basic-save-buffer :wk "save buffer")))
+    "i" '(ibuffer :wk "ibuffer")))
 
 ;; Window management
 (use-package emacs
@@ -298,8 +295,7 @@
     "h" '(split-window-below :wk "split below")
     "v" '(split-window-right :wk "split right")
     "u" '(winner-undo :wk "winner undo")
-    "r" '(winner-redo :wk "winner redo")
-    "b" '(turlando/switch-to-minibuffer :wk "switch to minibuffer")))
+    "r" '(winner-redo :wk "winner redo")))
 
 (use-package winner
   :config (winner-mode 1)
@@ -596,9 +592,9 @@
   (turlando/emacs-leader
    :keymaps 'eglot-mode-map
    "l"   '(:ignore t :wk "language server")
+   "ll"  '(eglot-list-connections :wk "list connections")
    "lr"  '(eglot-reconnect :wk "reconnect / restart server")
-   "ls"  '(eglot-shutdown :wk "shutdown server")
-   "ld"  '(lsp-describe-session :wk "describe session"))
+   "ls"  '(eglot-shutdown :wk "shutdown server"))
   (turlando/jump-leader
    :keymaps 'eglot-mode-map
    "i" '(eglot-find-implementation :wk "implementation")
