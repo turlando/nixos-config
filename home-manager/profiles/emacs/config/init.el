@@ -462,23 +462,33 @@
     "w" '(whitespace-mode :wk "whitespace")
     "h" '(hl-line-mode :wk "highlight line")))
 
-(use-package company
-  :delight
-  :hook (after-init . global-company-mode)
+(use-package corfu
+  :demand t
   :custom
-  (company-idle-delay 0.1)
-  (company-minimum-prefix-length 2)
-  (company-selection-wrap-around t)
-  (company-tooltip-align-annotations t)
-  (company-frontends '(company-pseudo-tooltip-frontend
-                       company-echo-metadata-frontend))
+  (corfu-cycle t)
+  (corfu-auto t)
+  (corfu-auto-prefix 2)
+  (corfu-auto-delay 0.1)
+  :config
+  (global-corfu-mode 1)
   :bind
-  (:map
-   company-active-map
-   ("C-j" . company-select-next)
-   ("C-k" . company-select-previous)
-   ("C-l" . company-complete-selection)
-   ("<tab>" . company-complete-common-or-cycle)))
+  (:map corfu-map
+        ("C-j" . corfu-next)
+        ("C-k" . corfu-previous)
+        ("C-l" . corfu-insert)
+        ("TAB" . corfu-complete)))
+
+(use-package cape
+  :demand t
+  :config
+  (add-hook 'completion-at-point-functions #'cape-dabbrev)
+  (add-hook 'completion-at-point-functions #'cape-file))
+
+(use-package cape-keyword
+  :demand t
+  :after cape
+  :config
+  (add-hook 'completion-at-point-functions #'cape-keyword))
 
 (use-package expand-region
   :general

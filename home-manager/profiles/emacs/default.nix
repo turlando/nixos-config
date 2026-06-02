@@ -7,8 +7,9 @@
     extraPackages = epkgs: with epkgs; [
       aggressive-indent
       avy
-      company
+      cape
       consult
+      corfu
       delight
       editorconfig
       embark
