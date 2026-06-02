@@ -48,6 +48,7 @@
 
     pkgs.kdePackages.elisa
     pkgs.kdePackages.khelpcenter
+    pkgs.kdePackages.konsole
   ];
 
   environment.persistence.paths = [
