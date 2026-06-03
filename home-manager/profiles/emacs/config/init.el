@@ -231,16 +231,16 @@
   :ensure nil
   :general
   (turlando/file-leader
+    "c" '(turlando/copy-file :wk "copy file")
+    "d" '(dired-jump :wk "dired")
+    "D" '(turlando/delete-file :wk "delete file")
     "f" '(find-file :wk "find file")
-    "r" '(consult-recent-file :wk "recent files")
+    "F" '(find-file-at-point :wk "find at point")
     "L" '(consult-locate :wk "locate")
+    "r" '(consult-recent-file :wk "recent files")
+    "R" '(turlando/rename-file :wk "rename file")
     "s" '(save-buffer :wk "save file")
     "S" '(evil-write-all :wk "save all")
-    "d" '(dired-jump :wk "dired")
-    "F" '(find-file-at-point :wk "find at point")
-    "c" '(turlando/copy-file :wk "copy file")
-    "R" '(turlando/rename-file :wk "rename file")
-    "D" '(turlando/delete-file :wk "delete file")
     "y" '(turlando/copy-file-path :wk "copy file path")))
 
 ;; Buffer management
@@ -250,15 +250,15 @@
   (turlando/buffer-leader
     "b" '(consult-buffer :wk "switch buffer")
     "d" '(kill-current-buffer :wk "kill buffer")
+    "i" '(ibuffer :wk "ibuffer")
     "k" '(kill-buffer :wk "kill buffer...")
-    "x" '(kill-buffer-and-window :wk "kill buffer + window")
-    "p" '(previous-buffer :wk "previous buffer")
     "n" '(next-buffer :wk "next buffer")
-    "u" '(evil-switch-to-windows-last-buffer :wk "last buffer")
+    "p" '(previous-buffer :wk "previous buffer")
     "r" '(revert-buffer :wk "revert buffer")
+    "u" '(evil-switch-to-windows-last-buffer :wk "last buffer")
+    "x" '(kill-buffer-and-window :wk "kill buffer + window")
     "y" '(turlando/copy-whole-buffer :wk "copy buffer")
-    "Y" '(turlando/copy-buffer-path :wk "copy buffer path")
-    "i" '(ibuffer :wk "ibuffer")))
+    "Y" '(turlando/copy-buffer-path :wk "copy buffer path")))
 
 ;; Window management
 (use-package emacs
@@ -289,13 +289,13 @@
   :general
   (turlando/window-leader
     "." '(turlando/window-transient :wk "transient")
-    "w" '(other-window :wk "other window")
     "d" '(delete-window :wk "delete window")
     "D" '(delete-other-windows :wk "delete other windows")
     "h" '(split-window-below :wk "split below")
-    "v" '(split-window-right :wk "split right")
     "u" '(winner-undo :wk "winner undo")
-    "r" '(winner-redo :wk "winner redo")))
+    "U" '(winner-redo :wk "winner redo")
+    "v" '(split-window-right :wk "split right")
+    "w" '(other-window :wk "other window")))
 
 (use-package winner
   :config (winner-mode 1)
@@ -303,7 +303,7 @@
   (turlando/window-leader
     :keymaps 'winner-mode-map
     "u" '(winner-undo :which-key "Undo Layout")
-    "r" '(winner-redo :which-key "Redo Layout")))
+    "U" '(winner-redo :which-key "Redo Layout")))
 
 (use-package vertico
   :demand t
@@ -315,10 +315,10 @@
   (vertico-mode 1)
   :bind
   (:map vertico-map
+        ("C-h" . vertico-directory-delete-char)
         ("C-j" . vertico-next)
         ("C-k" . vertico-previous)
-        ("C-l" . vertico-insert)
-        ("C-h" . vertico-directory-delete-char)))
+        ("C-l" . vertico-insert)))
 
 (use-package orderless
   :demand t
@@ -340,8 +340,8 @@
     "s" '(consult-line :wk "search buffer")
     "I" '(consult-line-multi :wk "search all buffers"))
   (turlando/search-leader
-    "p" '(consult-ripgrep :wk "search project")
-    "h" '(turlando/consult-ripgrep-at-point :wk "search project at point")))
+    "h" '(turlando/consult-ripgrep-at-point :wk "search project at point")
+    "p" '(consult-ripgrep :wk "search project")))
 
 (use-package embark
   :custom
@@ -367,9 +367,9 @@
   :general
   (turlando/major-leader
     :keymaps 'dired-mode-map
+    "." '(dired-omit-mode :wk "toggle omit")
     "h" '(dired-hide-details-mode :wk "toggle details")
-    "s" '(dired-sort-toggle-or-edit :wk "sort")
-    "." '(dired-omit-mode :wk "toggle omit")))
+    "s" '(dired-sort-toggle-or-edit :wk "sort")))
 
 (use-package dired-x
   :after dired
@@ -385,10 +385,10 @@
   :general
   (turlando/help-leader
     "f" '(helpful-callable :wk "describe function")
-    "v" '(helpful-variable :wk "describe variable")
     "k" '(helpful-key :wk "describe key")
     "m" '(helpful-macro :wk "describe macro")
-    "p" '(helpful-at-point :wk "at point")))
+    "p" '(helpful-at-point :wk "at point")
+    "v" '(helpful-variable :wk "describe variable")))
 
 (use-package project
   :ensure nil
@@ -396,13 +396,13 @@
   (project-switch-commands #'project-dired)
   :general
   (turlando/project-leader
-    "f" '(project-find-file :wk "find file")
-    "p" '(project-switch-project :wk "switch project")
     "b" '(project-switch-to-buffer :wk "switch buffer")
-    "d" '(project-dired :wk "dired")
-    "k" '(project-kill-buffers :wk "kill buffers")
     "c" '(project-compile :wk "compile")
-    "F" '(project-forget-project :wk "forget project")))
+    "d" '(project-dired :wk "dired")
+    "f" '(project-find-file :wk "find file")
+    "F" '(project-forget-project :wk "forget project")
+    "k" '(project-kill-buffers :wk "kill buffers")
+    "p" '(project-switch-project :wk "switch project")))
 
 ;;;; Editing
 
@@ -430,23 +430,23 @@
   :ensure nil
   :general
   (turlando/text-leader
-    "u" '(upcase-region :wk "upcase")
-    "l" '(downcase-region :wk "downcase")
     "c" '(capitalize-region :wk "capitalize")
+    "d" '(delete-duplicate-lines :wk "delete duplicates")
+    "l" '(downcase-region :wk "downcase")
     "r" '(reverse-region :wk "reverse")
     "s" '(sort-lines :wk "sort lines")
-    "d" '(delete-duplicate-lines :wk "delete duplicates")
-    "t" '(transpose-words :wk "transpose words")))
+    "t" '(transpose-words :wk "transpose words")
+    "u" '(upcase-region :wk "upcase")))
 
 (use-package emacs
   :ensure nil
   :general
   (turlando/toggle-leader
-    "n" '(display-line-numbers-mode :wk "line numbers")
     "f" '(display-fill-column-indicator-mode :wk "fill column")
     "F" '(auto-fill-mode :wk "auto fill")
-    "w" '(whitespace-mode :wk "whitespace")
-    "h" '(hl-line-mode :wk "highlight line")))
+    "h" '(hl-line-mode :wk "highlight line")
+    "n" '(display-line-numbers-mode :wk "line numbers")
+    "w" '(whitespace-mode :wk "whitespace")))
 
 (use-package corfu
   :demand t
@@ -505,24 +505,24 @@
   :general
   (turlando/parens-leader
     "." '(turlando/smartparens-transient :wk "transient")
-    "w" '(sp-wrap-round :wk "wrap")
-    "W" '(sp-unwrap-sexp :wk "unwrap")
-    "s" '(sp-forward-slurp-sexp :wk "slurp forward")
-    "S" '(sp-backward-slurp-sexp :wk "slurp backward")
     "b" '(sp-forward-barf-sexp :wk "barf forward")
     "B" '(sp-backward-barf-sexp :wk "barf backward")
-    "r" '(sp-raise-sexp :wk "raise")
-    "t" '(sp-transpose-sexp :wk "transpose")
+    "c" '(sp-copy-sexp :wk "copy sexp")
     "k" '(sp-kill-sexp :wk "kill sexp")
-    "c" '(sp-copy-sexp :wk "copy sexp")))
+    "r" '(sp-raise-sexp :wk "raise")
+    "s" '(sp-forward-slurp-sexp :wk "slurp forward")
+    "S" '(sp-backward-slurp-sexp :wk "slurp backward")
+    "t" '(sp-transpose-sexp :wk "transpose")
+    "w" '(sp-wrap-round :wk "wrap")
+    "W" '(sp-unwrap-sexp :wk "unwrap")))
 
 (use-package avy
   :general
   (turlando/jump-leader
    "c" '(avy-goto-char :wk "jump to char")
    "C" '(avy-goto-char-timer :wk "jump to char (timer)")
-   "w" '(avy-goto-word-1 :wk "jump to word")
-   "l" '(avy-goto-line :wk "jump to line")))
+   "l" '(avy-goto-line :wk "jump to line")
+   "w" '(avy-goto-word-1 :wk "jump to word")))
 
 (use-package editorconfig
   :delight
@@ -552,10 +552,10 @@
   :general
   (turlando/major-leader
     :keymaps 'flymake-mode-map
-    "e"   '(:ignore t :wk "errors")
+    "e"  '(:ignore t :wk "errors")
+    "eb" '(flymake-show-buffer-diagnostics :wk "buffer diagnostics")
     "en" '(flymake-goto-next-error :wk "next error")
     "ep" '(flymake-goto-prev-error :wk "previous error")
-    "eb" '(flymake-show-buffer-diagnostics :wk "buffer diagnostics")
     "eP" '(flymake-show-project-diagnostics :wk "project diagnostics")))
 
 (use-package xref
@@ -563,11 +563,11 @@
   (turlando/jump-leader
    :keymaps 'prog-mode-map
    "b" '(xref-go-back :wk "back")
-   "n" '(xref-go-forward :wk "back")
-   "s" '(xref-find-apropos :wk "symbol")
+   "B" '(xref-go-forward :wk "forward")
    "d" '(xref-find-definitions :wk "definition")
    "D" '(xref-find-definitions-other-window :wk "definition other window")
-   "r" '(xref-find-references :wk "references")))
+   "r" '(xref-find-references :wk "references")
+   "s" '(xref-find-apropos :wk "symbol")))
 
 ;;;; Programming
 
@@ -632,17 +632,17 @@
   :general
   (turlando/major-leader
     :keymaps 'rustic-mode-map
-    "m"   '(rust-toggle-mutability :wk "mut")
-    "c"   '(:ignore t :wk "cargo")
-    "cc"  '(rustic-compile :wk "compile")
-    "cb"  '(rustic-cargo-build :wk "build")
-    "cr"  '(rustic-cargo-run :wk "run")
-    "cl"  '(rustic-cargo-clippy :wk "clippy")
-    "ck"  '(rustic-cargo-check :wk "check")
-    "cf"  '(rustic-cargo-fmt :wk "fmt")
-    "t"   '(:ignore t :wk "test")
-    "ta"  '(rustic-cargo-test :wk "test all project")
-    "tt"  '(rustic-cargo-current-test :wk "test current function")))
+    "c"  '(:ignore t :wk "cargo")
+    "cb" '(rustic-cargo-build :wk "build")
+    "cc" '(rustic-compile :wk "compile")
+    "cf" '(rustic-cargo-fmt :wk "fmt")
+    "ck" '(rustic-cargo-check :wk "check")
+    "cl" '(rustic-cargo-clippy :wk "clippy")
+    "cr" '(rustic-cargo-run :wk "run")
+    "m"  '(rust-toggle-mutability :wk "mut")
+    "t"  '(:ignore t :wk "test")
+    "ta" '(rustic-cargo-test :wk "test all project")
+    "tt" '(rustic-cargo-current-test :wk "test current function")))
 
 (use-package typescript-ts-mode
   :ensure nil
@@ -660,13 +660,13 @@
   (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1)
   :general
   (turlando/git-leader
-    "s" '(magit-status :wk "status")
     "b" '(magit-blame-addition :wk "blame")
     "c" '(magit-clone :wk "clone")
+    "d" '(magit-diff-dwim :wk "diff")
     "f" '(magit-find-file :wk "find file")
     "l" '(magit-log-current :wk "log current")
     "L" '(magit-log-all :wk "log all")
-    "d" '(magit-diff-dwim :wk "diff")))
+    "s" '(magit-status :wk "status")))
 
 (use-package git-gutter
   :delight
@@ -675,10 +675,10 @@
   (git-gutter:update-interval 0.5)
   :general
   (turlando/git-leader
+    "g" '(git-gutter:popup-hunk :wk "show hunk")
     "n" '(git-gutter:next-hunk :wk "next hunk")
     "p" '(git-gutter:previous-hunk :wk "previous hunk")
-    "r" '(git-gutter:revert-hunk :wk "revert hunk")
-    "g" '(git-gutter:popup-hunk :wk "show hunk"))
+    "r" '(git-gutter:revert-hunk :wk "revert hunk"))
   (turlando/toggle-leader
     "g" '(git-gutter-mode :wk "git gutter")))
 
