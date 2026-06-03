@@ -255,6 +255,7 @@
     "n" '(next-buffer :wk "next buffer")
     "p" '(previous-buffer :wk "previous buffer")
     "r" '(revert-buffer :wk "revert buffer")
+    "s" '(basic-save-buffer :wk "save buffer")
     "u" '(evil-switch-to-windows-last-buffer :wk "last buffer")
     "x" '(kill-buffer-and-window :wk "kill buffer + window")
     "y" '(turlando/copy-whole-buffer :wk "copy buffer")
@@ -336,12 +337,11 @@
   :bind
   ("C-x b" . consult-buffer)
   :general
-  (turlando/buffer-leader
-    "s" '(consult-line :wk "search buffer")
-    "I" '(consult-line-multi :wk "search all buffers"))
   (turlando/search-leader
+    "b" '(consult-line-multi :wk "search all buffers")
     "h" '(turlando/consult-ripgrep-at-point :wk "search project at point")
-    "p" '(consult-ripgrep :wk "search project")))
+    "p" '(consult-ripgrep :wk "search project")
+    "s" '(consult-line :wk "search buffer")))
 
 (use-package embark
   :custom
