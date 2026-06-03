@@ -9,6 +9,7 @@
       avy
       cape
       consult
+      consult-eglot
       corfu
       delight
       editorconfig

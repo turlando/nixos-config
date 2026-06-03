@@ -221,8 +221,11 @@
   :general
   (turlando/universal-leader
     "SPC" '(execute-extended-command :wk "M-x")
+    "TAB" '(evil-switch-to-windows-last-buffer :wk "last buffer")
     ";"   '(eval-expression :wk "eval expression")
-    "u"   '(universal-argument :wk "universal arg")))
+    "u"   '(universal-argument :wk "universal arg"))
+  (turlando/emacs-leader
+    "q" '(save-buffers-kill-terminal :wk "quit emacs")))
 
 ;;;; Navigation
 
@@ -256,7 +259,6 @@
     "p" '(previous-buffer :wk "previous buffer")
     "r" '(revert-buffer :wk "revert buffer")
     "s" '(basic-save-buffer :wk "save buffer")
-    "u" '(evil-switch-to-windows-last-buffer :wk "last buffer")
     "x" '(kill-buffer-and-window :wk "kill buffer + window")
     "y" '(turlando/copy-whole-buffer :wk "copy buffer")
     "Y" '(turlando/copy-buffer-path :wk "copy buffer path")))
@@ -335,13 +337,21 @@
 (use-package consult
   :demand t
   :bind
-  ("C-x b" . consult-buffer)
+  (("C-x b" . consult-buffer)
+   ("M-y"   . consult-yank-pop))
   :general
+  (turlando/jump-leader
+    "j" '(consult-imenu :wk "imenu")
+    "m" '(consult-mark :wk "marks"))
   (turlando/search-leader
     "b" '(consult-line-multi :wk "search all buffers")
     "h" '(turlando/consult-ripgrep-at-point :wk "search project at point")
     "p" '(consult-ripgrep :wk "search project")
     "s" '(consult-line :wk "search buffer")))
+
+(use-package consult-imenu
+  :demand t
+  :after consult)
 
 (use-package embark
   :custom
@@ -553,7 +563,7 @@
   (turlando/major-leader
     :keymaps 'flymake-mode-map
     "e"  '(:ignore t :wk "errors")
-    "eb" '(flymake-show-buffer-diagnostics :wk "buffer diagnostics")
+    "eb" '(consult-flymake :wk "buffer diagnostics")
     "en" '(flymake-goto-next-error :wk "next error")
     "ep" '(flymake-goto-prev-error :wk "previous error")
     "eP" '(flymake-show-project-diagnostics :wk "project diagnostics")))
@@ -612,6 +622,13 @@
   (turlando/toggle-leader
     :keymaps 'eglot-mode-map
     "l" '(eglot-inlay-hints-mode :wk "LSP hints")))
+
+(use-package consult-eglot
+  :after (consult eglot)
+  :general
+  (turlando/jump-leader
+   :keymaps 'eglot-mode-map
+   "s" '(consult-eglot-symbols :wk "workspace symbol")))
 
 (use-package just-mode)
 
@@ -675,7 +692,7 @@
   (git-gutter:update-interval 0.5)
   :general
   (turlando/git-leader
-    "g" '(git-gutter:popup-hunk :wk "show hunk")
+    "h" '(git-gutter:popup-hunk :wk "show hunk")
     "n" '(git-gutter:next-hunk :wk "next hunk")
     "p" '(git-gutter:previous-hunk :wk "previous hunk")
     "r" '(git-gutter:revert-hunk :wk "revert hunk"))
