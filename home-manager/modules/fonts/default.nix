@@ -1,0 +1,3 @@
+{
+  families = import ./families.nix;
+}

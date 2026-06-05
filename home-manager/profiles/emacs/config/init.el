@@ -6,6 +6,7 @@
 ;;;; Core / Bootstrap
 
 (require 'minimal-init)
+(require 'turlando-fonts)
 (require 'turlando-utils)
 
 ;;;; UI / Appearance
@@ -15,7 +16,7 @@
   :ensure nil
   :init
   (when (display-graphic-p)
-    (set-face-attribute 'default nil :font "Aporetic Sans Mono-10")))
+    (set-face-attribute 'default nil :font turlando/font-monospace)))
 
 (use-package delight
   :demand t)

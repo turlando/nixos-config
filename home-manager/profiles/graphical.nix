@@ -1,7 +1,13 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 
 {
   fonts.fontconfig.enable = true;
+
+  fonts.families.monospace = {
+    family = "Aporetic Sans Mono";
+    size = 10.5;
+    package = pkgs.aporetic;
+  };
 
   # Enable Bluetooth headsets buttons support.
   services.mpris-proxy.enable = true;
@@ -10,8 +16,8 @@
     enable = true;
     settings = {
       theme = "Breeze";
-      font-family = "Source Code Pro";
-      font-size = 10;
+      font-family = config.fonts.families.monospace.family;
+      font-size = config.fonts.families.monospace.size;
       window-decoration = "server";
       window-theme = "system";
       window-width = 140;
@@ -35,7 +41,6 @@
   programs.keepassxc.enable = true;
 
   home.packages = [
-    pkgs.source-code-pro
     pkgs.libreoffice-qt6-fresh
     pkgs.hunspell
     pkgs.hunspellDicts.en-us
