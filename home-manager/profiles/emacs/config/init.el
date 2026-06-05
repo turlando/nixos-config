@@ -15,7 +15,7 @@
   :ensure nil
   :init
   (when (display-graphic-p)
-    (set-face-attribute 'default nil :font "Source Code Pro-10")))
+    (set-face-attribute 'default nil :font "Aporetic Sans Mono-10")))
 
 (use-package delight
   :demand t)
@@ -27,13 +27,13 @@
   :config
   (ultra-scroll-mode 1))
 
-(use-package spacemacs-theme
-  :demand t
-  :config
-  (load-theme 'spacemacs-dark t)
+(use-package emacs
+  :ensure nil
   :custom
-  (spacemacs-theme-org-agenda-height nil)
-  (spacemacs-theme-org-height nil))
+  (modus-themes-common-palette-overrides
+   '((fringe unspecified)))
+  :config
+  (load-theme 'modus-operandi-tinted t))
 
 (use-package emacs
   :ensure nil

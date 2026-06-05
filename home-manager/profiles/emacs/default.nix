@@ -1,7 +1,10 @@
 { pkgs, ... }:
 
 {
-  home.packages = [ pkgs.ripgrep ];
+  home.packages = with pkgs; [
+    aporetic
+    ripgrep
+  ];
 
   programs.emacs = {
     extraPackages = epkgs: with epkgs; [
@@ -31,7 +34,6 @@
       orderless
       rustic
       smartparens
-      spacemacs-theme
       (treesit-grammars.with-grammars (p: [
         p.tree-sitter-tsx
         p.tree-sitter-typescript
