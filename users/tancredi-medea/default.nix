@@ -1,13 +1,15 @@
 { self, agenix, home-manager, nixpkgs, ... }:
 
-home-manager.lib.homeManagerConfiguration {
-  pkgs = import nixpkgs {
-    system = "x86_64-linux";
-  };
+let
+  nixosConfiguration = self.nixosConfigurations.medea.config;
+  system = nixosConfiguration.nixpkgs.hostPlatform.system;
+in home-manager.lib.homeManagerConfiguration {
+  pkgs = import nixpkgs { inherit system; };
 
   extraSpecialArgs = {
     lib-age = self.lib.age;
-    nixosConfiguration = self.nixosConfigurations.medea.config;
+    inherit nixosConfiguration;
+    packages = self.packages.${system};
   };
 
   modules = [

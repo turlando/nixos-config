@@ -1,11 +1,10 @@
-;;; init.el --- Init                                 -*- lexical-binding: t; -*-
+;;; post-init.el --- Run after upstream init  -*- lexical-binding: t; -*-
 
 ;;; Commentary:
+;;; Loaded by minimal-emacs.d's init.el after its own setup.
+
 ;;; Code:
 
-;;;; Core / Bootstrap
-
-(require 'minimal-init)
 (require 'turlando-fonts)
 (require 'turlando-utils)
 
@@ -701,4 +700,4 @@
   (turlando/toggle-leader
     "g" '(git-gutter-mode :wk "git gutter")))
 
-;;; init.el ends here
+;;; post-init.el ends here

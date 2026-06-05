@@ -65,7 +65,7 @@
   in {
     inherit (import ./scripts (inputs // { inherit system pkgs pkgs-unstable; })) apps;
     devShells = import ./shells (inputs // { inherit system pkgs pkgs-unstable; });
-    packages = {
+    packages = (import ./packages (inputs // { inherit system pkgs pkgs-unstable; })) // {
       terraform-config = import ./infra (inputs // { inherit system; });
     };
   });

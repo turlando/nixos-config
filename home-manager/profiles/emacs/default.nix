@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, packages, pkgs, ... }:
 
 {
   home.packages = [ pkgs.ripgrep ];
@@ -43,12 +43,6 @@
     ];
   };
 
-  xdg.configFile."emacs/early-init.el".source = ./config/early-init.el;
-  xdg.configFile."emacs/init.el".source = ./config/init.el;
-  xdg.configFile."emacs/lisp/minimal-early-init.el".source =
-    ./config/lisp/minimal-early-init.el;
-  xdg.configFile."emacs/lisp/minimal-init.el".source =
-    ./config/lisp/minimal-init.el;
   xdg.configFile."emacs/lisp/turlando-utils.el".source =
     ./config/lisp/turlando-utils.el;
   xdg.configFile."emacs/lisp/turlando-fonts.el".text = ''
@@ -66,4 +60,11 @@
     (provide 'turlando-fonts)
     ;;; turlando-fonts.el ends here
   '';
+
+  xdg.configFile."emacs/early-init.el".source = "${packages.minimal-emacs-d}/early-init.el";
+  xdg.configFile."emacs/init.el".source = "${packages.minimal-emacs-d}/init.el";
+
+  xdg.configFile."emacs/pre-early-init.el".source = ./config/pre-early-init.el;
+  xdg.configFile."emacs/post-early-init.el".source = ./config/post-early-init.el;
+  xdg.configFile."emacs/post-init.el".source = ./config/post-init.el;
 }
