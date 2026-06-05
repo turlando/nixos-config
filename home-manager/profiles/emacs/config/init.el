@@ -426,7 +426,8 @@
 
 (use-package recentf
   :config
-  (recentf-mode 1))
+  (let ((inhibit-message t))
+    (recentf-mode 1)))
 
 (use-package saveplace
   :config
