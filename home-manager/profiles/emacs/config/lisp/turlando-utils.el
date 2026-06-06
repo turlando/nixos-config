@@ -65,6 +65,18 @@
   (interactive)
   (consult-ripgrep nil (thing-at-point 'symbol t)))
 
+(defun turlando/eldoc-after-mouse-click (&rest _)
+  "Schedule an eldoc query after a mouse click.
+On PGTK Emacs the eldoc idle timer doesn't fire after mouse events.
+Invalidates `eldoc--last-request-state' so the non-interactive call
+actually runs the query (echo area only; the doc buffer would pop up
+if we forced interactive mode)."
+  (when (bound-and-true-p eldoc-mode)
+    (run-at-time eldoc-idle-delay nil
+                 (lambda ()
+                   (setq eldoc--last-request-state nil)
+                   (eldoc-print-current-symbol-info)))))
+
 (defun turlando/delete-file ()
   "Remove file connected to current buffer and kill buffer."
   (interactive)

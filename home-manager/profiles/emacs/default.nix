@@ -13,6 +13,7 @@
       corfu
       delight
       editorconfig
+      eldoc-box
       embark
       embark-consult
       evil

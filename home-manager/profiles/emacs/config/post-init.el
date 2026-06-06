@@ -214,7 +214,9 @@
     :prefix ","
     :global-prefix "M-m m"
     :non-normal-prefix "M-m m"
-    :keymaps 'override))
+    :keymaps 'override)
+  (turlando/major-leader
+    "" '(:ignore t :wk "major mode")))
 
 (use-package emacs
   :ensure nil
@@ -587,22 +589,48 @@
   :custom
   (eldoc-idle-delay 0.1)
   (eldoc-echo-area-use-multiline-p nil)
+  :init
+  (advice-add 'mouse-set-point :after #'turlando/eldoc-after-mouse-click)
   :general
   (turlando/help-leader
     :predicate 'eldoc-mode
-    "h" '(eldoc-doc-buffer :wk "documentation")))
+    "H" '(eldoc-doc-buffer :wk "documentation buffer")))
+
+(use-package eldoc-box
+  :custom
+  (eldoc-box-clear-with-C-g t)
+  :config
+  (defun turlando/eldoc-box-help-at-point ()
+    "Show eldoc-box popup; j/k scroll, any other key dismisses."
+    (interactive)
+    (eldoc-box-help-at-point)
+    (set-transient-map
+     (let ((map (make-sparse-keymap)))
+       (define-key map "j" #'eldoc-box-scroll-up)
+       (define-key map "k" #'eldoc-box-scroll-down)
+       map)
+     t
+     #'eldoc-box-quit-frame))
+  :general
+  (turlando/help-leader
+    :predicate 'eldoc-mode
+    "h" '(turlando/eldoc-box-help-at-point :wk "documentation popup")))
 
 (use-package eglot
   :hook
   (eglot-managed-mode . flymake-mode)
   :custom
   (eglot-autoshutdown t)
+  (eglot-code-action-indications nil)
   (eglot-confirm-server-initiated-edits nil)
   (eglot-extend-to-xref t)
   :general
   (turlando/emacs-leader
-   :keymaps 'eglot-mode-map
+   :keymaps 'prog-mode-map
    "l"   '(:ignore t :wk "language server")
+   "lc"  '(eglot :wk "connect"))
+  (turlando/emacs-leader
+   :keymaps 'eglot-mode-map
    "ll"  '(eglot-list-connections :wk "list connections")
    "lr"  '(eglot-reconnect :wk "reconnect / restart server")
    "ls"  '(eglot-shutdown :wk "shutdown server"))
@@ -619,6 +647,7 @@
   (turlando/major-leader
     :keymaps 'eglot-mode-map
     "a" '(eglot-code-actions :wk "code actions")
+    "q" '(eglot-code-action-quickfix :wk "quick fix")
     "r" '(eglot-rename :wk "rename"))
   (turlando/toggle-leader
     :keymaps 'eglot-mode-map
