@@ -423,7 +423,6 @@
   :config
   (show-paren-mode 1)
   (delete-selection-mode 1)
-  (electric-pair-mode 1)
   (global-auto-revert-mode 1))
 
 (use-package recentf
@@ -502,6 +501,7 @@
   (sp-autoskip-closing-pair 'always)
   (sp-hybrid-kill-entire-symbol nil)
   :config
+  (require 'smartparens-config)
   (smartparens-global-mode 1)
   (show-smartparens-global-mode 1)
   (transient-define-prefix
