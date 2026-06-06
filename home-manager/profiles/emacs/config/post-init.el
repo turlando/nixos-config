@@ -561,8 +561,9 @@
 
 (use-package flymake
   :delight
-  :hook (emacs-lisp-mode . flymake-mode)
   :general
+  (turlando/toggle-leader
+    "e" '(flymake-mode :wk "errors"))
   (turlando/major-leader
     :keymaps 'flymake-mode-map
     "e"  '(:ignore t :wk "errors")
@@ -617,8 +618,6 @@
     "h" '(turlando/eldoc-box-help-at-point :wk "documentation popup")))
 
 (use-package eglot
-  :hook
-  (eglot-managed-mode . flymake-mode)
   :custom
   (eglot-autoshutdown t)
   (eglot-code-action-indications nil)
