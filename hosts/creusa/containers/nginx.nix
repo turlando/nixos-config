@@ -27,7 +27,7 @@
   };
 
   systemd.tmpfiles.rules = [
-    "d /var/state/var/lib/acme 0750 root root -"
+    "d ${config.environment.persistence.stateDir}/var/lib/acme 0750 root root -"
   ];
 
   networking.firewall.interfaces.eth0.allowedTCPPorts = [
@@ -53,7 +53,7 @@
       };
 
       "/var/lib/acme" = {
-        hostPath = "/var/state/var/lib/acme";
+        hostPath = "${config.environment.persistence.stateDir}/var/lib/acme";
         isReadOnly = false;
       };
     };
