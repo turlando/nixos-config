@@ -307,14 +307,18 @@
   (vertico-cycle t)
   (vertico-count 15)
   :config
-  (require 'vertico-directory)
   (vertico-mode 1)
   :bind
   (:map vertico-map
-        ("C-h" . vertico-directory-delete-char)
         ("C-j" . vertico-next)
         ("C-k" . vertico-previous)
         ("C-l" . vertico-insert)))
+
+(use-package vertico-directory
+  :after vertico
+  :bind
+  (:map vertico-map
+        ("C-h" . vertico-directory-delete-char)))
 
 (use-package orderless
   :demand t
@@ -381,9 +385,10 @@
 
 (use-package helpful
   :bind
-  (([remap describe-function] . helpful-callable)
-   ([remap describe-command] . helpful-command)
+  (([remap describe-command] . helpful-command)
+   ([remap describe-function] . helpful-callable)
    ([remap describe-key] . helpful-key)
+   ([remap describe-symbol] . helpful-symbol)
    ([remap describe-variable] . helpful-variable))
   :general
   (turlando/help-leader
@@ -464,7 +469,23 @@
         ("C-j" . corfu-next)
         ("C-k" . corfu-previous)
         ("C-l" . corfu-insert)
-        ("TAB" . corfu-complete)))
+        ("TAB" . corfu-complete))
+  :general
+  (turlando/toggle-leader
+    "c" '(corfu-mode :wk "completion")))
+
+(use-package corfu-popupinfo
+  :demand t
+  :after corfu
+  :config
+  (corfu-popupinfo-mode 1))
+
+(use-package corfu-history
+  :demand t
+  :after (corfu savehist)
+  :config
+  (corfu-history-mode 1)
+  (add-to-list 'savehist-additional-variables 'corfu-history))
 
 (use-package cape
   :demand t
@@ -498,7 +519,6 @@
   (sp-autoskip-closing-pair 'always)
   (sp-hybrid-kill-entire-symbol nil)
   :config
-  (require 'smartparens-config)
   (smartparens-global-mode 1)
   (show-smartparens-global-mode 1)
   (transient-define-prefix
@@ -525,6 +545,10 @@
     "t" '(sp-transpose-sexp :wk "transpose")
     "w" '(sp-wrap-round :wk "wrap")
     "W" '(sp-unwrap-sexp :wk "unwrap")))
+
+(use-package smartparens-config
+  :demand t
+  :after smartparens)
 
 (use-package avy
   :general
