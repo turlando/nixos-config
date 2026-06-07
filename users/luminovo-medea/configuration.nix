@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, pkgs, ... }:
 
 {
   home.stateVersion = "26.05";
@@ -37,11 +37,6 @@
 
   programs.emacs.enable = true;
   programs.emacs.package = pkgs.emacs-pgtk;
-
-  nixpkgs.config.allowUnfreePredicate = pkg:
-    builtins.elem (lib.getName pkg) [
-      "slack"
-    ];
 
   home.packages = [
     pkgs.slack

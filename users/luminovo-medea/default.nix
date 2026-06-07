@@ -3,8 +3,13 @@
 let
   nixosConfiguration = self.nixosConfigurations.medea.config;
   system = nixosConfiguration.nixpkgs.hostPlatform.system;
+  allowedUnfree = [ "slack" ];
 in home-manager.lib.homeManagerConfiguration {
-  pkgs = import nixpkgs { inherit system; };
+  pkgs = import nixpkgs {
+    inherit system;
+    config.allowUnfreePredicate = pkg:
+      builtins.elem (nixpkgs.lib.getName pkg) allowedUnfree;
+  };
 
   extraSpecialArgs = {
     lib-age = self.lib.age;
