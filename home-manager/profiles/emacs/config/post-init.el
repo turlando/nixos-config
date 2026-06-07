@@ -659,6 +659,17 @@
    :keymaps 'eglot-mode-map
    "s" '(consult-eglot-symbols :wk "workspace symbol")))
 
+(use-package emacs
+  :ensure nil
+  :general
+  (turlando/major-leader
+    :keymaps 'emacs-lisp-mode-map
+    "e"  '(:ignore t :wk "eval")
+    "eb" '(eval-buffer :wk "buffer")
+    "ee" '(eval-last-sexp :wk "last sexp")
+    "ef" '(eval-defun :wk "defun")
+    "er" '(eval-region :wk "region")))
+
 (use-package just-mode)
 
 (use-package nix-mode
@@ -681,6 +692,7 @@
     "c"  '(:ignore t :wk "cargo")
     "cb" '(rustic-cargo-build :wk "build")
     "cc" '(rustic-compile :wk "compile")
+    "cd" '(rustic-cargo-doc :wk "doc")
     "cf" '(rustic-cargo-fmt :wk "fmt")
     "ck" '(rustic-cargo-check :wk "check")
     "cl" '(rustic-cargo-clippy :wk "clippy")
