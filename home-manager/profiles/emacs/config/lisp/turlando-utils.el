@@ -12,16 +12,11 @@
 (defun turlando/copy-buffer-path ()
   "Copy the current buffer's file path to kill ring."
   (interactive)
-  (if-let ((filename (buffer-file-name)))
+  (if-let* ((filename (buffer-file-name)))
       (progn
         (kill-new filename)
         (message "Copied: %s" filename))
     (error "Buffer is not visiting a file")))
-
-(defun turlando/copy-file-path ()
-  "Copy file path to kill ring."
-  (interactive)
-  (turlando/copy-buffer-path))
 
 (defun turlando/copy-file (new-path)
   "Copy the current buffer's file to NEW-PATH."
@@ -76,6 +71,14 @@ if we forced interactive mode)."
                  (lambda ()
                    (setq eldoc--last-request-state nil)
                    (eldoc-print-current-symbol-info)))))
+
+(defun turlando/apply-default-font (&optional frame)
+  "Apply the configured monospace font to FRAME (or the current one).
+Required for `emacs --daemon': the initial daemon has no graphical
+frame, so `display-graphic-p' is nil at startup and the font would
+never be applied to subsequently-created frames."
+  (when (display-graphic-p frame)
+    (set-face-attribute 'default frame :font turlando/font-monospace)))
 
 (defun turlando/delete-file ()
   "Remove file connected to current buffer and kill buffer."

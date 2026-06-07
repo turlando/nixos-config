@@ -14,8 +14,8 @@
 (use-package emacs
   :ensure nil
   :init
-  (when (display-graphic-p)
-    (set-face-attribute 'default nil :font turlando/font-monospace)))
+  (turlando/apply-default-font)
+  (add-hook 'after-make-frame-functions #'turlando/apply-default-font))
 
 (use-package delight
   :demand t)
@@ -23,7 +23,6 @@
 (use-package ultra-scroll
   :custom
   (scroll-conservatively 3)
-  (scroll-margin 0)
   :config
   (ultra-scroll-mode 1))
 
@@ -58,11 +57,9 @@
 (use-package evil
   :demand t
   :init
-  (setq evil-want-integration t
-        evil-want-keybinding nil
+  (setq evil-want-keybinding nil
         evil-want-C-u-scroll t
         evil-want-C-i-jump nil
-        evil-respect-visual-line-mode nil
         evil-undo-system 'undo-redo)
   :config
   (evil-mode 1)
@@ -246,7 +243,7 @@
     "R" '(turlando/rename-file :wk "rename file")
     "s" '(save-buffer :wk "save file")
     "S" '(evil-write-all :wk "save all")
-    "y" '(turlando/copy-file-path :wk "copy file path")))
+    "y" '(turlando/copy-buffer-path :wk "copy file path")))
 
 ;; Buffer management
 (use-package emacs
@@ -260,7 +257,6 @@
     "n" '(next-buffer :wk "next buffer")
     "p" '(previous-buffer :wk "previous buffer")
     "r" '(revert-buffer :wk "revert buffer")
-    "s" '(basic-save-buffer :wk "save buffer")
     "x" '(kill-buffer-and-window :wk "kill buffer + window")
     "y" '(turlando/copy-whole-buffer :wk "copy buffer")
     "Y" '(turlando/copy-buffer-path :wk "copy buffer path")))
@@ -273,18 +269,18 @@
   (transient-define-prefix
     turlando/window-transient ()
     [["Split"
-      ("h" "horizontally" split-window-below :transient t)
-      ("v" "vertically" split-window-right :transient t)]
+      ("b" "below" split-window-below :transient t)
+      ("v" "right" split-window-right :transient t)]
      ["Navigate"
+      ("h" "left" windmove-left :transient t)
       ("j" "down" windmove-down :transient t)
       ("k" "up" windmove-up :transient t)
-      ("l" "right" windmove-right :transient t)
-      ("h" "left" windmove-left :transient t)]
+      ("l" "right" windmove-right :transient t)]
      ["Resize"
-      ("H" "shrink horizontal" shrink-window-horizontally :transient t)
-      ("L" "enlarge horizontal" enlarge-window-horizontally :transient t)
-      ("J" "shrink vertical" shrink-window :transient t)
-      ("K" "enlarge vertical" enlarge-window :transient t)]
+      ("H" "narrower" shrink-window-horizontally :transient t)
+      ("L" "wider" enlarge-window-horizontally :transient t)
+      ("J" "shorter" shrink-window :transient t)
+      ("K" "taller" enlarge-window :transient t)]
      ["Actions"
       ("d" "delete" delete-window :transient nil)
       ("D" "delete others" delete-other-windows :transient nil)
@@ -294,21 +290,16 @@
   :general
   (turlando/window-leader
     "." '(turlando/window-transient :wk "transient")
+    "b" '(split-window-below :wk "split below")
     "d" '(delete-window :wk "delete window")
     "D" '(delete-other-windows :wk "delete other windows")
-    "h" '(split-window-below :wk "split below")
     "u" '(winner-undo :wk "winner undo")
     "U" '(winner-redo :wk "winner redo")
     "v" '(split-window-right :wk "split right")
     "w" '(other-window :wk "other window")))
 
 (use-package winner
-  :config (winner-mode 1)
-  :general
-  (turlando/window-leader
-    :keymaps 'winner-mode-map
-    "u" '(winner-undo :which-key "Undo Layout")
-    "U" '(winner-redo :which-key "Redo Layout")))
+  :config (winner-mode 1))
 
 (use-package vertico
   :demand t
@@ -385,8 +376,8 @@
 
 (use-package dired-x
   :after dired
-  :config
-  (setq dired-omit-files "^\\.[^.]\\|^#\\|~$"))
+  :custom
+  (dired-omit-files "^\\.[^.]\\|^#\\|~$"))
 
 (use-package helpful
   :bind
@@ -421,7 +412,6 @@
 (use-package emacs
   :ensure nil
   :config
-  (show-paren-mode 1)
   (delete-selection-mode 1)
   (global-auto-revert-mode 1))
 
@@ -479,14 +469,21 @@
 (use-package cape
   :demand t
   :config
-  (add-hook 'completion-at-point-functions #'cape-dabbrev)
-  (add-hook 'completion-at-point-functions #'cape-file))
+  (add-hook 'prog-mode-hook
+            (lambda ()
+              (add-hook 'completion-at-point-functions #'cape-dabbrev nil t)
+              (add-hook 'completion-at-point-functions #'cape-file nil t)))
+  (add-hook 'text-mode-hook
+            (lambda ()
+              (add-hook 'completion-at-point-functions #'cape-file nil t))))
 
 (use-package cape-keyword
   :demand t
   :after cape
   :config
-  (add-hook 'completion-at-point-functions #'cape-keyword))
+  (add-hook 'prog-mode-hook
+            (lambda ()
+              (add-hook 'completion-at-point-functions #'cape-keyword nil t))))
 
 (use-package expand-region
   :general
@@ -573,6 +570,9 @@
     "eP" '(flymake-show-project-diagnostics :wk "project diagnostics")))
 
 (use-package xref
+  :custom
+  (xref-show-xrefs-function #'consult-xref)
+  (xref-show-definitions-function #'consult-xref)
   :general
   (turlando/jump-leader
    :keymaps 'prog-mode-map
@@ -582,6 +582,10 @@
    "D" '(xref-find-definitions-other-window :wk "definition other window")
    "r" '(xref-find-references :wk "references")
    "s" '(xref-find-apropos :wk "symbol")))
+
+(use-package consult-xref
+  :demand t
+  :after (consult xref))
 
 ;;;; Programming
 
