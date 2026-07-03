@@ -20,6 +20,7 @@ nixpkgs.lib.nixosSystem {
     self.nixosModules.modules.i18n.extra-locale
 
     self.nixosModules.profiles.base
+    self.nixosModules.profiles.boot-systemd
     self.nixosModules.profiles.age
     self.nixosModules.profiles.zfs
     self.nixosModules.profiles.libvirt
