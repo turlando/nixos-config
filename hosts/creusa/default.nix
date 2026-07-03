@@ -16,6 +16,7 @@ nixpkgs.lib.nixosSystem {
     disko.nixosModules.default
 
     self.nixosModules.modules.environment.persistence
+    self.nixosModules.modules.environment.ssh-public-keys
     self.nixosModules.modules.services.ephemeral
     self.nixosModules.modules.services.journald
 
