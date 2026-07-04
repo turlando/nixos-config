@@ -50,4 +50,15 @@
       linkConfig.RequiredForOnline = "no";
     };
   };
+
+  # NAT: masquerade lan0 traffic out wan0 so LAN clients reach the internet.
+  networking.nat = {
+    enable = true;
+    externalInterface = "wan0";
+    internalInterfaces = [ "lan0" ];
+  };
+
+  # Firewall: trust lan0 (the apartment LAN); wan0 stays default-deny
+  # inbound, passing only conntrack-established return traffic.
+  networking.firewall.trustedInterfaces = [ "lan0" ];
 }
