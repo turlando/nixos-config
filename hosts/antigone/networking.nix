@@ -114,14 +114,17 @@
         local-zone = [
           ''"perosi.rhyzomatic.net." static''
           ''"23.241.10.in-addr.arpa." static''
+          ''"254.241.10.in-addr.arpa." static''
         ];
         local-data = [
           ''"antigone.perosi.rhyzomatic.net. IN A 10.241.23.1"''
           ''"ap0.perosi.rhyzomatic.net. IN A 10.241.23.11"''
+          ''"modem.perosi.rhyzomatic.net. IN A 10.241.254.1"''
         ];
         local-data-ptr = [
           ''"10.241.23.1 antigone.perosi.rhyzomatic.net"''
           ''"10.241.23.11 ap0.perosi.rhyzomatic.net"''
+          ''"10.241.254.1 modem.perosi.rhyzomatic.net"''
         ];
       };
       forward-zone = [
