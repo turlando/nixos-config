@@ -32,22 +32,20 @@
   };
 
   # Networking backend: systemd-networkd. wan0 stays a DHCP client of the
-  # ZTE so the uplink is unchanged; lan0 is the static LAN gateway. Neither
-  # is required for online, so a down WAN or idle LAN never blocks boot;
-  # services self-heal as links come up. NAT, DHCP and DNS land in later
-  # commits.
+  # ZTE so the uplink is unchanged; lan0 is the static LAN gateway.
+  # wait-online is disabled so a down WAN or idle LAN never blocks or
+  # degrades boot; services self-heal as links come up.
   networking.useDHCP = false;
   networking.useNetworkd = true;
+  systemd.network.wait-online.enable = false;
   systemd.network.networks = {
     "10-wan0" = {
       matchConfig.Name = "wan0";
       networkConfig.DHCP = "ipv4";
-      linkConfig.RequiredForOnline = "no";
     };
     "10-lan0" = {
       matchConfig.Name = "lan0";
       address = [ "10.241.23.1/24" ];
-      linkConfig.RequiredForOnline = "no";
     };
   };
 
