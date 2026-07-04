@@ -85,4 +85,16 @@
       ];
     };
   };
+
+  # DNS: unbound is the LAN's recursive resolver on lan0 for 10.241.23.0/24.
+  # resolveLocalQueries is off, so antigone's own resolution stays on
+  # resolved.
+  services.unbound = {
+    enable = true;
+    resolveLocalQueries = false;
+    settings.server = {
+      interface = [ "10.241.23.1" ];
+      access-control = [ "10.241.23.0/24 allow" ];
+    };
+  };
 }
