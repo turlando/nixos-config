@@ -1,4 +1,4 @@
-{ config, ... }:
+{ config, pkgs, ... }:
 {
   # Remote unlock of the encrypted root: the initrd brings up wan0 (DHCP)
   # and runs sshd on port 2222 so the ZFS passphrase can be entered before
@@ -86,15 +86,53 @@
     };
   };
 
-  # DNS: unbound is the LAN's recursive resolver on lan0 for 10.241.23.0/24.
-  # resolveLocalQueries is off, so antigone's own resolution stays on
-  # resolved.
+  # antigone resolves through unbound, not systemd-resolved (which would
+  # otherwise use the wan0 link's DNS, i.e. the modem). With resolved off,
+  # resolveLocalQueries points antigone's /etc/resolv.conf straight at
+  # unbound.
+  services.resolved.enable = false;
+
+  # DNS: unbound is the caching resolver for antigone and the LAN. It
+  # forwards to Quad9 over DoT and answers authoritatively for the perosi
+  # site zone (and its reverse), so ap0.perosi.rhyzomatic.net resolves
+  # locally. resolveLocalQueries points antigone's own queries here too.
   services.unbound = {
     enable = true;
-    resolveLocalQueries = false;
-    settings.server = {
-      interface = [ "10.241.23.1" ];
-      access-control = [ "10.241.23.0/24 allow" ];
+    resolveLocalQueries = true;
+    settings = {
+      server = {
+        interface = [
+          "127.0.0.1"
+          "10.241.23.1"
+        ];
+        access-control = [
+          "127.0.0.0/8 allow"
+          "10.241.23.0/24 allow"
+        ];
+        tls-cert-bundle = "${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt";
+        local-zone = [
+          ''"perosi.rhyzomatic.net." static''
+          ''"23.241.10.in-addr.arpa." static''
+        ];
+        local-data = [
+          ''"antigone.perosi.rhyzomatic.net. IN A 10.241.23.1"''
+          ''"ap0.perosi.rhyzomatic.net. IN A 10.241.23.11"''
+        ];
+        local-data-ptr = [
+          ''"10.241.23.1 antigone.perosi.rhyzomatic.net"''
+          ''"10.241.23.11 ap0.perosi.rhyzomatic.net"''
+        ];
+      };
+      forward-zone = [
+        {
+          name = ".";
+          forward-tls-upstream = true;
+          forward-addr = [
+            "9.9.9.9@853#dns.quad9.net"
+            "149.112.112.112@853#dns.quad9.net"
+          ];
+        }
+      ];
     };
   };
 }
