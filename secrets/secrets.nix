@@ -27,6 +27,12 @@ in
     scope = with scope; [ nixos ];
   };
 
+  # Login password for root UNIX user on antigone.
+  "user-password-antigone-root.age" = {
+    publicKeys = with keys; [ antigone ];
+    scope = with scope; [ nixos ];
+  };
+
   # SSH key for user tancredi on antigone from medea.
   "ssh-key-antigone-tancredi.age" = {
     publicKeys = with keys; [ medea ];
