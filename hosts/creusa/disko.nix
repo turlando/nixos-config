@@ -42,7 +42,11 @@
         compression = "zstd";
         normalization = "formD";
         xattr = "sa";
-        reservation = "10G";
+        # Hold ~20% of the pool free: a refreservation on the dataless root
+        # keeps that space unavailable to the child datasets, so ZFS never
+        # fills enough to fragment and slow down. A plain reservation would
+        # not do this; it covers descendants, which could still consume it.
+        refreservation = "8G";
         relatime = "on";
         canmount = "off";
         mountpoint = "none";
