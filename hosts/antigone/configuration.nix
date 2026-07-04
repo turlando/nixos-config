@@ -15,17 +15,19 @@
     MaxRetentionSec = "1month";
   };
 
-  # Redundant boot: GRUB EFI installed to both ESPs (/boot/1, /boot/2), so
-  # the machine boots from whichever disk survives. Both ESPs are mounted
-  # nofail (see disko.nix) so a missing disk never blocks boot.
-  #
-  # `devices = ["nodev"]` keeps each entry EFI-only, so grub-install skips
-  # the BIOS/i386-pc step. With no top-level `device` (boot-grub profile),
-  # the grub module injects no phantom `/boot` entry, so this list stands
-  # as-is (no mkForce needed).
-  boot.loader.grub.mirroredBoots = [
-    { path = "/boot/1"; efiSysMountPoint = "/boot/1"; devices = [ "nodev" ]; }
-    { path = "/boot/2"; efiSysMountPoint = "/boot/2"; devices = [ "nodev" ]; }
+  # Redundant boot: GRUB EFI is installed to both ESPs so the machine boots
+  # from whichever disk survives; the mount points come from disko, where
+  # both ESPs are mounted nofail. `devices = ["nodev"]` keeps each entry
+  # EFI-only, so grub-install skips the BIOS/i386-pc step. With no top-level
+  # `device` (boot-grub profile) the grub module injects no phantom `/boot`
+  # entry, so this list stands as-is.
+  boot.loader.grub.mirroredBoots = let
+    inherit (config.disko.devices.disk) antigone-1 antigone-2;
+    boot1 = antigone-1.content.partitions.ESP.content.mountpoint;
+    boot2 = antigone-2.content.partitions.ESP.content.mountpoint;
+  in [
+    { path = boot1; efiSysMountPoint = boot1; devices = [ "nodev" ]; }
+    { path = boot2; efiSysMountPoint = boot2; devices = [ "nodev" ]; }
   ];
 
   users.users.root = {
