@@ -61,4 +61,30 @@
   # Firewall: trust lan0 (the apartment LAN); wan0 stays default-deny
   # inbound, passing only conntrack-established return traffic.
   networking.firewall.trustedInterfaces = [ "lan0" ];
+
+  # DHCP: kea serves the LAN on lan0 from the 10.241.23.101-200 pool,
+  # handing out antigone (.1) as gateway and resolver.
+  services.kea.dhcp4 = {
+    enable = true;
+    settings = {
+      interfaces-config.interfaces = [ "lan0" ];
+      lease-database = {
+        type = "memfile";
+        persist = true;
+        name = "/var/lib/kea/dhcp4.leases";
+      };
+      valid-lifetime = 86400;
+      subnet4 = [
+        {
+          id = 1;
+          subnet = "10.241.23.0/24";
+          pools = [ { pool = "10.241.23.101 - 10.241.23.200"; } ];
+          option-data = [
+            { name = "routers";             data = "10.241.23.1"; }
+            { name = "domain-name-servers"; data = "10.241.23.1"; }
+          ];
+        }
+      ];
+    };
+  };
 }
