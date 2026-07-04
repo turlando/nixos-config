@@ -31,8 +31,8 @@
     linkConfig.Name = "lan0";
   };
 
-  # Networking backend: systemd-networkd. wan0 stays a DHCP client of the
-  # ZTE so the uplink is unchanged; lan0 is the static LAN gateway.
+  # Networking backend: systemd-networkd. wan0 is antigone's static uplink
+  # to the ZTE on the transit segment; lan0 is the static LAN gateway.
   # wait-online is disabled so a down WAN or idle LAN never blocks or
   # degrades boot; services self-heal as links come up.
   networking.useDHCP = false;
@@ -41,7 +41,8 @@
   systemd.network.networks = {
     "10-wan0" = {
       matchConfig.Name = "wan0";
-      networkConfig.DHCP = "ipv4";
+      address = [ "10.241.254.2/24" ];
+      gateway = [ "10.241.254.1" ];
     };
     "10-lan0" = {
       matchConfig.Name = "lan0";
