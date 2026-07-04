@@ -1,5 +1,21 @@
-_:
+{ config, ... }:
 {
+  # Remote unlock of the encrypted root: the initrd brings up wan0 (DHCP)
+  # and runs sshd on port 2222 so the ZFS passphrase can be entered before
+  # the pool is mounted. Connect with `ssh -p 2222 root@<ip>`, then type
+  # the passphrase. The host key is appended to the initrd at activation
+  # (not the Nix store), so it sits unencrypted on the ESP; it is only an
+  # SSH identity, not the disk key.
+  boot.initrd.availableKernelModules = [ "e1000e" ];
+  boot.kernelParams = [ "ip=dhcp" ];
+  boot.initrd.network.enable = true;
+  boot.initrd.network.ssh = {
+    enable = true;
+    port = 2222;
+    authorizedKeys = [ config.environment.sshPublicKeys.antigone-root_medea-tancredi ];
+    hostKeys = [ "/var/state/secrets/initrd/ssh_host_ed25519_key" ];
+  };
+
   # Pin interface names by MAC so they stay stable across reboots and as
   # NICs are added.
 
