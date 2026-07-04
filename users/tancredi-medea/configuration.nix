@@ -10,8 +10,13 @@
     enableDefaultConfig = false;
     settings = {
       "antigone" = {
-        HostName = "81.56.74.151";
-        Port = 13022;
+        HostName = "10.241.23.1";
+        User = "root";
+        IdentityFile = config.age.secrets.ssh-key_antigone-root_medea-tancredi.path;
+      };
+      "antigone-unlock" = {
+        HostName = "10.241.23.1";
+        Port = 2222;
         User = "root";
         IdentityFile = config.age.secrets.ssh-key_antigone-root_medea-tancredi.path;
       };
