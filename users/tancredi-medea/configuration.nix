@@ -12,18 +12,18 @@
       "antigone" = {
         HostName = "81.56.74.151";
         Port = 13022;
-        User = "tancredi";
-        IdentityFile = config.age.secrets.ssh-key-antigone-tancredi.path;
+        User = "root";
+        IdentityFile = config.age.secrets.ssh-key_antigone-root_medea-tancredi.path;
       };
       "creusa" = {
         HostName = "46.225.229.141";
         User = "root";
-        IdentityFile = config.age.secrets.ssh-key-creusa-root.path;
+        IdentityFile = config.age.secrets.ssh-key_creusa-root_medea-tancredi.path;
       };
       "github.com" = {
         HostName = "github.com";
         User = "git";
-        IdentityFile = config.age.secrets.ssh-key-github.path;
+        IdentityFile = config.age.secrets.ssh-key_github-git_medea-tancredi.path;
       };
     };
   };

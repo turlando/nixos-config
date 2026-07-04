@@ -33,32 +33,37 @@ in
     scope = with scope; [ nixos ];
   };
 
-  # SSH key for user tancredi on antigone from medea.
-  "ssh-key-antigone-tancredi.age" = {
+  # SSH client keys follow the convention
+  #   ssh-key_<target_host>-<target_user>_<source_host>-<source_user>
+  # so each key names the grant it represents: the private half lets
+  # <source_user>@<source_host> authenticate as <target_user>@<target_host>.
+  # Hence publicKeys is the source host (the only place the key is
+  # decrypted, since it is used there as an SSH client identity) and scope
+  # is the source user's realm. The public half lives in ssh-keys.nix under
+  # the same tuple and is installed into the target's authorized_keys (our
+  # hosts) or registered with the service (github/gitlab/compiler).
+
+  "ssh-key_creusa-root_medea-tancredi.age" = {
     publicKeys = with keys; [ medea ];
     scope = with scope; [ tancredi ];
   };
 
-  # SSH key for user root on creusa from medea.
-  "ssh-key-creusa-root.age" = {
+  "ssh-key_antigone-root_medea-tancredi.age" = {
     publicKeys = with keys; [ medea ];
     scope = with scope; [ tancredi ];
   };
 
-  # SSH key for turlando GitHub account on medea.
-  "ssh-key-github.age" = {
+  "ssh-key_github-git_medea-tancredi.age" = {
     publicKeys = with keys; [ medea ];
     scope = with scope; [ tancredi ];
   };
 
-  # SSH key for Luminovo GitLab account on medea.
-  "ssh-key-luminovo-gitlab.age" = {
+  "ssh-key_gitlab-git_medea-luminovo.age" = {
     publicKeys = with keys; [ medea ];
     scope = with scope; [ luminovo ];
   };
 
-  # SSH key for Luminovo compiler machines on medea.
-  "ssh-key-luminovo-compilers.age" = {
+  "ssh-key_compiler4-tancredi_medea-luminovo.age" = {
     publicKeys = with keys; [ medea ];
     scope = with scope; [ luminovo ];
   };

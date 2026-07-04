@@ -12,12 +12,12 @@
       "gitlab.com" = {
         HostName = "gitlab.com";
         User = "git";
-        IdentityFile = config.age.secrets.ssh-key-luminovo-gitlab.path;
+        IdentityFile = config.age.secrets.ssh-key_gitlab-git_medea-luminovo.path;
       };
       "compiler4.luminovo.com" = {
         HostName = "148.251.132.243";
         User = "tancredi";
-        IdentityFile = config.age.secrets.ssh-key-luminovo-compilers.path;
+        IdentityFile = config.age.secrets.ssh-key_compiler4-tancredi_medea-luminovo.path;
       };
     };
   };

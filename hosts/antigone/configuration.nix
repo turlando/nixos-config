@@ -30,6 +30,6 @@
 
   users.users.root = {
     hashedPasswordFile = config.age.secrets.user-password-antigone-root.path;
-    openssh.authorizedKeys.keys = [ config.environment.sshPublicKeys.antigone-tancredi ];
+    openssh.authorizedKeys.keys = [ config.environment.sshPublicKeys.antigone-root_medea-tancredi ];
   };
 }
