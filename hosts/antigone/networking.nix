@@ -61,6 +61,10 @@
   # inbound, passing only conntrack-established return traffic.
   networking.firewall.trustedInterfaces = [ "lan0" ];
 
+  # SSH is management: reachable only via lan0 (trusted above), never on
+  # wan0, which is the internet edge under DMZ.
+  services.openssh.openFirewall = false;
+
   # DHCP: kea serves the LAN on lan0 from the 10.241.23.101-200 pool,
   # handing out antigone (.1) as gateway and resolver.
   services.kea.dhcp4 = {
