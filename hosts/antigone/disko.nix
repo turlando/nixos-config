@@ -82,7 +82,6 @@
 
         dnodesize = "auto";
         redundant_metadata = "most";
-        checksum = "fletcher4";
         compression = "zstd";
         normalization = "formD";
         xattr = "sa";
@@ -140,7 +139,6 @@
           mountpoint = "/nix/var";
           options = {
             recordsize = "16K";
-            logbias = "latency";
             atime = "off";
           };
         };
@@ -150,7 +148,6 @@
           mountpoint = "/var/log/journal";
           options = {
             recordsize = "16K";
-            logbias = "latency";
             primarycache = "metadata";
             sync = "disabled";
             atime = "off";

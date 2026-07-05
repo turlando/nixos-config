@@ -13,7 +13,6 @@
       mountpoint = "/var/containers/nginx/journal";
       options = {
         recordsize = "16K";
-        logbias = "latency";
         primarycache = "metadata";
         sync = "disabled";
         atime = "off";
