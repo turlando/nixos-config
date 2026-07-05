@@ -1,12 +1,10 @@
 { config, pkgs, ... }:
 {
-  # Remote unlock of the encrypted root: the initrd brings up lan0 (static)
-  # and runs sshd on port 2222, so the ZFS passphrase can be entered from
-  # the LAN before the pool is mounted: `ssh -p 2222 root@10.241.23.1`.
-  # Only lan0 gets an address, so the unlock stays off the internet-facing
-  # wan0; both NIC drivers are kept in the initrd for safety. The host key
-  # is appended to the initrd at activation (not the Nix store), so it sits
-  # unencrypted on the ESP; it is only an SSH identity, not the disk key.
+  # Remote unlock: the initrd-openssh-server profile runs sshd (:2222) with a
+  # persistent host key. Here we bring up lan0 (static, matched by MAC) and
+  # authorize who may unlock, so the ZFS passphrase can be entered from the
+  # LAN before the pool mounts. Only lan0 gets an address, keeping unlock off
+  # wan0; both NIC drivers stay in the initrd for safety.
   boot.initrd.availableKernelModules = [
     "e1000e"
     "r8169"
@@ -18,13 +16,7 @@
       address = [ "10.241.23.1/24" ];
     };
   };
-  boot.initrd.network.enable = true;
-  boot.initrd.network.ssh = {
-    enable = true;
-    port = 2222;
-    authorizedKeys = [ config.environment.sshPublicKeys.antigone-root_medea-tancredi ];
-    hostKeys = [ "/var/state/secrets/initrd/ssh_host_ed25519_key" ];
-  };
+  boot.initrd.network.ssh.authorizedKeys = [ config.environment.sshPublicKeys.antigone-root_medea-tancredi ];
 
   # Pin interface names by MAC so they stay stable across reboots and as
   # NICs are added.

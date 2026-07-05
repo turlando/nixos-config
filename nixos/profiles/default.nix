@@ -5,6 +5,7 @@
   boot-systemd = import ./boot-systemd.nix;
   clamav = import ./clamav.nix;
   graphical = import ./graphical.nix;
+  initrd-openssh-server = import ./initrd-openssh-server.nix;
   libvirt = import ./libvirt.nix;
   openssh-server = import ./openssh-server.nix;
   smartcard = import ./smartcard.nix;

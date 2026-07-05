@@ -21,6 +21,7 @@ nixpkgs.lib.nixosSystem {
     self.nixosModules.profiles.boot-grub
     self.nixosModules.profiles.age
     self.nixosModules.profiles.zfs
+    self.nixosModules.profiles.initrd-openssh-server
     self.nixosModules.profiles.openssh-server
 
     ./hardware.nix
