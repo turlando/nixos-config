@@ -33,6 +33,13 @@ in
     scope = with scope; [ nixos ];
   };
 
+  # ZFS passphrase for the storage pool. Read via keylocation for unattended
+  # unlock once the root pool is open; also typeable at a prompt for recovery.
+  "zfs-passphrase-storage.age" = {
+    publicKeys = with keys; [ antigone ];
+    scope = with scope; [ nixos ];
+  };
+
   # SSH client keys follow the convention
   #   ssh-key_<target_host>-<target_user>_<source_host>-<source_user>
   # so each key names the grant it represents: the private half lets

@@ -1,3 +1,4 @@
+{ config, ... }:
 {
   disko.devices = {
     disk = {
@@ -60,6 +61,56 @@
                 pool = "antigone";
               };
             };
+          };
+        };
+      };
+
+      # Four 4 TB HGST disks forming the storage pool (RAID10, two mirrors).
+      storage-1 = {
+        type = "disk";
+        device = "/dev/disk/by-id/ata-HGST_HUS724040ALA640_PN1334PBJMA8AS";
+        content = {
+          type = "gpt";
+          partitions.zfs = {
+            size = "100%";
+            label = "storage-1";
+            content = { type = "zfs"; pool = "storage"; };
+          };
+        };
+      };
+      storage-2 = {
+        type = "disk";
+        device = "/dev/disk/by-id/ata-HGST_HUS724040ALA640_PN1334PBJN6DGS";
+        content = {
+          type = "gpt";
+          partitions.zfs = {
+            size = "100%";
+            label = "storage-2";
+            content = { type = "zfs"; pool = "storage"; };
+          };
+        };
+      };
+      storage-3 = {
+        type = "disk";
+        device = "/dev/disk/by-id/ata-HGST_HUS724040ALA640_PN1334PBJX3R3S";
+        content = {
+          type = "gpt";
+          partitions.zfs = {
+            size = "100%";
+            label = "storage-3";
+            content = { type = "zfs"; pool = "storage"; };
+          };
+        };
+      };
+      storage-4 = {
+        type = "disk";
+        device = "/dev/disk/by-id/ata-HGST_HUS724040ALA640_PN2334PBJTM5GT";
+        content = {
+          type = "gpt";
+          partitions.zfs = {
+            size = "100%";
+            label = "storage-4";
+            content = { type = "zfs"; pool = "storage"; };
           };
         };
       };
@@ -161,6 +212,66 @@
             acltype = "posixacl";
           };
         };
+      };
+    };
+
+    zpool.storage = {
+      type = "zpool";
+
+      # RAID10: two mirror vdevs, striped. Survives one disk per mirror (two
+      # total if they land in different mirrors), with fast resilvers.
+      #
+      # disko requires each topology member to be one of the partitions that
+      # reference this pool, named by its by-partlabel path.
+      mode = {
+        topology = {
+          type = "topology";
+          vdev = [
+            {
+              mode = "mirror";
+              members = [
+                "/dev/disk/by-partlabel/storage-1"
+                "/dev/disk/by-partlabel/storage-2"
+              ];
+            }
+            {
+              mode = "mirror";
+              members = [
+                "/dev/disk/by-partlabel/storage-3"
+                "/dev/disk/by-partlabel/storage-4"
+              ];
+            }
+          ];
+        };
+      };
+
+      options.ashift = "12";
+
+      rootFsOptions = {
+        # Passphrase encryption. The passphrase lives in agenix and is read
+        # from that file for unattended unlock once the root pool is open;
+        # the same passphrase is typeable at a prompt for recovery on any
+        # machine (`zfs load-key -L prompt storage`).
+        encryption = "aes-256-gcm";
+        keyformat = "passphrase";
+        keylocation = "file://${config.age.secrets.zfs-passphrase-storage.path}";
+
+        dnodesize = "auto";
+        redundant_metadata = "most";
+        compression = "zstd";
+        normalization = "formD";
+        xattr = "sa";
+        acltype = "posixacl";
+
+        # Hold ~20% of the pool free: a refreservation on the dataless root
+        # keeps that space unavailable to the child datasets, so ZFS never
+        # fills enough to fragment and slow down. A plain reservation would
+        # not do this; it covers descendants, which could still consume it.
+        refreservation = "1.5T";
+
+        relatime = "on";
+        canmount = "off";
+        mountpoint = "none";
       };
     };
   };

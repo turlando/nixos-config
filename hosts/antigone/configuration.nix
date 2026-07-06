@@ -9,6 +9,11 @@
   services.ephemeral.enable = true;
   services.ephemeral.datasets."antigone/nixos/ROOT".enable = true;
 
+  # Import the storage pool at boot and unlock it from its agenix keyfile.
+  # Activation (so agenix) runs in the initrd, so /run/agenix already holds
+  # the passphrase when the stage-2 import service reads it via keylocation.
+  boot.zfs.extraPools = [ config.disko.devices.zpool.storage.name ];
+
   services.journald.settings = {
     SystemMaxUse = "256M";
     SystemMaxFileSize = "32M";
