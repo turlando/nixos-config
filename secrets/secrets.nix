@@ -40,6 +40,13 @@ in
     scope = with scope; [ nixos ];
   };
 
+  # Soulseek network credentials for slskd (SLSKD_SLSK_USERNAME /
+  # SLSKD_SLSK_PASSWORD), delivered as its environmentFile in the container.
+  "slskd-credentials.age" = {
+    publicKeys = with keys; [ antigone ];
+    scope = with scope; [ nixos ];
+  };
+
   # SSH client keys follow the convention
   #   ssh-key_<target_host>-<target_user>_<source_host>-<source_user>
   # so each key names the grant it represents: the private half lets

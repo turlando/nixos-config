@@ -212,6 +212,16 @@
             acltype = "posixacl";
           };
         };
+
+        # Parent for the nspawn container datasets defined under
+        # hosts/antigone/containers/; each child holds a container's journal
+        # and data.
+        "containers" = {
+          type = "zfs_fs";
+          options = {
+            canmount = "off";
+          };
+        };
       };
     };
 
