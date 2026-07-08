@@ -64,7 +64,7 @@ in
 
     "downloads/slskd" = {
       type = "zfs_fs";
-      mountpoint = "/storage/downloads/slskd";
+      mountpoint = "/srv/downloads/slskd";
       options = {
         # slskd's downloads, in-progress and completed: large, sequential
         # media. A big recordsize maximizes throughput and compression

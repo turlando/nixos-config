@@ -26,7 +26,7 @@ in
     # ACLs applied by storage-music-perms below.
     "music/electronic-flac" = {
       type = "zfs_fs";
-      mountpoint = "/storage/music/electronic-flac";
+      mountpoint = "/srv/music/electronic-flac";
       options = {
         recordsize = "1M";
         atime = "off";
@@ -36,7 +36,7 @@ in
 
     "music/electronic-mp3" = {
       type = "zfs_fs";
-      mountpoint = "/storage/music/electronic-mp3";
+      mountpoint = "/srv/music/electronic-mp3";
       options = {
         recordsize = "1M";
         atime = "off";
