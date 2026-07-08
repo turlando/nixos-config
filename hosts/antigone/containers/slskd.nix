@@ -9,6 +9,15 @@ let
   downloadsDir = "/var/lib/slskd/downloads";
   completeDownloadsDir = "${downloadsDir}/complete";
   incompleteDownloadsDir = "${downloadsDir}/incomplete";
+
+  # Pinned ids from the registry, so slskd's uid and the storage-music gid
+  # line up across the container boundary (privateUsers = false).
+  slskdUid = config.environment.ids.uids.slskd;
+  slskdGid = config.environment.ids.gids.slskd;
+  storageMusicGid = config.environment.ids.gids.storage-music;
+
+  # Master FLAC library on the storage pool, shared read-only through slskd.
+  flacLibrary = config.disko.devices.zpool.storage.datasets."music/electronic-flac".mountpoint;
 in
 {
   disko.devices.zpool.antigone.datasets = {
@@ -108,6 +117,13 @@ in
         isReadOnly = false;
       };
 
+      # FLAC library, read-only: slskd serves it on Soulseek but can never
+      # modify it (the group would allow writes, so the ro mount is the guard).
+      "${flacLibrary}" = {
+        hostPath = flacLibrary;
+        isReadOnly = true;
+      };
+
       # Soulseek credentials from agenix. systemd reads the environmentFile as
       # root before dropping to the slskd user.
       "${credentialsPath}" = {
@@ -133,6 +149,16 @@ in
         system.stateVersion = "26.05";
         environment.etc."machine-id".text = "968550ca92ef428e91a8bcb33490d815";
 
+        # Pin slskd's uid so its bind-mounted state stays owned by it across
+        # restarts of the ephemeral container, and add it to storage-music so
+        # it can read the group-owned FLAC library it shares.
+        users.users.slskd = {
+          uid = slskdUid;
+          extraGroups = [ "storage-music" ];
+        };
+        users.groups.slskd.gid = slskdGid;
+        users.groups.storage-music.gid = storageMusicGid;
+
         services.journald.settings = {
           SystemMaxUse = "256M";
           SystemMaxFileSize = "32M";
@@ -141,9 +167,10 @@ in
 
         # slskd's download dirs are in the service's ReadWritePaths, which
         # systemd requires to exist before it builds the sandbox (slskd can't
-        # create them itself, as it never starts). Create them owned by slskd.
+        # create them itself, as it never starts). complete/ is world-readable
+        # so tancredi's beets can copy-import from it; incomplete/ stays private.
         systemd.tmpfiles.rules = [
-          "d ${completeDownloadsDir} 0700 slskd slskd -"
+          "d ${completeDownloadsDir} 0755 slskd slskd -"
           "d ${incompleteDownloadsDir} 0700 slskd slskd -"
         ];
 
@@ -155,10 +182,10 @@ in
             # Bind the web UI to loopback so nginx (which shares the host
             # netns) is the only way in; it is never reachable on lan0 or wan0.
             web.ip_address = "127.0.0.1";
-            # No web login: the LAN is trusted and nginx fronts it. Nothing is
-            # shared yet; the media layout comes with a later change.
+            # No web login: the LAN is trusted and nginx fronts it.
             web.authentication.disabled = true;
-            shares.directories = [ ];
+            # Share the FLAC library (bound read-only) on the Soulseek network.
+            shares.directories = [ flacLibrary ];
             # Completed and in-progress files as sibling dirs on the one
             # storage mount (bound above), so finishing a download is a rename
             # within the dataset, not a cross-dataset or cross-pool copy.

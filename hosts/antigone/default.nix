@@ -15,6 +15,7 @@ nixpkgs.lib.nixosSystem {
     agenix.nixosModules.default
     disko.nixosModules.default
 
+    self.nixosModules.modules.environment.ids
     self.nixosModules.modules.environment.persistence
     self.nixosModules.modules.environment.ssh-public-keys
     self.nixosModules.modules.services.ephemeral
@@ -29,6 +30,7 @@ nixpkgs.lib.nixosSystem {
 
     ./hardware.nix
     ./disko.nix
+    ./storage.nix
     ./configuration.nix
     ./networking.nix
     ./containers
