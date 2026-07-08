@@ -20,15 +20,17 @@ pkgs.writeShellApplication {
   meta.description = "Format and mount disks on a remote host (non-destructive)";
   runtimeInputs = [ pkgs.openssh ];
   text = ''
-    if [ "$#" -lt 1 ] || [ "$#" -gt 2 ]; then
-      echo "Usage: disko-apply-remote <host> [remote]" >&2
+    if [ "$#" -lt 2 ] || [ "$#" -gt 3 ]; then
+      echo "Usage: disko-apply-remote <host> <user> [remote]" >&2
       echo "  <host>    NixOS configuration name" >&2
+      echo "  <user>    ssh login user on the target" >&2
       echo "  [remote]  ssh target host (defaults to <host>)" >&2
       exit 2
     fi
 
     HOST="$1"
-    REMOTE="''${2:-$HOST}"
+    USER="$2"
+    REMOTE="''${3:-$HOST}"
 
     # Look up the pre-built formatMount derivation for $HOST. Building
     # this script implicitly builds formatMount for every known host;
@@ -40,11 +42,11 @@ pkgs.writeShellApplication {
 
     # Copy the formatMount derivation to the target's Nix store, then
     # execute it on the target.
-    nix copy --to "ssh://root@$REMOTE" "$SCRIPT"
+    nix copy --to "ssh://$USER@$REMOTE" "$SCRIPT"
 
     # shellcheck disable=SC2029
     # $SCRIPT must expand client-side: it is the local store path of
     # the just-copied derivation, which the remote must invoke verbatim.
-    ssh "root@$REMOTE" "$SCRIPT/bin/disko-format-mount"
+    ssh "$USER@$REMOTE" "$SCRIPT/bin/disko-format-mount"
   '';
 }

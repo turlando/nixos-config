@@ -56,8 +56,8 @@ nixos-install host:
 
 # Deploy NixOS to a new remote host via nixos-anywhere
 [group("nixos")]
-nixos-install-remote host key remote=host:
-    nix run .#nixos-install-remote -- "{{host}}" "{{key}}" "{{remote}}"
+nixos-install-remote host key user="root" remote=host:
+    nix run .#nixos-install-remote -- "{{host}}" "{{key}}" "{{user}}" "{{remote}}"
 
 # Build NixOS configuration without activating
 [group("nixos")]
@@ -71,8 +71,8 @@ nixos-switch host=HOSTNAME:
 
 # Build and activate NixOS configuration to a remote host
 [group("nixos")]
-nixos-switch-remote host remote=host user="root":
-    nixos-rebuild switch --flake .#{{host}} --target-host root@{{remote}}
+nixos-switch-remote host user="root" remote=host:
+    nixos-rebuild switch --flake .#{{host}} --target-host {{user}}@{{remote}}
 
 # Build home-manager configuration without activating
 [group("home-manager")]
@@ -101,8 +101,8 @@ disko-apply host=HOSTNAME:
 
 # Apply disko changes (format and mount) on a remote host
 [group("disko")]
-disko-apply-remote host remote=host:
-    nix run .#disko-apply-remote -- "{{host}}" "{{remote}}"
+disko-apply-remote host user="root" remote=host:
+    nix run .#disko-apply-remote -- "{{host}}" "{{user}}" "{{remote}}"
 
 # Generate an SSH ed25519 key pair for a new host
 [group("agenix")]

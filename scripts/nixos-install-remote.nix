@@ -17,17 +17,19 @@ pkgs.writeShellApplication {
     nixos-anywhere.packages.${system}.default
   ];
   text = ''
-    if [ "$#" -lt 2 ] || [ "$#" -gt 3 ]; then
-      echo "Usage: nixos-install-remote <host> <identity-key> [remote]" >&2
+    if [ "$#" -lt 3 ] || [ "$#" -gt 4 ]; then
+      echo "Usage: nixos-install-remote <host> <identity-key> <user> [remote]" >&2
       echo "  <host>          NixOS configuration name (e.g. creusa)" >&2
       echo "  <identity-key>  path to the agenix identity (private) key" >&2
+      echo "  <user>          ssh login user on the target" >&2
       echo "  [remote]        ssh target host (defaults to <host>)" >&2
       exit 2
     fi
 
     HOST="$1"
     KEY="$2"
-    REMOTE="''${3:-$HOST}"
+    USER="$3"
+    REMOTE="''${4:-$HOST}"
 
     if [ ! -f "$KEY" ]; then
       echo "Error: identity key file not found: $KEY" >&2
@@ -47,6 +49,6 @@ pkgs.writeShellApplication {
     nixos-anywhere \
       --extra-files "$TEMP" \
       --flake ".#$HOST" \
-      "root@$REMOTE"
+      "$USER@$REMOTE"
   '';
 }
