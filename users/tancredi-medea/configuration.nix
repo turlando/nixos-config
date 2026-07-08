@@ -62,6 +62,18 @@
     enable = true;
     cert = config.age.secrets.syncthing-medea-cert.path;
     key = config.age.secrets.syncthing-medea-key.path;
+
+    settings.devices.antigone.id = config.environment.syncthingDeviceIds.antigone;
+
+    settings.folders."electronic-mp3" = {
+      label = "Electronic (MP3)";
+      path = "/srv/music/electronic";
+      type = "receiveonly";
+      # antigone's files are group-restricted (o=---); take medea's umask
+      # instead so the library stays world-readable for the libvirt VM.
+      ignorePerms = true;
+      devices = [ "antigone" ];
+    };
   };
 
   # syncthing's copy-keys step installs the pinned cert from agenix, so order

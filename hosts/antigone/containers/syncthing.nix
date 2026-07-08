@@ -6,6 +6,13 @@ let
   # host-decrypted paths through is enough.
   certPath = config.age.secrets.syncthing-antigone-cert.path;
   keyPath = config.age.secrets.syncthing-antigone-key.path;
+
+  # Syncthing's TCP + QUIC sync port.
+  syncPort = 22000;
+
+  # MP3 export shared one-way to medea; syncthing joins storage-music to read it.
+  mp3Library = config.disko.devices.zpool.storage.datasets."music/electronic-mp3".mountpoint;
+  storageMusicGid = config.environment.ids.gids.storage-music;
 in
 {
   disko.devices.zpool.antigone.datasets = {
@@ -36,6 +43,18 @@ in
     };
   };
 
+  # syncthing's sync port on the internet edge (like slskd's P2P port); the GUI
+  # stays loopback behind nginx, and local discovery stays on lan0.
+  networking.firewall.interfaces.wan0.allowedTCPPorts = [ syncPort ];
+  networking.firewall.interfaces.wan0.allowedUDPPorts = [ syncPort ];
+
+  # The MP3 dataset is on the storage pool (late stage-2 mount), so order the
+  # container after zfs-mount, as slskd does.
+  systemd.services."container@syncthing" = {
+    after = [ "zfs-mount.service" ];
+    requires = [ "zfs-mount.service" ];
+  };
+
   containers.syncthing = {
     ephemeral = true;
     autoStart = true;
@@ -64,6 +83,12 @@ in
         hostPath = keyPath;
         isReadOnly = true;
       };
+
+      # MP3 export on storage, read-write so syncthing can manage the folder.
+      "${mp3Library}" = {
+        hostPath = mp3Library;
+        isReadOnly = false;
+      };
     };
 
     config =
@@ -84,9 +109,12 @@ in
           MaxRetentionSec = "1month";
         };
 
+        # syncthing (uid 237 from nixpkgs) joins storage-music to read and
+        # write the MP3 dataset it shares.
+        users.users.syncthing.extraGroups = [ "storage-music" ];
+        users.groups.storage-music.gid = storageMusicGid;
+
         # GUI stays on the default loopback (127.0.0.1:8384); nginx fronts it.
-        # The MP3 folder, storage-music access, the sync port on wan0, and the
-        # device pairing all come with the shares setup.
         services.syncthing = {
           enable = true;
           # Pin the TLS identity (bound in above) so antigone's device ID stays
@@ -99,6 +127,18 @@ in
           # DNS rebinding; the GUI here is on antigone's loopback, reached
           # only through nginx from the trusted LAN, where it does not apply.
           settings.gui.insecureSkipHostcheck = true;
+
+          settings.devices = {
+            antigone.id = config.environment.syncthingDeviceIds.antigone;
+            medea.id = config.environment.syncthingDeviceIds.medea;
+          };
+
+          settings.folders."electronic-mp3" = {
+            label = "Electronic (MP3)";
+            path = mp3Library;
+            type = "sendonly";
+            devices = [ "medea" ];
+          };
         };
       };
   };
