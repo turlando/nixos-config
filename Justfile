@@ -86,8 +86,8 @@ home-switch host=HOSTNAME user=USER:
 
 # Build and activate home-manager configuration on a remote host
 [group("home-manager")]
-home-switch-remote host user remote=host:
-    nix run .#home-switch-remote -- "{{host}}" "{{user}}" "{{remote}}"
+home-switch-remote host user remote=host copyuser="root":
+    nix run .#home-switch-remote -- "{{host}}" "{{user}}" "{{remote}}" "{{copyuser}}"
 
 # Destroy existing partitions, format, and mount disks
 [group("disko")]

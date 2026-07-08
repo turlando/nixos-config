@@ -8,17 +8,19 @@ pkgs.writeShellApplication {
     pkgs.openssh
   ];
   text = ''
-    if [ "$#" -lt 2 ] || [ "$#" -gt 3 ]; then
-      echo "Usage: home-switch-remote <host> <user> [remote]" >&2
-      echo "  <host>    home-manager configuration host" >&2
-      echo "  <user>    home-manager configuration user" >&2
-      echo "  [remote]  ssh target host (defaults to <host>)" >&2
+    if [ "$#" -lt 2 ] || [ "$#" -gt 4 ]; then
+      echo "Usage: home-switch-remote <host> <user> [remote] [copy-user]" >&2
+      echo "  <host>       home-manager configuration host" >&2
+      echo "  <user>       configuration user; activation runs as this user" >&2
+      echo "  [remote]     ssh target host (defaults to <host>)" >&2
+      echo "  [copy-user]  ssh user for the store copy (defaults to root)" >&2
       exit 2
     fi
 
     HOST="$1"
     USER="$2"
     REMOTE="''${3:-$HOST}"
+    COPYUSER="''${4:-root}"
 
     # Build only the requested activation package. Unlike disko-apply-remote,
     # which bakes every host's tiny formatMount into the script, home closures
@@ -27,9 +29,11 @@ pkgs.writeShellApplication {
     REF=".#homeConfigurations.\"$USER@$HOST\".activationPackage"
     ACTIVATION="$(nix build --no-link --print-out-paths "$REF")"
 
-    # Copy it to the target's Nix store, then run its activate script over ssh
-    # as the configuration's user, into whose home activation writes.
-    nix copy --to "ssh://$USER@$REMOTE" "$ACTIVATION"
+    # Copy the closure as a trusted user (root by default): importing unsigned,
+    # locally-built paths requires trust, which the config's unprivileged user
+    # usually lacks. Then run the activate script as the configuration's user,
+    # into whose home it writes.
+    nix copy --to "ssh://$COPYUSER@$REMOTE" "$ACTIVATION"
 
     # shellcheck disable=SC2029
     # $ACTIVATION must expand client-side: it is the local store path of the
