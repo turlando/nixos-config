@@ -149,6 +149,29 @@
             };
           };
 
+          "storage" = {
+            type = "zfs_fs";
+            options = {
+              canmount = "off";
+            };
+          };
+
+          "storage/music" = {
+            type = "zfs_fs";
+            options = {
+              canmount = "off";
+            };
+          };
+
+          "storage/music/electronic" = {
+            type = "zfs_fs";
+            mountpoint = "/srv/music/electronic";
+            options = {
+              recordsize = "1M";
+              atime = "off";
+            };
+          };
+
           "libvirt" = {
             type = "zfs_fs";
             options = {

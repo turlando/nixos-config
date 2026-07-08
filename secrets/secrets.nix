@@ -66,6 +66,20 @@ in
     scope = with scope; [ nixos ];
   };
 
+  # Syncthing TLS identity for tancredi@medea's user-level syncthing (scope
+  # tancredi: decrypted in the home realm, where the HM service copies it into
+  # configDir). Its fingerprint is the medea device ID in
+  # syncthing-device-ids.nix.
+  "syncthing-medea-cert.age" = {
+    publicKeys = with keys; [ medea ];
+    scope = with scope; [ tancredi ];
+  };
+
+  "syncthing-medea-key.age" = {
+    publicKeys = with keys; [ medea ];
+    scope = with scope; [ tancredi ];
+  };
+
   # SSH client keys follow the convention
   #   ssh-key_<target_host>-<target_user>_<source_host>-<source_user>
   # so each key names the grant it represents: the private half lets

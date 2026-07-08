@@ -1,3 +1,4 @@
+{ config, ... }:
 {
   system.stateVersion = "26.05";
 
@@ -22,4 +23,13 @@
 
   i18n.extra-locale = "it_IT.UTF-8";
   time.timeZone = "Europe/Rome";
+
+  # storage/music is not a home, so nothing chowns its mountpoint; hand it to
+  # tancredi (the syncthing user), readable by everyone. It mounts before
+  # systemd-tmpfiles-setup, so a tmpfiles rule owns it without a post-mount unit.
+  systemd.tmpfiles.rules = let
+    musicDir = config.disko.devices.zpool.medea.datasets."storage/music/electronic".mountpoint;
+  in [
+    "d ${musicDir} 0755 tancredi users -"
+  ];
 }

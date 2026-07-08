@@ -55,6 +55,23 @@
   programs.emacs.enable = true;
   programs.emacs.package = pkgs.emacs-pgtk;
 
+  # User-level syncthing with a TLS identity pinned from agenix, fixing medea's
+  # device ID (its entry in the syncthing device-id registry). The GUI stays on
+  # the default loopback, reached locally.
+  services.syncthing = {
+    enable = true;
+    cert = config.age.secrets.syncthing-medea-cert.path;
+    key = config.age.secrets.syncthing-medea-key.path;
+  };
+
+  # syncthing's copy-keys step installs the pinned cert from agenix, so order
+  # it after the home secrets are decrypted; otherwise it races agenix on login
+  # and the service fails until a retry.
+  systemd.user.services.syncthing.Unit = {
+    After = [ "agenix.service" ];
+    Requires = [ "agenix.service" ];
+  };
+
   home.packages = [
     pkgs.kdePackages.krdc
   ];
