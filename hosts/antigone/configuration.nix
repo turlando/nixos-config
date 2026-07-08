@@ -35,8 +35,24 @@
     { path = boot2; efiSysMountPoint = boot2; devices = [ "nodev" ]; }
   ];
 
-  users.users.root = {
-    hashedPasswordFile = config.age.secrets.user-password-antigone-root.path;
-    openssh.authorizedKeys.keys = [ config.environment.sshPublicKeys.antigone-root_medea-tancredi ];
+  users.users = {
+    root = {
+      hashedPasswordFile = config.age.secrets.user-password-antigone-root.path;
+      openssh.authorizedKeys.keys = [ config.environment.sshPublicKeys.antigone-root_medea-tancredi ];
+    };
+
+    # Curates the music library via beets; storage-music grants write to the
+    # FLAC/MP3 datasets, wheel is for admin.
+    tancredi = {
+      uid = 1000;
+      description = "Tancredi Orlando";
+      isNormalUser = true;
+      hashedPasswordFile = config.age.secrets.user-password-antigone-tancredi.path;
+      openssh.authorizedKeys.keys = [ config.environment.sshPublicKeys.antigone-tancredi_medea-tancredi ];
+      extraGroups = [
+        config.users.groups.wheel.name
+        config.users.groups.storage-music.name
+      ];
+    };
   };
 }

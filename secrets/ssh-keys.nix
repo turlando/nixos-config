@@ -16,4 +16,8 @@
   # -> root@antigone, from tancredi@medea
   antigone-root_medea-tancredi =
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIPLHIzL/1b7N08O3z7yRDsKI2vL4cyqxBaMonjlR7Ub";
+
+  # -> tancredi@antigone, from tancredi@medea
+  antigone-tancredi_medea-tancredi =
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICpg4hmvX07NutPjp71CD/4Kx5ezzuheO+7HUD4DLqur";
 }

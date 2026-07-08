@@ -222,6 +222,21 @@
             canmount = "off";
           };
         };
+
+        "home" = {
+          type = "zfs_fs";
+          options = {
+            canmount = "off";
+          };
+        };
+
+        "home/tancredi" = {
+          type = "zfs_fs";
+          mountpoint = "/home/tancredi";
+          options = {
+            acltype = "posixacl";
+          };
+        };
       };
     };
 

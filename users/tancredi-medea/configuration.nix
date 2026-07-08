@@ -20,6 +20,11 @@
         User = "root";
         IdentityFile = config.age.secrets.ssh-key_antigone-root_medea-tancredi.path;
       };
+      "antigone-tancredi" = {
+        HostName = "10.241.23.1";
+        User = "tancredi";
+        IdentityFile = config.age.secrets.ssh-key_antigone-tancredi_medea-tancredi.path;
+      };
       "creusa" = {
         HostName = "46.225.229.141";
         User = "root";

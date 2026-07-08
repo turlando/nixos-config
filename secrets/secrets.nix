@@ -33,6 +33,12 @@ in
     scope = with scope; [ nixos ];
   };
 
+  # Login password for tancredi UNIX user on antigone.
+  "user-password-antigone-tancredi.age" = {
+    publicKeys = with keys; [ antigone ];
+    scope = with scope; [ nixos ];
+  };
+
   # ZFS passphrase for the storage pool. Read via keylocation for unattended
   # unlock once the root pool is open; also typeable at a prompt for recovery.
   "zfs-passphrase-storage.age" = {
@@ -63,6 +69,11 @@ in
   };
 
   "ssh-key_antigone-root_medea-tancredi.age" = {
+    publicKeys = with keys; [ medea ];
+    scope = with scope; [ tancredi ];
+  };
+
+  "ssh-key_antigone-tancredi_medea-tancredi.age" = {
     publicKeys = with keys; [ medea ];
     scope = with scope; [ tancredi ];
   };
