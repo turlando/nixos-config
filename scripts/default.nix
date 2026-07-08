@@ -9,6 +9,7 @@ let
     age-read = import ./age-read.nix inputs;
     age-rekey = import ./age-rekey.nix inputs;
     disko-apply-remote = import ./disko-apply-remote.nix inputs;
+    home-switch-remote = import ./home-switch-remote.nix inputs;
     infra-build = import ./infra-build.nix inputs;
     infra-tofu = import ./infra-tofu.nix inputs;
     nixos-install-remote = import ./nixos-install-remote.nix inputs;

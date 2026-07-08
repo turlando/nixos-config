@@ -84,6 +84,11 @@ home-build host=HOSTNAME user=USER:
 home-switch host=HOSTNAME user=USER:
     home-manager switch --flake .#{{user}}@{{host}}
 
+# Build and activate home-manager configuration on a remote host
+[group("home-manager")]
+home-switch-remote host user remote=host:
+    nix run .#home-switch-remote -- "{{host}}" "{{user}}" "{{remote}}"
+
 # Destroy existing partitions, format, and mount disks
 [group("disko")]
 disko-wipe host=HOSTNAME:
