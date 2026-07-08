@@ -53,6 +53,19 @@ in
     scope = with scope; [ nixos ];
   };
 
+  # Syncthing TLS identity for antigone: the cert and key whose fingerprint is
+  # the device ID published in secrets/syncthing-device-ids.nix. Delivered into
+  # the container as services.syncthing.cert/key.
+  "syncthing-antigone-cert.age" = {
+    publicKeys = with keys; [ antigone ];
+    scope = with scope; [ nixos ];
+  };
+
+  "syncthing-antigone-key.age" = {
+    publicKeys = with keys; [ antigone ];
+    scope = with scope; [ nixos ];
+  };
+
   # SSH client keys follow the convention
   #   ssh-key_<target_host>-<target_user>_<source_host>-<source_user>
   # so each key names the grant it represents: the private half lets

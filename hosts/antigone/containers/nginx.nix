@@ -63,8 +63,8 @@
         };
 
         # HTTP only for now (the LAN is trusted); TLS arrives with ACME later.
-        # Containers share the host network namespace, so slskd's web port is
-        # reachable over loopback.
+        # Containers share the host network namespace, so the slskd and
+        # syncthing web UIs are reachable over loopback.
         services.nginx = {
           enable = true;
           recommendedProxySettings = true;
@@ -83,6 +83,18 @@
             extraConfig = ''
               error_log /var/log/nginx/slskd-error.log error;
               access_log /var/log/nginx/slskd-access.log combined;
+            '';
+          };
+
+          virtualHosts."syncthing.antigone.perosi.rhyzomatic.net" = {
+            locations."/" = {
+              proxyPass = "http://${hostConfig.containers.syncthing.config.services.syncthing.guiAddress}";
+              proxyWebsockets = true;
+            };
+
+            extraConfig = ''
+              error_log /var/log/nginx/syncthing-error.log error;
+              access_log /var/log/nginx/syncthing-access.log combined;
             '';
           };
         };

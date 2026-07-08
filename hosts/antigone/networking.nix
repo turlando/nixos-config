@@ -125,6 +125,7 @@
         local-data = [
           ''"antigone.perosi.rhyzomatic.net. IN A 10.241.23.1"''
           ''"slskd.antigone.perosi.rhyzomatic.net. IN A 10.241.23.1"''
+          ''"syncthing.antigone.perosi.rhyzomatic.net. IN A 10.241.23.1"''
           ''"ap0.perosi.rhyzomatic.net. IN A 10.241.23.11"''
           ''"modem.perosi.rhyzomatic.net. IN A 10.241.254.1"''
         ];
