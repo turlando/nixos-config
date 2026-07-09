@@ -14,12 +14,6 @@
   # the passphrase when the stage-2 import service reads it via keylocation.
   boot.zfs.extraPools = [ config.disko.devices.zpool.storage.name ];
 
-  services.journald.settings = {
-    SystemMaxUse = "256M";
-    SystemMaxFileSize = "32M";
-    MaxRetentionSec = "1month";
-  };
-
   # Redundant boot: GRUB EFI is installed to both ESPs so the machine boots
   # from whichever disk survives; the mount points come from disko, where
   # both ESPs are mounted nofail. `devices = ["nodev"]` keeps each entry

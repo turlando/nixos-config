@@ -17,6 +17,14 @@
   boot.tmp.useTmpfs = true;
   zramSwap.enable = true;
 
+  # Bound the persistent journal fleet-wide (the journald module is imported
+  # at the host level).
+  services.journald.settings = {
+    SystemMaxUse = "256M";
+    SystemMaxFileSize = "32M";
+    MaxRetentionSec = "1month";
+  };
+
   users.mutableUsers = false;
 
   programs.zsh.enable = true;

@@ -18,6 +18,7 @@ nixpkgs.lib.nixosSystem {
     self.nixosModules.modules.environment.persistence
     self.nixosModules.modules.hardware.framework
     self.nixosModules.modules.i18n.extra-locale
+    self.nixosModules.modules.services.journald
 
     self.nixosModules.profiles.base
     self.nixosModules.profiles.boot-systemd
