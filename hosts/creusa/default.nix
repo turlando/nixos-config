@@ -17,6 +17,7 @@ nixpkgs.lib.nixosSystem {
 
     self.nixosModules.modules.environment.persistence
     self.nixosModules.modules.environment.ssh-public-keys
+    self.nixosModules.modules.environment.wireguard-devices
     self.nixosModules.modules.services.ephemeral
     self.nixosModules.modules.services.journald
 
@@ -29,6 +30,7 @@ nixpkgs.lib.nixosSystem {
     ./hardware.nix
     ./disko.nix
     ./configuration.nix
+    ./networking.nix
     ./containers
   ];
 }
