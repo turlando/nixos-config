@@ -21,7 +21,7 @@ test:
 # Run linters
 [group("flake")]
 lint:
-    deadnix && statix check
+    deadnix --fail && statix check
 
 # Verify flake outputs build
 [group("flake")]
