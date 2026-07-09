@@ -69,7 +69,7 @@
           enable = true;
           recommendedProxySettings = true;
 
-          virtualHosts."slskd.antigone.perosi.rhyzomatic.net" = {
+          virtualHosts."slskd.antigone.rhyzomatic.net" = {
             locations."/" = {
               proxyPass =
                 let
@@ -86,7 +86,7 @@
             '';
           };
 
-          virtualHosts."syncthing.antigone.perosi.rhyzomatic.net" = {
+          virtualHosts."syncthing.antigone.rhyzomatic.net" = {
             locations."/" = {
               proxyPass = "http://${hostConfig.containers.syncthing.config.services.syncthing.guiAddress}";
               proxyWebsockets = true;

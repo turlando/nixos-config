@@ -100,9 +100,10 @@
   services.resolved.enable = false;
 
   # DNS: unbound is the caching resolver for antigone and the LAN. It
-  # forwards to Quad9 over DoT and answers authoritatively for the perosi
-  # site zone (and its reverse), so ap0.perosi.rhyzomatic.net resolves
-  # locally. resolveLocalQueries points antigone's own queries here too.
+  # forwards to Quad9 over DoT and answers authoritatively for rhyzomatic.net
+  # and the LAN reverse zones. Managed hosts and their services sit directly
+  # under the zone; site devices (ap0, modem) live under the perosi subzone.
+  # resolveLocalQueries points antigone's own queries here too.
   services.unbound = {
     enable = true;
     resolveLocalQueries = true;
@@ -118,19 +119,19 @@
         ];
         tls-cert-bundle = "${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt";
         local-zone = [
-          ''"perosi.rhyzomatic.net." static''
+          ''"rhyzomatic.net." static''
           ''"23.241.10.in-addr.arpa." static''
           ''"254.241.10.in-addr.arpa." static''
         ];
         local-data = [
-          ''"antigone.perosi.rhyzomatic.net. IN A 10.241.23.1"''
-          ''"slskd.antigone.perosi.rhyzomatic.net. IN A 10.241.23.1"''
-          ''"syncthing.antigone.perosi.rhyzomatic.net. IN A 10.241.23.1"''
+          ''"antigone.rhyzomatic.net. IN A 10.241.23.1"''
+          ''"slskd.antigone.rhyzomatic.net. IN A 10.241.23.1"''
+          ''"syncthing.antigone.rhyzomatic.net. IN A 10.241.23.1"''
           ''"ap0.perosi.rhyzomatic.net. IN A 10.241.23.11"''
           ''"modem.perosi.rhyzomatic.net. IN A 10.241.254.1"''
         ];
         local-data-ptr = [
-          ''"10.241.23.1 antigone.perosi.rhyzomatic.net"''
+          ''"10.241.23.1 antigone.rhyzomatic.net"''
           ''"10.241.23.11 ap0.perosi.rhyzomatic.net"''
           ''"10.241.254.1 modem.perosi.rhyzomatic.net"''
         ];
