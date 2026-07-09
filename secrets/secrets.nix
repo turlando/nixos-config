@@ -80,6 +80,26 @@ in
     scope = with scope; [ tancredi ];
   };
 
+  # WireGuard interface private keys, one per host, decrypted into the nixos
+  # realm. creusa and antigone consume theirs via
+  # networking.wireguard.interfaces.wg0.privateKeyFile; medea's is env-format
+  # (WG_PRIVATE_KEY=...) for NetworkManager's ensureProfiles.environmentFiles.
+  # The public halves live in registry/wireguard-devices.nix.
+  "wireguard-creusa-key.age" = {
+    publicKeys = with keys; [ creusa ];
+    scope = with scope; [ nixos ];
+  };
+
+  "wireguard-antigone-key.age" = {
+    publicKeys = with keys; [ antigone ];
+    scope = with scope; [ nixos ];
+  };
+
+  "wireguard-medea-key.age" = {
+    publicKeys = with keys; [ medea ];
+    scope = with scope; [ nixos ];
+  };
+
   # SSH client keys follow the convention
   #   ssh-key_<target_host>-<target_user>_<source_host>-<source_user>
   # so each key names the grant it represents: the private half lets
