@@ -9,6 +9,14 @@ in {
         type = types.str;
         description = "WireGuard device public key.";
       };
+      options.endpoint = mkOption {
+        type = types.nullOr types.str;
+        default = null;
+        description = ''
+          Dial-in endpoint (host:port) for a listening device such as the hub;
+          null for spokes and roaming clients.
+        '';
+      };
     });
     readOnly = true;
     default = import ../../../registry/wireguard-devices.nix;

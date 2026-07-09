@@ -59,13 +59,33 @@
     internalInterfaces = [ "lan0" ];
   };
 
-  # Firewall: trust lan0 (the apartment LAN); wan0 stays default-deny
-  # inbound, passing only conntrack-established return traffic.
-  networking.firewall.trustedInterfaces = [ "lan0" ];
+  # Firewall: trust lan0 (the apartment LAN) and wg0 (the VPN) so both reach
+  # antigone's services; wan0 stays default-deny inbound, passing only
+  # conntrack-established return traffic.
+  networking.firewall.trustedInterfaces = [ "lan0" "wg0" ];
 
-  # SSH is management: reachable only via lan0 (trusted above), never on
-  # wan0, which is the internet edge under DMZ.
+  # SSH is management: reachable over the trusted interfaces (lan0 and the
+  # wg0 VPN), never on wan0, the internet edge under DMZ.
   services.openssh.openFirewall = false;
+
+  # WireGuard spoke. antigone dials out to the creusa hub (stable public IP)
+  # and holds the tunnel open with keepalive, so it stays reachable across the
+  # rotating WAN with no dynamic DNS. allowedIPs covers the WG transit, so
+  # replies to roaming clients route back through creusa. antigone initiates,
+  # so no inbound port is opened on wan0; creusa's replies return established.
+  networking.wireguard.interfaces.wg0 = {
+    ips = [ "10.241.46.2/24" ];
+    privateKeyFile = config.age.secrets.wireguard-antigone-key.path;
+
+    peers = [
+      {
+        publicKey = config.environment.wireguardDevices.creusa.publicKey;
+        endpoint = config.environment.wireguardDevices.creusa.endpoint;
+        allowedIPs = [ "10.241.46.0/24" ];
+        persistentKeepalive = 25;
+      }
+    ];
+  };
 
   # DHCP: kea serves the LAN on lan0 from the 10.241.23.101-200 pool,
   # handing out antigone (.1) as gateway and resolver.
@@ -99,8 +119,9 @@
   # unbound.
   services.resolved.enable = false;
 
-  # DNS: unbound is the caching resolver for antigone and the LAN. It
-  # forwards to Quad9 over DoT and answers authoritatively for rhyzomatic.net
+  # DNS: unbound is the caching resolver for antigone, the LAN, and roaming
+  # WireGuard clients. It forwards to Quad9 over DoT and answers
+  # authoritatively for rhyzomatic.net
   # and the LAN reverse zones. Managed hosts and their services sit directly
   # under the zone; site devices (ap0, modem) live under the perosi subzone.
   # resolveLocalQueries points antigone's own queries here too.
@@ -116,6 +137,7 @@
         access-control = [
           "127.0.0.0/8 allow"
           "10.241.23.0/24 allow"
+          "10.241.46.0/24 allow"
         ];
         tls-cert-bundle = "${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt";
         local-zone = [
