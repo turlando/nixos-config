@@ -18,7 +18,7 @@ nixpkgs.lib.nixosSystem {
     self.nixosModules.modules.environment.ids
     self.nixosModules.modules.environment.persistence
     self.nixosModules.modules.environment.ssh-public-keys
-    self.nixosModules.modules.environment.syncthing-device-ids
+    self.nixosModules.modules.environment.syncthing-devices
     self.nixosModules.modules.services.ephemeral
     self.nixosModules.modules.services.journald
 

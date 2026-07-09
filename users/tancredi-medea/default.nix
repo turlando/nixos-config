@@ -18,7 +18,7 @@ in home-manager.lib.homeManagerConfiguration {
     self.homeManagerModules.modules.fonts.families
     self.homeManagerModules.modules.programs.firefox
     self.homeManagerModules.modules.programs.thunderbird
-    self.homeManagerModules.modules.environment.syncthing-device-ids
+    self.homeManagerModules.modules.environment.syncthing-devices
 
     self.homeManagerModules.profiles.base
     self.homeManagerModules.profiles.age

@@ -1,7 +1,7 @@
 { self, config, ... }:
 let
   # Pinned syncthing TLS identity from agenix; its fingerprint is the device
-  # ID in environment.syncthingDeviceIds.antigone. The module's ExecStartPre
+  # ID in environment.syncthingDevices.antigone. The module's ExecStartPre
   # runs as root and copies these into configDir, so bind-mounting the
   # host-decrypted paths through is enough.
   certPath = config.age.secrets.syncthing-antigone-cert.path;
@@ -118,7 +118,7 @@ in
         services.syncthing = {
           enable = true;
           # Pin the TLS identity (bound in above) so antigone's device ID stays
-          # fixed at environment.syncthingDeviceIds.antigone regardless of the
+          # fixed at environment.syncthingDevices.antigone regardless of the
           # data dataset, instead of a fresh auto-generated cert.
           cert = certPath;
           key = keyPath;
@@ -129,8 +129,8 @@ in
           settings.gui.insecureSkipHostcheck = true;
 
           settings.devices = {
-            antigone.id = config.environment.syncthingDeviceIds.antigone;
-            medea.id = config.environment.syncthingDeviceIds.medea;
+            antigone = config.environment.syncthingDevices.antigone;
+            medea = config.environment.syncthingDevices.medea;
           };
 
           settings.folders."electronic-mp3" = {

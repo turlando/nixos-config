@@ -54,7 +54,7 @@ in
   };
 
   # Syncthing TLS identity for antigone: the cert and key whose fingerprint is
-  # the device ID published in secrets/syncthing-device-ids.nix. Delivered into
+  # the device ID published in registry/syncthing-devices.nix. Delivered into
   # the container as services.syncthing.cert/key.
   "syncthing-antigone-cert.age" = {
     publicKeys = with keys; [ antigone ];
@@ -69,7 +69,7 @@ in
   # Syncthing TLS identity for tancredi@medea's user-level syncthing (scope
   # tancredi: decrypted in the home realm, where the HM service copies it into
   # configDir). Its fingerprint is the medea device ID in
-  # syncthing-device-ids.nix.
+  # registry/syncthing-devices.nix.
   "syncthing-medea-cert.age" = {
     publicKeys = with keys; [ medea ];
     scope = with scope; [ tancredi ];

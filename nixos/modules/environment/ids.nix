@@ -3,6 +3,8 @@
 let
   inherit (lib) mkOption types;
 
+  ids = import ../../../registry/ids.nix;
+
   description = ''
     Registry of statically pinned UIDs/GIDs we assign ourselves, for
     identities that must stay stable and identical across the nspawn
@@ -13,8 +15,9 @@ let
     already assigns a service (e.g. syncthing = 237). We only pin what
     nixpkgs leaves dynamic and what has to line up host-side.
 
-    Accessor only: host and container configs pin their users/groups to
-    these, e.g. users.users.slskd.uid = config.environment.ids.uids.slskd.
+    This module is only the accessor: the values live in registry/ids.nix.
+    Host and container configs pin their users/groups to these, e.g.
+    users.users.slskd.uid = config.environment.ids.uids.slskd.
   '';
 in
 {
@@ -22,27 +25,14 @@ in
     uids = mkOption {
       type = types.attrsOf types.int;
       readOnly = true;
-      default = {
-        # slskd is newer than nixpkgs' static id list and its module uses a
-        # dynamic isSystemUser uid; pinned so its persistent state survives
-        # restarts of the ephemeral container.
-        slskd = 60001;
-      };
+      default = ids.uids;
       inherit description;
     };
 
     gids = mkOption {
       type = types.attrsOf types.int;
       readOnly = true;
-      default = {
-        # slskd's primary group, pinned (matching its uid) so its state isn't
-        # left group-owned by whatever host group happens to share slskd's
-        # otherwise-dynamic gid.
-        slskd = 60001;
-        # Owns the shared music datasets; the one group that has to be
-        # identical on the host and inside the slskd/syncthing containers.
-        storage-music = 61001;
-      };
+      default = ids.gids;
       inherit description;
     };
   };

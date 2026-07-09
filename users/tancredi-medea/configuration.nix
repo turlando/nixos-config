@@ -56,14 +56,14 @@
   programs.emacs.package = pkgs.emacs-pgtk;
 
   # User-level syncthing with a TLS identity pinned from agenix, fixing medea's
-  # device ID (its entry in the syncthing device-id registry). The GUI stays on
+  # device ID (its entry in the syncthing device registry). The GUI stays on
   # the default loopback, reached locally.
   services.syncthing = {
     enable = true;
     cert = config.age.secrets.syncthing-medea-cert.path;
     key = config.age.secrets.syncthing-medea-key.path;
 
-    settings.devices.antigone.id = config.environment.syncthingDeviceIds.antigone;
+    settings.devices.antigone = config.environment.syncthingDevices.antigone;
 
     settings.folders."electronic-mp3" = {
       label = "Electronic (MP3)";
