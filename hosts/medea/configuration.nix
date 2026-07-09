@@ -32,4 +32,40 @@
   in [
     "d ${musicDir} 0755 tancredi users -"
   ];
+
+  # WireGuard roaming client, scoped to tancredi and off by default
+  # (connect-when-away): bring it up from the NetworkManager applet only when
+  # away from the LAN. Split tunnel, so only the internal supernet
+  # (10.241.0.0/16) routes through creusa and the rest of the internet stays
+  # direct. While connected, dns + the negative dns-priority make antigone the
+  # resolver so rhyzomatic.net names resolve over the tunnel. The private key is
+  # substituted from its agenix secret at activation, so it never enters the
+  # store.
+  networking.networkmanager.ensureProfiles = {
+    environmentFiles = [ config.age.secrets.wireguard-medea-key.path ];
+    profiles.wg-rhyzomatic = {
+      connection = {
+        id = "rhyzomatic.net";
+        type = "wireguard";
+        interface-name = "wg0";
+        autoconnect = "false";
+        permissions = "user:tancredi:";
+      };
+      wireguard.private-key = "$WG_PRIVATE_KEY";
+      "wireguard-peer.${config.environment.wireguardDevices.creusa.publicKey}" = {
+        endpoint = config.environment.wireguardDevices.creusa.endpoint;
+        allowed-ips = "10.241.0.0/16";
+        persistent-keepalive = "25";
+      };
+      ipv4 = {
+        method = "manual";
+        address1 = "10.241.46.10/24";
+        dns = "10.241.23.1";
+        dns-search = "rhyzomatic.net";
+        dns-priority = "-10";
+        never-default = "true";
+      };
+      ipv6.method = "disabled";
+    };
+  };
 }
