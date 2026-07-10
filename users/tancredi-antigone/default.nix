@@ -12,14 +12,15 @@ in home-manager.lib.homeManagerConfiguration {
     packages = self.packages.${system};
   };
 
-  # Headless curation home: no graphical profiles. beets is added in
-  # configuration.nix.
+  # Headless curation home: no graphical profiles, just the beets library
+  # module (./beets) on top of the base and agenix profiles.
   modules = [
     agenix.homeManagerModules.default
 
     self.homeManagerModules.profiles.base
     self.homeManagerModules.profiles.age
 
+    ./beets
     ./configuration.nix
   ];
 }

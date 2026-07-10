@@ -80,6 +80,19 @@ in
     scope = with scope; [ tancredi ];
   };
 
+  # Discogs personal access token for tancredi@antigone's beets library curation
+  # (scope tancredi: decrypted in the home realm on antigone). Its plaintext is
+  # a beets config overlay merged in only at import time via `beet -c`, so the
+  # token stays out of the world-readable Nix store that holds the rest of the
+  # beets config:
+  #   discogs:
+  #     user_token: <token>
+  # Created out of band with agenix; see the manage-music-library skill.
+  "discogs-personal-access-token-turlando.age" = {
+    publicKeys = with keys; [ antigone ];
+    scope = with scope; [ tancredi ];
+  };
+
   # WireGuard interface private keys, one per host, decrypted into the nixos
   # realm. creusa and antigone consume theirs via
   # networking.wireguard.interfaces.wg0.privateKeyFile; medea's is env-format

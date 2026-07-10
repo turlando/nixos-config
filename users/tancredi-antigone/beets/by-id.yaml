@@ -1,0 +1,7 @@
+# Force-apply overlay for the Discogs import lane. The release id passed on the
+# command line is authoritative, so accept the match even though wiping the tags
+# first leaves nothing to score against (which import.quiet_fallback would
+# otherwise skip). Pulled in with `beet -c` alongside the agenix token overlay;
+# see the manage-music-library skill.
+match:
+    strong_rec_thresh: 1.0
