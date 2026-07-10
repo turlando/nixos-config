@@ -200,27 +200,16 @@
       { type = "tablet"; bus = "usb"; }
     ];
 
-    # video = {
-    #   model = {
-    #     type = "qxl";
-    #     ram = 131072;
-    #     vram = 131072;
-    #     vgamem = 65536;
-    #     heads = 1;
-    #     primary = true;
-    #   };
-    # };
-    #
-    # graphics = {
-    #   type = "spice";
-    #   autoport = true;
-    #   listen = { type = "address"; };
-    #   image = { compression = false; };
-    # };
-
+    # QXL (not virtio-gpu): its DOD driver mints arbitrary resolutions via the
+    # SPICE agent, which virtio-gpu's driver does not, so the guest can match
+    # the panel's non-standard 2880x1920. No Windows 11 qxldod build exists; the
+    # Windows 10 driver is used.
     video = {
       model = {
-        type = "virtio";
+        type = "qxl";
+        ram = 131072;
+        vram = 131072;
+        vgamem = 65536;
         heads = 1;
         primary = true;
       };
