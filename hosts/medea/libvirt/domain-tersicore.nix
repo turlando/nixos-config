@@ -15,7 +15,8 @@
   cpu = {
     mode = "host-passthrough";
     check = "none";
-    migratable = true;
+    # Never live-migrated; false exposes invariant TSC and more host features.
+    migratable = false;
     topology = { sockets = 1; dies = 1; clusters = 1; cores = 4; threads = 2; };
   };
 
@@ -23,19 +24,21 @@
   iothreads = { count = 1; };
 
   cputune = {
+    # Pin to the four Zen 5 cores (0-3 and SMT siblings 12-15, 5.1 GHz).
+    # The Zen 5c cores (4-11, 16-23) cap at 3.3 GHz and raise xrun risk.
     vcpupin = [
-      { vcpu = 0; cpuset = "8"; }
-      { vcpu = 1; cpuset = "20"; }
-      { vcpu = 2; cpuset = "9"; }
-      { vcpu = 3; cpuset = "21"; }
-      { vcpu = 4; cpuset = "10"; }
-      { vcpu = 5; cpuset = "22"; }
-      { vcpu = 6; cpuset = "11"; }
-      { vcpu = 7; cpuset = "23"; }
+      { vcpu = 0; cpuset = "0"; }
+      { vcpu = 1; cpuset = "12"; }
+      { vcpu = 2; cpuset = "1"; }
+      { vcpu = 3; cpuset = "13"; }
+      { vcpu = 4; cpuset = "2"; }
+      { vcpu = 5; cpuset = "14"; }
+      { vcpu = 6; cpuset = "3"; }
+      { vcpu = 7; cpuset = "15"; }
     ];
 
-    emulatorpin = { cpuset = "7,19"; };
-    iothreadpin = { iothread = 1; cpuset = "7,19"; };
+    emulatorpin = { cpuset = "11,23"; };
+    iothreadpin = { iothread = 1; cpuset = "11,23"; };
 
     vcpusched = [
       { vcpus = "0"; scheduler = "fifo"; priority = 1; }
@@ -147,10 +150,6 @@
       }
     ];
 
-    iommu = {
-      model = "amd";
-    };
-
     memballoon = {
       model = "virtio";
     };
@@ -198,6 +197,7 @@
     input = [
       { type = "mouse"; bus = "ps2"; }
       { type = "keyboard"; bus = "ps2"; }
+      { type = "tablet"; bus = "usb"; }
     ];
 
     # video = {
@@ -222,7 +222,6 @@
       model = {
         type = "virtio";
         heads = 1;
-        accel3d = true;
         primary = true;
       };
     };
