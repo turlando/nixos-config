@@ -55,6 +55,12 @@
   memory = { unit = "GiB"; count = 8; };
   currentMemory = { unit = "GiB"; count = 8; };
 
+  # virtiofs needs the guest memory shared so virtiofsd can map it.
+  memoryBacking = {
+    source = { type = "memfd"; };
+    access = { mode = "shared"; };
+  };
+
   os = {
     type = "hvm";
     arch = "x86_64";
@@ -182,6 +188,17 @@
         source = { dev = "/dev/zvol/medea/libvirt/tersicore"; };
         target = { dev = "sda"; bus = "scsi"; };
         boot = { order = 1; };
+      }
+    ];
+
+    # Read-write virtiofs share of /srv/music into the guest (tag "Music").
+    filesystem = [
+      {
+        type = "mount";
+        accessmode = "passthrough";
+        driver = { type = "virtiofs"; };
+        source = { dir = "/srv/music"; };
+        target = { dir = "Music"; };
       }
     ];
 
