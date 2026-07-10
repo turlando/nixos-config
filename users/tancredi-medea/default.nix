@@ -1,8 +1,9 @@
-{ self, agenix, home-manager, nixpkgs, ... }:
+{ self, agenix, home-manager, nixpkgs, nixpkgs-unstable, ... }:
 
 let
   nixosConfiguration = self.nixosConfigurations.medea.config;
   system = nixosConfiguration.nixpkgs.hostPlatform.system;
+  allowedUnfree = [ "claude-code" ];
 in home-manager.lib.homeManagerConfiguration {
   pkgs = import nixpkgs { inherit system; };
 
@@ -10,6 +11,11 @@ in home-manager.lib.homeManagerConfiguration {
     lib-age = self.lib.age;
     inherit nixosConfiguration;
     packages = self.packages.${system};
+    pkgs-unstable = import nixpkgs-unstable {
+      inherit system;
+      config.allowUnfreePredicate = pkg:
+        builtins.elem (nixpkgs.lib.getName pkg) allowedUnfree;
+    };
   };
 
   modules = [
@@ -26,6 +32,7 @@ in home-manager.lib.homeManagerConfiguration {
     self.homeManagerModules.profiles.graphical
     self.homeManagerModules.profiles.libvirt
 
+    ./claude
     ./configuration.nix
   ];
 }
