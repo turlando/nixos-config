@@ -13,6 +13,10 @@
   antigone = {
     publicKey = "SkHq3/Od7nJZmZjffyxtVw+qyxyrB/GW+HNFS6N/qnY=";
   };
+  # Unlock-only identity baked into antigone's initrd; see secrets.nix.
+  antigone-initrd = {
+    publicKey = "DbcrDXoGFHHCa0s8GclHUxVzOHHW0QpINuTJPin5RCU=";
+  };
   medea = {
     publicKey = "O0hJgahCGphLASTUIW25yuTOVtPd96bDH7lSd8swAAo=";
   };

@@ -108,6 +108,16 @@ in
     scope = with scope; [ nixos ];
   };
 
+  # antigone's initrd WireGuard identity: a separate unlock-only key.
+  # boot.initrd.secrets bakes it from /run/agenix into the initrd at switch
+  # time, so it must be decrypted first (hence a two-step rollout), letting
+  # remote unlock work before the encrypted pool holding the main agenix
+  # identity is open. Public half in registry/wireguard-devices.nix.
+  "wireguard-antigone-initrd-key.age" = {
+    publicKeys = with keys; [ antigone ];
+    scope = with scope; [ nixos ];
+  };
+
   "wireguard-medea-key.age" = {
     publicKeys = with keys; [ medea ];
     scope = with scope; [ nixos ];

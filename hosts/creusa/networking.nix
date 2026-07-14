@@ -17,6 +17,12 @@
         publicKey = config.environment.wireguardDevices.antigone.publicKey;
         allowedIPs = [ "10.241.46.2/32" "10.241.23.0/24" ];
       }
+      # antigone's initrd unlock identity: only its own address, so you can SSH
+      # the initrd over the tunnel to enter the disk passphrase at boot.
+      {
+        publicKey = config.environment.wireguardDevices.antigone-initrd.publicKey;
+        allowedIPs = [ "10.241.46.3/32" ];
+      }
       # medea: a single roaming client.
       {
         publicKey = config.environment.wireguardDevices.medea.publicKey;

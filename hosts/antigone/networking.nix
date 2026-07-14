@@ -1,19 +1,61 @@
 { config, pkgs, ... }:
+let
+  # Where boot.initrd.secrets bakes the initrd WG key and networkd reads it,
+  # named once so the two references cannot drift apart.
+  initrdWgKey = "/etc/wireguard-initrd.key";
+in
 {
   # Remote unlock: the initrd-openssh-server profile runs sshd (:2222) with a
-  # persistent host key. Here we bring up lan0 (static, matched by MAC) and
-  # authorize who may unlock, so the ZFS passphrase can be entered from the
-  # LAN before the pool mounts. Only lan0 gets an address, keeping unlock off
-  # wan0; both NIC drivers stay in the initrd for safety.
+  # persistent host key. lan0 unlocks from the LAN; wan0 plus a wg0 tunnel
+  # dialing the creusa hub unlock over the VPN (ssh -p 2222 root@10.241.46.3),
+  # reachable before the pool mounts. lan0 unlock is unaffected and stays the
+  # fallback. The tunnel key is a separate unlock-only agenix secret, baked
+  # into the initrd from /run/agenix at switch time; like the initrd host key
+  # it lives unencrypted on the ESP, so creusa scopes its peer to its own
+  # address.
   boot.initrd.availableKernelModules = [
     "e1000e"
     "r8169"
   ];
+  boot.initrd.kernelModules = [ "wireguard" ];
+  # In the initrd, networkd runs as the unprivileged systemd-network user and
+  # must read this key to build wg0. The initrd-secrets cpio forces root:root
+  # ownership, so a group grant cannot reach it: the key has to be
+  # world-readable. That adds no exposure, as it is already baked unencrypted
+  # onto the ESP.
+  age.secrets.wireguard-antigone-initrd-key.mode = "0444";
+  boot.initrd.secrets.${initrdWgKey} = config.age.secrets.wireguard-antigone-initrd-key.path;
   boot.initrd.systemd.network = {
     enable = true;
-    networks."10-lan0" = {
-      matchConfig.MACAddress = "c4:e9:84:04:c2:64";
-      address = [ "10.241.23.1/24" ];
+    netdevs."10-wg0" = {
+      netdevConfig = {
+        Name = "wg0";
+        Kind = "wireguard";
+      };
+      wireguardConfig.PrivateKeyFile = initrdWgKey;
+      wireguardPeers = [
+        {
+          PublicKey = config.environment.wireguardDevices.creusa.publicKey;
+          Endpoint = config.environment.wireguardDevices.creusa.endpoint;
+          AllowedIPs = [ "10.241.46.0/24" ];
+          PersistentKeepalive = 25;
+        }
+      ];
+    };
+    networks = {
+      "10-lan0" = {
+        matchConfig.MACAddress = "c4:e9:84:04:c2:64";
+        address = [ "10.241.23.1/24" ];
+      };
+      "10-wan0" = {
+        matchConfig.MACAddress = "10:7b:44:49:e6:8a";
+        address = [ "10.241.254.2/24" ];
+        gateway = [ "10.241.254.1" ];
+      };
+      "10-wg0" = {
+        matchConfig.Name = "wg0";
+        address = [ "10.241.46.3/24" ];
+      };
     };
   };
   boot.initrd.network.ssh.authorizedKeys = [ config.environment.sshPublicKeys.antigone-root_medea-tancredi ];
