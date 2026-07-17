@@ -6,7 +6,7 @@
   age = {
     identityPaths = [ lib-age.identityFile ];
     secrets = lib-age.mkSecrets {
-      key   = lib-age.keys.${config.networking.hostName};
+      key   = lib-age.keys.${config.networking.hostName}.host;
       scope = lib-age.scope.nixos;
     };
   };

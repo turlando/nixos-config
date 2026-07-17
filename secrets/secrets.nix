@@ -5,51 +5,51 @@ in
 {
   # Hashed login password for root user on medea.
   "user-password-root.age" = {
-    publicKeys = with keys; [ medea ];
+    publicKeys = [ keys.medea.host ];
     scope = with scope; [ nixos ];
   };
 
   # Hashed login password for tancredi user on medea.
   "user-password-tancredi.age" = {
-    publicKeys = with keys; [ medea ];
+    publicKeys = [ keys.medea.host ];
     scope = with scope; [ nixos ];
   };
 
   # Hashed login password for luminovo user on medea.
   "user-password-medea-luminovo.age" = {
-    publicKeys = with keys; [ medea ];
+    publicKeys = [ keys.medea.host ];
     scope = with scope; [ nixos ];
   };
 
   # Login password for root UNIX user on creusa.
   "user-password-creusa-root.age" = {
-    publicKeys = with keys; [ creusa ];
+    publicKeys = [ keys.creusa.host ];
     scope = with scope; [ nixos ];
   };
 
   # Login password for root UNIX user on antigone.
   "user-password-antigone-root.age" = {
-    publicKeys = with keys; [ antigone ];
+    publicKeys = [ keys.antigone.host ];
     scope = with scope; [ nixos ];
   };
 
   # Login password for tancredi UNIX user on antigone.
   "user-password-antigone-tancredi.age" = {
-    publicKeys = with keys; [ antigone ];
+    publicKeys = [ keys.antigone.host ];
     scope = with scope; [ nixos ];
   };
 
   # ZFS passphrase for the storage pool. Read via keylocation for unattended
   # unlock once the root pool is open; also typeable at a prompt for recovery.
   "zfs-passphrase-storage.age" = {
-    publicKeys = with keys; [ antigone ];
+    publicKeys = [ keys.antigone.host ];
     scope = with scope; [ nixos ];
   };
 
   # Soulseek network credentials for slskd (SLSKD_SLSK_USERNAME /
   # SLSKD_SLSK_PASSWORD), delivered as its environmentFile in the container.
   "slskd-credentials.age" = {
-    publicKeys = with keys; [ antigone ];
+    publicKeys = [ keys.antigone.host ];
     scope = with scope; [ nixos ];
   };
 
@@ -57,12 +57,12 @@ in
   # the device ID published in registry/syncthing-devices.nix. Delivered into
   # the container as services.syncthing.cert/key.
   "syncthing-antigone-cert.age" = {
-    publicKeys = with keys; [ antigone ];
+    publicKeys = [ keys.antigone.host ];
     scope = with scope; [ nixos ];
   };
 
   "syncthing-antigone-key.age" = {
-    publicKeys = with keys; [ antigone ];
+    publicKeys = [ keys.antigone.host ];
     scope = with scope; [ nixos ];
   };
 
@@ -71,12 +71,12 @@ in
   # configDir). Its fingerprint is the medea device ID in
   # registry/syncthing-devices.nix.
   "syncthing-medea-cert.age" = {
-    publicKeys = with keys; [ medea ];
+    publicKeys = [ keys.medea.users.tancredi ];
     scope = with scope; [ tancredi ];
   };
 
   "syncthing-medea-key.age" = {
-    publicKeys = with keys; [ medea ];
+    publicKeys = [ keys.medea.users.tancredi ];
     scope = with scope; [ tancredi ];
   };
 
@@ -89,7 +89,7 @@ in
   #     user_token: <token>
   # Created out of band with agenix; see the manage-music-library skill.
   "discogs-personal-access-token-turlando.age" = {
-    publicKeys = with keys; [ antigone ];
+    publicKeys = [ keys.antigone.users.tancredi ];
     scope = with scope; [ tancredi ];
   };
 
@@ -99,12 +99,12 @@ in
   # (WG_PRIVATE_KEY=...) for NetworkManager's ensureProfiles.environmentFiles.
   # The public halves live in registry/wireguard-devices.nix.
   "wireguard-creusa-key.age" = {
-    publicKeys = with keys; [ creusa ];
+    publicKeys = [ keys.creusa.host ];
     scope = with scope; [ nixos ];
   };
 
   "wireguard-antigone-key.age" = {
-    publicKeys = with keys; [ antigone ];
+    publicKeys = [ keys.antigone.host ];
     scope = with scope; [ nixos ];
   };
 
@@ -114,12 +114,12 @@ in
   # remote unlock work before the encrypted pool holding the main agenix
   # identity is open. Public half in registry/wireguard-devices.nix.
   "wireguard-antigone-initrd-key.age" = {
-    publicKeys = with keys; [ antigone ];
+    publicKeys = [ keys.antigone.host ];
     scope = with scope; [ nixos ];
   };
 
   "wireguard-medea-key.age" = {
-    publicKeys = with keys; [ medea ];
+    publicKeys = [ keys.medea.host ];
     scope = with scope; [ nixos ];
   };
 
@@ -134,38 +134,38 @@ in
   # hosts) or registered with the service (github/gitlab/compiler).
 
   "ssh-key_creusa-root_medea-tancredi.age" = {
-    publicKeys = with keys; [ medea ];
+    publicKeys = [ keys.medea.users.tancredi ];
     scope = with scope; [ tancredi ];
   };
 
   "ssh-key_antigone-root_medea-tancredi.age" = {
-    publicKeys = with keys; [ medea ];
+    publicKeys = [ keys.medea.users.tancredi ];
     scope = with scope; [ tancredi ];
   };
 
   "ssh-key_antigone-tancredi_medea-tancredi.age" = {
-    publicKeys = with keys; [ medea ];
+    publicKeys = [ keys.medea.users.tancredi ];
     scope = with scope; [ tancredi ];
   };
 
   "ssh-key_github-git_medea-tancredi.age" = {
-    publicKeys = with keys; [ medea ];
+    publicKeys = [ keys.medea.users.tancredi ];
     scope = with scope; [ tancredi ];
   };
 
   "ssh-key_gitlab-git_medea-luminovo.age" = {
-    publicKeys = with keys; [ medea ];
+    publicKeys = [ keys.medea.users.luminovo ];
     scope = with scope; [ luminovo ];
   };
 
   "ssh-key_compiler4-tancredi_medea-luminovo.age" = {
-    publicKeys = with keys; [ medea ];
+    publicKeys = [ keys.medea.users.luminovo ];
     scope = with scope; [ luminovo ];
   };
 
   # Hetzner API token for project Personal.
   "hetzner-api-token-personal.age" = {
-    publicKeys = with keys; [ medea ];
+    publicKeys = [ keys.medea.users.tancredi ];
     scope = with scope; [ infra ];
   };
 }

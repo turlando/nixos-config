@@ -10,6 +10,11 @@ let
   keyDir       = "/etc/agenix";
   identityFile = "${keyDir}/key";
 
+  # Per-user agenix identity, relative to the user's home. The home realm
+  # decrypts with this instead of the shared host key, so host secrets and
+  # user secrets never share a decryption identity.
+  userKeyFile = ".config/agenix/key";
+
   # Default secrets and keys
   allSecrets = import (defaultSecretsPath + "/secrets.nix");
   keys       = import (defaultSecretsPath + "/keys.nix");
@@ -67,6 +72,7 @@ in
   inherit
     keyDir
     identityFile
+    userKeyFile
     keys
     scope
     mkSecrets;

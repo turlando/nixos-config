@@ -14,7 +14,7 @@ pkgs.writeShellApplication {
     fi
 
     NAME="$1"
-    IDENTITY="''${2:-${self.lib.age.identityFile}}"
+    IDENTITY="''${2:-$HOME/${self.lib.age.userKeyFile}}"
     SECRETS_DIR="''${SECRETS_DIR:-$PWD/secrets}"
 
     if [ ! -f "$SECRETS_DIR/secrets.nix" ]; then
