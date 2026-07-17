@@ -109,10 +109,20 @@ disko-apply-remote host user="root" remote=host:
 age-keygen name:
     nix run .#age-keygen -- "{{name}}"
 
+# Generate an age identity for a new user
+[group("agenix")]
+age-user-keygen name:
+    nix run .#age-user-keygen -- "{{name}}"
+
 # Install agenix key to /mnt during system installation
 [group("agenix")]
 age-install-key key_dir dest="/mnt/etc/agenix":
     nix run .#age-install-key -- "{{key_dir}}" "{{dest}}"
+
+# Install a user's age identity to their ~/.config/agenix/key
+[group("agenix")]
+age-install-user-key keyfile user:
+    nix run .#age-install-user-key -- "{{keyfile}}" "{{user}}"
 
 # Create or edit an age-encrypted secret
 [group("agenix")]
