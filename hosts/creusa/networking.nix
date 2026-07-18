@@ -14,18 +14,18 @@
       # traffic for 10.241.23.0/24 routes here and on to antigone. No endpoint:
       # antigone dials in and creusa learns its address from the handshake.
       {
-        publicKey = config.environment.wireguardDevices.antigone.publicKey;
+        publicKey = config.environment.wireguard.devices.antigone.publicKey;
         allowedIPs = [ "10.241.46.2/32" "10.241.23.0/24" ];
       }
       # antigone's initrd unlock identity: only its own address, so you can SSH
       # the initrd over the tunnel to enter the disk passphrase at boot.
       {
-        publicKey = config.environment.wireguardDevices.antigone-initrd.publicKey;
+        publicKey = config.environment.wireguard.devices.antigone-initrd.publicKey;
         allowedIPs = [ "10.241.46.3/32" ];
       }
       # medea: a single roaming client.
       {
-        publicKey = config.environment.wireguardDevices.medea.publicKey;
+        publicKey = config.environment.wireguard.devices.medea.publicKey;
         allowedIPs = [ "10.241.46.10/32" ];
       }
     ];

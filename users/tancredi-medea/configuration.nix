@@ -63,7 +63,7 @@
     cert = config.age.secrets.syncthing-medea-cert.path;
     key = config.age.secrets.syncthing-medea-key.path;
 
-    settings.devices.antigone = config.environment.syncthingDevices.antigone;
+    settings.devices.antigone = config.environment.syncthing.devices.antigone;
 
     settings.folders."electronic-mp3" = {
       label = "Electronic (MP3)";

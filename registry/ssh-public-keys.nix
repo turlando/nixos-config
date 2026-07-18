@@ -3,9 +3,9 @@
 # entry is the public half of the correspondingly-named ssh-key_<name>.age
 # private secret and shares its tuple name
 #   <target_host>-<target_user>_<source_host>-<source_user>
-# (see secrets/secrets.nix). It is surfaced by the environment.sshPublicKeys
+# (see secrets/secrets.nix). It is surfaced by the environment.ssh.publicKeys
 # module, so host configs reference it as
-# config.environment.sshPublicKeys.<name> when populating the target's
+# config.environment.ssh.publicKeys.<name> when populating the target's
 # authorized_keys. Keys for external services (github/gitlab/compiler) are
 # registered with the service instead, so they have no public half here.
 {

@@ -12,9 +12,9 @@ let
 
   # Pinned ids from the registry, so slskd's uid and the storage-music gid
   # line up across the container boundary (privateUsers = false).
-  slskdUid = config.environment.ids.uids.slskd;
-  slskdGid = config.environment.ids.gids.slskd;
-  storageMusicGid = config.environment.ids.gids.storage-music;
+  slskdUid = config.environment.unixIds.uids.slskd;
+  slskdGid = config.environment.unixIds.gids.slskd;
+  storageMusicGid = config.environment.unixIds.gids.storage-music;
 
   # Master FLAC library on the storage pool, shared read-only through slskd.
   flacLibrary = config.disko.devices.zpool.storage.datasets."music/electronic-flac".mountpoint;

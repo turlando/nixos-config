@@ -1,13 +1,13 @@
 let
   age = ./age.nix;
   host-name = ./host-name.nix;
-  syncthing-devices = ./syncthing-devices.nix;
+  syncthing = ./syncthing.nix;
 in
 {
-  inherit age host-name syncthing-devices;
+  inherit age host-name syncthing;
   default.imports = [
     age
     host-name
-    syncthing-devices
+    syncthing
   ];
 }

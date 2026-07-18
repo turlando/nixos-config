@@ -1,8 +1,8 @@
 # Statically pinned uids/gids we assign ourselves, keyed by name. Public data,
-# not secret, surfaced by the environment.ids accessor. We only pin what nixpkgs
-# leaves dynamic and what has to line up host-side across the nspawn container
-# boundary (containers run privateUsers = false, so a container's numeric IDs
-# are the host's).
+# not secret, surfaced by the environment.unixIds accessor. We only pin what
+# nixpkgs leaves dynamic and what has to line up host-side across the nspawn
+# container boundary (containers run privateUsers = false, so a container's
+# numeric IDs are the host's).
 {
   uids = {
     # slskd is newer than nixpkgs' static id list and its module uses a dynamic

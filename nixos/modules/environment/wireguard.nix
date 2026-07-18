@@ -3,7 +3,7 @@
 let
   inherit (lib) mkOption types;
 in {
-  options.environment.wireguardDevices = mkOption {
+  options.environment.wireguard.devices = mkOption {
     type = types.attrsOf (types.submodule {
       options.publicKey = mkOption {
         type = types.str;
@@ -26,7 +26,7 @@ in {
 
       This module is only the accessor: the devices live in
       registry/wireguard-devices.nix. A configuration references a peer as
-      `config.environment.wireguardDevices.<name>.publicKey` when declaring
+      `config.environment.wireguard.devices.<name>.publicKey` when declaring
       WireGuard peers, so it is always clear whose key is used.
     '';
   };

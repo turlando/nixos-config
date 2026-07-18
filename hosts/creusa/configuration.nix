@@ -12,6 +12,6 @@
 
   users.users.root = {
     hashedPasswordFile = config.age.secrets.user-password-creusa-root.path;
-    openssh.authorizedKeys.keys = [ config.environment.sshPublicKeys.creusa-root_medea-tancredi ];
+    openssh.authorizedKeys.keys = [ config.environment.ssh.publicKeys.creusa-root_medea-tancredi ];
   };
 }

@@ -1,7 +1,7 @@
 { flake, config, ... }:
 let
   # Pinned syncthing TLS identity from agenix; its fingerprint is the device
-  # ID in environment.syncthingDevices.antigone. The module's ExecStartPre
+  # ID in environment.syncthing.devices.antigone. The module's ExecStartPre
   # runs as root and copies these into configDir, so bind-mounting the
   # host-decrypted paths through is enough.
   certPath = config.age.secrets.syncthing-antigone-cert.path;
@@ -12,7 +12,7 @@ let
 
   # MP3 export shared one-way to medea; syncthing joins storage-music to read it.
   mp3Library = config.disko.devices.zpool.storage.datasets."music/electronic-mp3".mountpoint;
-  storageMusicGid = config.environment.ids.gids.storage-music;
+  storageMusicGid = config.environment.unixIds.gids.storage-music;
 in
 {
   disko.devices.zpool.antigone.datasets = {
@@ -118,7 +118,7 @@ in
         services.syncthing = {
           enable = true;
           # Pin the TLS identity (bound in above) so antigone's device ID stays
-          # fixed at environment.syncthingDevices.antigone regardless of the
+          # fixed at environment.syncthing.devices.antigone regardless of the
           # data dataset, instead of a fresh auto-generated cert.
           cert = certPath;
           key = keyPath;
@@ -129,8 +129,8 @@ in
           settings.gui.insecureSkipHostcheck = true;
 
           settings.devices = {
-            antigone = config.environment.syncthingDevices.antigone;
-            medea = config.environment.syncthingDevices.medea;
+            antigone = config.environment.syncthing.devices.antigone;
+            medea = config.environment.syncthing.devices.medea;
           };
 
           settings.folders."electronic-mp3" = {

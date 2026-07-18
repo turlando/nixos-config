@@ -35,8 +35,8 @@ in
       wireguardConfig.PrivateKeyFile = initrdWgKey;
       wireguardPeers = [
         {
-          PublicKey = config.environment.wireguardDevices.creusa.publicKey;
-          Endpoint = config.environment.wireguardDevices.creusa.endpoint;
+          PublicKey = config.environment.wireguard.devices.creusa.publicKey;
+          Endpoint = config.environment.wireguard.devices.creusa.endpoint;
           AllowedIPs = [ "10.241.46.0/24" ];
           PersistentKeepalive = 25;
         }
@@ -58,7 +58,7 @@ in
       };
     };
   };
-  boot.initrd.network.ssh.authorizedKeys = [ config.environment.sshPublicKeys.antigone-root_medea-tancredi ];
+  boot.initrd.network.ssh.authorizedKeys = [ config.environment.ssh.publicKeys.antigone-root_medea-tancredi ];
 
   # Pin interface names by MAC so they stay stable across reboots and as
   # NICs are added.
@@ -121,8 +121,8 @@ in
 
     peers = [
       {
-        publicKey = config.environment.wireguardDevices.creusa.publicKey;
-        endpoint = config.environment.wireguardDevices.creusa.endpoint;
+        publicKey = config.environment.wireguard.devices.creusa.publicKey;
+        endpoint = config.environment.wireguard.devices.creusa.endpoint;
         allowedIPs = [ "10.241.46.0/24" ];
         persistentKeepalive = 25;
       }

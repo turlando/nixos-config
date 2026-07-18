@@ -1,19 +1,19 @@
 let
   age = ./age.nix;
-  ids = ./ids.nix;
   persistence = ./persistence.nix;
-  ssh-public-keys = ./ssh-public-keys.nix;
-  syncthing-devices = ./syncthing-devices.nix;
-  wireguard-devices = ./wireguard-devices.nix;
+  ssh = ./ssh.nix;
+  syncthing = ./syncthing.nix;
+  unix-ids = ./unix-ids.nix;
+  wireguard = ./wireguard.nix;
 in
 {
-  inherit age ids persistence ssh-public-keys syncthing-devices wireguard-devices;
+  inherit age persistence ssh syncthing unix-ids wireguard;
   default.imports = [
     age
-    ids
     persistence
-    ssh-public-keys
-    syncthing-devices
-    wireguard-devices
+    ssh
+    syncthing
+    unix-ids
+    wireguard
   ];
 }

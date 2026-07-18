@@ -52,8 +52,8 @@
         permissions = "user:tancredi:";
       };
       wireguard.private-key = "$WG_PRIVATE_KEY";
-      "wireguard-peer.${config.environment.wireguardDevices.creusa.publicKey}" = {
-        endpoint = config.environment.wireguardDevices.creusa.endpoint;
+      "wireguard-peer.${config.environment.wireguard.devices.creusa.publicKey}" = {
+        endpoint = config.environment.wireguard.devices.creusa.endpoint;
         allowed-ips = "10.241.0.0/16";
         persistent-keepalive = "25";
       };

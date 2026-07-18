@@ -3,7 +3,7 @@
 let
   inherit (lib) mkOption types;
 in {
-  options.environment.syncthingDevices = mkOption {
+  options.environment.syncthing.devices = mkOption {
     type = types.attrsOf (types.submodule {
       options.id = mkOption {
         type = types.str;
@@ -19,7 +19,7 @@ in {
       This module is only the accessor: the devices live in
       registry/syncthing-devices.nix. An entry maps directly onto
       services.syncthing.settings.devices.<name>, so a configuration can set
-      `settings.devices.<name> = config.environment.syncthingDevices.<name>`.
+      `settings.devices.<name> = config.environment.syncthing.devices.<name>`.
     '';
   };
 }

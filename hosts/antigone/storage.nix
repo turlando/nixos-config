@@ -10,7 +10,7 @@ in
   # storage-music owns the shared music datasets. Its gid is pinned so the
   # group is identical on the host and inside the slskd/syncthing containers
   # (which run privateUsers = false); members get to it from either side.
-  users.groups.storage-music.gid = config.environment.ids.gids.storage-music;
+  users.groups.storage-music.gid = config.environment.unixIds.gids.storage-music;
 
   disko.devices.zpool.storage.datasets = {
     "music" = {
