@@ -15,11 +15,7 @@ nixpkgs.lib.nixosSystem {
     agenix.nixosModules.default
     disko.nixosModules.default
 
-    self.nixosModules.modules.environment.persistence
-    self.nixosModules.modules.environment.ssh-public-keys
-    self.nixosModules.modules.environment.wireguard-devices
-    self.nixosModules.modules.services.ephemeral
-    self.nixosModules.modules.services.journald
+    self.nixosModules.modules.default
 
     self.nixosModules.profiles.base
     self.nixosModules.profiles.boot-systemd

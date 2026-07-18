@@ -17,6 +17,8 @@ in home-manager.lib.homeManagerConfiguration {
   modules = [
     agenix.homeManagerModules.default
 
+    self.homeManagerModules.modules.default
+
     self.homeManagerModules.profiles.base
     self.homeManagerModules.profiles.age
 

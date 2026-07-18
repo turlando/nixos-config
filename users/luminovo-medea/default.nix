@@ -20,9 +20,7 @@ in home-manager.lib.homeManagerConfiguration {
   modules = [
     agenix.homeManagerModules.default
 
-    self.homeManagerModules.modules.fonts.families
-    self.homeManagerModules.modules.programs.firefox
-    self.homeManagerModules.modules.programs.thunderbird
+    self.homeManagerModules.modules.default
 
     self.homeManagerModules.profiles.base
     self.homeManagerModules.profiles.age

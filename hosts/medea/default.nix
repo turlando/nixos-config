@@ -14,12 +14,7 @@ nixpkgs.lib.nixosSystem {
     nixos-hardware.nixosModules.framework-amd-ai-300-series
     nixvirt.nixosModules.default
 
-    self.nixosModules.modules.boot.silent
-    self.nixosModules.modules.environment.persistence
-    self.nixosModules.modules.environment.wireguard-devices
-    self.nixosModules.modules.hardware.framework
-    self.nixosModules.modules.i18n.extra-locale
-    self.nixosModules.modules.services.journald
+    self.nixosModules.modules.default
 
     self.nixosModules.profiles.base
     self.nixosModules.profiles.boot-systemd
