@@ -5,12 +5,5 @@
 
 flake.inputs.nixpkgs.lib.nixosSystem {
   inherit system modules;
-
-  specialArgs = {
-    inherit flake;
-    # Transitional args; consumers still on the old names.
-    self = flake;
-    lib-age = flake.lib.age;
-    nixvirt-lib = flake.inputs.nixvirt.lib;
-  };
+  specialArgs = { inherit flake; };
 }

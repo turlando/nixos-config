@@ -1,5 +1,9 @@
-{ config, packages, pkgs, ... }:
+{ config, flake, pkgs, ... }:
 
+let
+  minimal-emacs-d =
+    flake.packages.${pkgs.stdenv.hostPlatform.system}.minimal-emacs-d;
+in
 {
   home.packages = [ pkgs.ripgrep ];
 
@@ -62,8 +66,8 @@
     ;;; turlando-fonts.el ends here
   '';
 
-  xdg.configFile."emacs/early-init.el".source = "${packages.minimal-emacs-d}/early-init.el";
-  xdg.configFile."emacs/init.el".source = "${packages.minimal-emacs-d}/init.el";
+  xdg.configFile."emacs/early-init.el".source = "${minimal-emacs-d}/early-init.el";
+  xdg.configFile."emacs/init.el".source = "${minimal-emacs-d}/init.el";
 
   xdg.configFile."emacs/pre-early-init.el".source = ./config/pre-early-init.el;
   xdg.configFile."emacs/post-early-init.el".source = ./config/post-early-init.el;

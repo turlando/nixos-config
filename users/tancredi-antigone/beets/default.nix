@@ -13,9 +13,13 @@
 # with `beet -c` (see the manage-music-library skill). Everything else (lint,
 # convert, queries, the manual import lane) runs against this config with no
 # secret.
-{ config, pkgs, nixosConfiguration, ... }:
+{ config, flake, pkgs, ... }:
 let
-  storage = nixosConfiguration.disko.devices.zpool.storage.datasets;
+  # Library locations come from the target host's disko layout, so the paths
+  # cannot drift from the pool definition. This is the sanctioned cross-realm
+  # escape hatch: the NixOS config of the host this home deploys to.
+  storage = flake.nixosConfigurations.${config.environment.hostName}.config
+    .disko.devices.zpool.storage.datasets;
   flacLibrary = storage."music/electronic-flac".mountpoint;
   mp3Export = storage."music/electronic-mp3".mountpoint;
 

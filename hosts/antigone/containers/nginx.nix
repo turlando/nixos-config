@@ -1,4 +1,4 @@
-{ self, config, ... }:
+{ flake, config, ... }:
 {
   disko.devices.zpool.antigone.datasets = {
     "containers/nginx" = {
@@ -50,7 +50,7 @@
       { ... }:
       {
         imports = [
-          self.nixosModules.modules.services.journald
+          flake.nixosModules.modules.services.journald
         ];
 
         system.stateVersion = "26.05";

@@ -1,9 +1,9 @@
-{ pkgs, nixvirt-lib, ... }:
+{ flake, pkgs, ... }:
 {
   virtualisation.libvirt.connections."qemu:///system" = {
     domains = [
       {
-        definition = nixvirt-lib.domain.writeXML
+        definition = flake.inputs.nixvirt.lib.domain.writeXML
           (import ./domain-tersicore.nix {
             ovmf = pkgs.OVMFFull;
           });
@@ -13,7 +13,7 @@
     networks = [
       {
         active = true;
-        definition = nixvirt-lib.network.writeXML (import ./network-default.nix);
+        definition = flake.inputs.nixvirt.lib.network.writeXML (import ./network-default.nix);
         restart = null;
       }
     ];

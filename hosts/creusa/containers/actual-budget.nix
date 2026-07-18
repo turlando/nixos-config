@@ -1,4 +1,4 @@
-{ self, config, ... }:
+{ flake, config, ... }:
 {
   disko.devices.zpool.creusa.datasets = {
     "containers/actual-budget" = {
@@ -65,7 +65,7 @@
         ];
 
         imports = [
-          self.nixosModules.modules.services.journald
+          flake.nixosModules.modules.services.journald
           "${config.nixpkgs.unstable.pkgs.path}/nixos/modules/services/web-apps/actual.nix"
         ];
 

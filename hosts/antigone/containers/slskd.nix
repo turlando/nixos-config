@@ -1,4 +1,4 @@
-{ self, config, ... }:
+{ flake, config, ... }:
 let
   # Bind the host-decrypted agenix secret through to the same path inside the
   # container.
@@ -142,7 +142,7 @@ in
         ];
 
         imports = [
-          self.nixosModules.modules.services.journald
+          flake.nixosModules.modules.services.journald
           "${config.nixpkgs.unstable.pkgs.path}/nixos/modules/services/web-apps/slskd.nix"
         ];
 

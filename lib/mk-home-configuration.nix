@@ -1,7 +1,7 @@
-# Constructor for a home: wires the flake specialArg and evaluates the
-# module list with home-manager's homeManagerConfiguration. User
-# configurations call this from their default.nix and never touch
-# extraSpecialArgs themselves.
+# Constructor for a home: wires the flake specialArg, records the target
+# host in environment.hostName, and evaluates the module list with
+# home-manager's homeManagerConfiguration. User configurations call this
+# from their default.nix and never touch extraSpecialArgs themselves.
 { flake
 , host
 , system ? "x86_64-linux"
@@ -16,13 +16,7 @@ flake.inputs.home-manager.lib.homeManagerConfiguration {
       builtins.elem (flake.inputs.nixpkgs.lib.getName pkg) allowUnfree;
   };
 
-  extraSpecialArgs = {
-    inherit flake;
-    # Transitional args; consumers still on the old names.
-    lib-age = flake.lib.age;
-    nixosConfiguration = flake.nixosConfigurations.${host}.config;
-    packages = flake.packages.${system};
-  };
+  extraSpecialArgs = { inherit flake; };
 
-  inherit modules;
+  modules = modules ++ [ { environment.hostName = host; } ];
 }

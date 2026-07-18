@@ -1,4 +1,4 @@
-{ self, config, ... }:
+{ flake, config, ... }:
 let
   # Pinned syncthing TLS identity from agenix; its fingerprint is the device
   # ID in environment.syncthingDevices.antigone. The module's ExecStartPre
@@ -95,7 +95,7 @@ in
       { ... }:
       {
         imports = [
-          self.nixosModules.modules.services.journald
+          flake.nixosModules.modules.services.journald
         ];
 
         system.stateVersion = "26.05";
