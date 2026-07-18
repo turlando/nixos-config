@@ -17,7 +17,7 @@ pkgs.writeShellApplication {
     NAME="$1"
 
     ssh-keygen -t ed25519 -C "$NAME" -f "''${NAME}_key" -N ""
-    echo "Add this public key to secrets/keys.nix:"
+    echo "Add this public key to registry/age-keys.nix:"
     cat "''${NAME}_key.pub"
   '';
 }

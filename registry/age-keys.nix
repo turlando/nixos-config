@@ -1,7 +1,10 @@
-# Agenix recipients, organized by host: each host carries its machine identity
+# Agenix recipients, keyed by host: each host carries its machine identity
 # (the SSH host key, used by the nixos realm) and the per-user age identities
 # that live on it (used by the home realm, and the infra realm for the OpenTofu
-# token). Each user private half lives in ~/.config/agenix/key on that host.
+# token). Public halves only, so this is plain data; each user private half
+# lives in ~/.config/agenix/key on that host. Surfaced by the
+# environment.age.keys accessor; secrets/secrets.nix imports it directly to
+# declare recipients.
 {
   antigone = {
     host = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDRuCWecmULsH4Ir1TtZ+8uSbvV+h9fxZ7M6sop0bTIt";

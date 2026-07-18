@@ -1,4 +1,5 @@
 let
+  age = ./age.nix;
   ids = ./ids.nix;
   persistence = ./persistence.nix;
   ssh-public-keys = ./ssh-public-keys.nix;
@@ -6,8 +7,9 @@ let
   wireguard-devices = ./wireguard-devices.nix;
 in
 {
-  inherit ids persistence ssh-public-keys syncthing-devices wireguard-devices;
+  inherit age ids persistence ssh-public-keys syncthing-devices wireguard-devices;
   default.imports = [
+    age
     ids
     persistence
     ssh-public-keys

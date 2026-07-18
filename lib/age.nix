@@ -15,9 +15,9 @@ let
   # user secrets never share a decryption identity.
   userKeyFile = ".config/agenix/key";
 
-  # Default secrets and keys
+  # Default secrets and scopes; the recipient keys live in
+  # registry/age-keys.nix behind the environment.ageKeys accessor.
   allSecrets = import (defaultSecretsPath + "/secrets.nix");
-  keys       = import (defaultSecretsPath + "/keys.nix");
   scope      = import (defaultSecretsPath + "/scope.nix");
 
   # mkSecrets { key, scope, secrets?, dir? }
@@ -73,7 +73,6 @@ in
     keyDir
     identityFile
     userKeyFile
-    keys
     scope
     mkSecrets;
 }

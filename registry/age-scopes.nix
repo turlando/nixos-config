@@ -1,3 +1,7 @@
+# Secret scopes: the realms a secret is filtered for by lib/age.nix's
+# mkSecrets (each entry in secrets/secrets.nix lists the scopes it belongs
+# to). Surfaced by the environment.age.scopes accessor; the age profiles
+# select theirs as config.environment.age.scopes.<realm>.
 {
   # Scope for secrets used by OpenTofu.
   #

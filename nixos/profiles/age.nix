@@ -11,8 +11,8 @@
   age = {
     identityPaths = [ flake.lib.age.identityFile ];
     secrets = flake.lib.age.mkSecrets {
-      key   = flake.lib.age.keys.${config.networking.hostName}.host;
-      scope = flake.lib.age.scope.nixos;
+      key   = config.environment.age.keys.${config.networking.hostName}.host;
+      scope = config.environment.age.scopes.nixos;
     };
   };
 }

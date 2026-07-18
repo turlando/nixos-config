@@ -1,5 +1,5 @@
 # Public SSH keys. These are not secret, so they live here as plain data
-# (cf. secrets/keys.nix, which holds the hosts' public age keys). Each
+# (cf. age-keys.nix, which holds the hosts' public age keys). Each
 # entry is the public half of the correspondingly-named ssh-key_<name>.age
 # private secret and shares its tuple name
 #   <target_host>-<target_user>_<source_host>-<source_user>

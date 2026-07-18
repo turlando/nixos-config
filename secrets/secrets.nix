@@ -1,6 +1,6 @@
 let
-  keys = import ./keys.nix;
-  scope = import ./scope.nix;
+  keys = import ../registry/age-keys.nix;
+  scope = import ../registry/age-scopes.nix;
 in
 {
   # Hashed login password for root user on medea.
