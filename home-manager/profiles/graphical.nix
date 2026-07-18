@@ -9,6 +9,18 @@
     package = pkgs.aporetic;
   };
 
+  fonts.families.sansSerif = {
+    family = "Noto Sans";
+    size = 10;
+    package = pkgs.noto-fonts;
+  };
+
+  fonts.families.serif = {
+    family = "Noto Serif";
+    size = 10;
+    package = pkgs.noto-fonts;
+  };
+
   # Enable Bluetooth headsets buttons support.
   services.mpris-proxy.enable = true;
 
