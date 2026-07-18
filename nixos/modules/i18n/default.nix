@@ -1,3 +1,3 @@
 {
-  extra-locale = import ./extra-locale.nix;
+  extra-locale = ./extra-locale.nix;
 }

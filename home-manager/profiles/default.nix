@@ -1,7 +1,9 @@
+# Profiles, exported as file paths so the module system can identify and
+# deduplicate each one by file. Importing a profile activates it.
 {
-  age = import ./age.nix;
-  base = import ./base.nix;
-  emacs = import ./emacs;
-  graphical = import ./graphical.nix;
-  libvirt = import ./libvirt.nix;
+  age = ./age.nix;
+  base = ./base.nix;
+  emacs = ./emacs;
+  graphical = ./graphical.nix;
+  libvirt = ./libvirt.nix;
 }

@@ -1,4 +1,4 @@
 {
-  ephemeral = import ./ephemeral.nix;
-  journald = import ./journald.nix;
+  ephemeral = ./ephemeral.nix;
+  journald = ./journald.nix;
 }

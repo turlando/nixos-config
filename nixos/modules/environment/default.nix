@@ -1,7 +1,7 @@
 {
-  ids = import ./ids.nix;
-  persistence = import ./persistence.nix;
-  ssh-public-keys = import ./ssh-public-keys.nix;
-  syncthing-devices = import ./syncthing-devices.nix;
-  wireguard-devices = import ./wireguard-devices.nix;
+  ids = ./ids.nix;
+  persistence = ./persistence.nix;
+  ssh-public-keys = ./ssh-public-keys.nix;
+  syncthing-devices = ./syncthing-devices.nix;
+  wireguard-devices = ./wireguard-devices.nix;
 }

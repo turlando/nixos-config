@@ -1,3 +1,3 @@
 {
-  framework = import ./framework.nix;
+  framework = ./framework.nix;
 }

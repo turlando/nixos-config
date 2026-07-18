@@ -1,3 +1,3 @@
 {
-  syncthing-devices = import ./syncthing-devices.nix;
+  syncthing-devices = ./syncthing-devices.nix;
 }

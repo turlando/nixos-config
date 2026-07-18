@@ -1,4 +1,4 @@
 {
-  firefox = import ./firefox.nix;
-  thunderbird = import ./thunderbird.nix;
+  firefox = ./firefox.nix;
+  thunderbird = ./thunderbird.nix;
 }
