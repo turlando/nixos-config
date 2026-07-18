@@ -1,5 +1,10 @@
-{ config, pkgs, ... }:
+{ config, flake, lib, pkgs, ... }:
 let
+  inherit (flake.lib) net;
+  inherit (config.environment.network) dns hosts subnets;
+
+  antigone = hosts.antigone.interfaces;
+
   # Where boot.initrd.secrets bakes the initrd WG key and networkd reads it,
   # named once so the two references cannot drift apart.
   initrdWgKey = "/etc/wireguard-initrd.key";
@@ -37,24 +42,24 @@ in
         {
           PublicKey = config.environment.wireguard.devices.creusa.publicKey;
           Endpoint = config.environment.wireguard.devices.creusa.endpoint;
-          AllowedIPs = [ "10.241.46.0/24" ];
+          AllowedIPs = [ subnets.wireguard.cidr ];
           PersistentKeepalive = 25;
         }
       ];
     };
     networks = {
       "10-lan0" = {
-        matchConfig.MACAddress = "c4:e9:84:04:c2:64";
-        address = [ "10.241.23.1/24" ];
+        matchConfig.MACAddress = antigone.lan0.mac;
+        address = [ (net.withPrefix antigone.lan0.address subnets.lan.cidr) ];
       };
       "10-wan0" = {
-        matchConfig.MACAddress = "10:7b:44:49:e6:8a";
-        address = [ "10.241.254.2/24" ];
-        gateway = [ "10.241.254.1" ];
+        matchConfig.MACAddress = antigone.wan0.mac;
+        address = [ (net.withPrefix antigone.wan0.address subnets.transit.cidr) ];
+        gateway = [ hosts.modem.interfaces.eth0.address ];
       };
       "10-wg0" = {
         matchConfig.Name = "wg0";
-        address = [ "10.241.46.3/24" ];
+        address = [ (net.withPrefix antigone.wg0-initrd.address subnets.wireguard.cidr) ];
       };
     };
   };
@@ -65,13 +70,13 @@ in
 
   # wan0: builtin NIC (e1000e), uplink to the ZTE modem.
   systemd.network.links."10-wan0" = {
-    matchConfig.MACAddress = "10:7b:44:49:e6:8a";
+    matchConfig.MACAddress = antigone.wan0.mac;
     linkConfig.Name = "wan0";
   };
 
   # lan0: PCIe NIC (r8169), the trusted apartment LAN.
   systemd.network.links."10-lan0" = {
-    matchConfig.MACAddress = "c4:e9:84:04:c2:64";
+    matchConfig.MACAddress = antigone.lan0.mac;
     linkConfig.Name = "lan0";
   };
 
@@ -85,12 +90,12 @@ in
   systemd.network.networks = {
     "10-wan0" = {
       matchConfig.Name = "wan0";
-      address = [ "10.241.254.2/24" ];
-      gateway = [ "10.241.254.1" ];
+      address = [ (net.withPrefix antigone.wan0.address subnets.transit.cidr) ];
+      gateway = [ hosts.modem.interfaces.eth0.address ];
     };
     "10-lan0" = {
       matchConfig.Name = "lan0";
-      address = [ "10.241.23.1/24" ];
+      address = [ (net.withPrefix antigone.lan0.address subnets.lan.cidr) ];
     };
   };
 
@@ -116,21 +121,21 @@ in
   # replies to roaming clients route back through creusa. antigone initiates,
   # so no inbound port is opened on wan0; creusa's replies return established.
   networking.wireguard.interfaces.wg0 = {
-    ips = [ "10.241.46.2/24" ];
+    ips = [ (net.withPrefix antigone.wg0.address subnets.wireguard.cidr) ];
     privateKeyFile = config.age.secrets.wireguard-antigone-key.path;
 
     peers = [
       {
         publicKey = config.environment.wireguard.devices.creusa.publicKey;
         endpoint = config.environment.wireguard.devices.creusa.endpoint;
-        allowedIPs = [ "10.241.46.0/24" ];
+        allowedIPs = [ subnets.wireguard.cidr ];
         persistentKeepalive = 25;
       }
     ];
   };
 
-  # DHCP: kea serves the LAN on lan0 from the 10.241.23.101-200 pool,
-  # handing out antigone (.1) as gateway and resolver.
+  # DHCP: kea serves the LAN on lan0, handing out antigone as gateway and
+  # resolver.
   services.kea.dhcp4 = {
     enable = true;
     settings = {
@@ -144,11 +149,11 @@ in
       subnet4 = [
         {
           id = 1;
-          subnet = "10.241.23.0/24";
+          subnet = subnets.lan.cidr;
           pools = [ { pool = "10.241.23.101 - 10.241.23.200"; } ];
           option-data = [
-            { name = "routers";             data = "10.241.23.1"; }
-            { name = "domain-name-servers"; data = "10.241.23.1"; }
+            { name = "routers";             data = antigone.lan0.address; }
+            { name = "domain-name-servers"; data = antigone.lan0.address; }
           ];
         }
       ];
@@ -162,43 +167,59 @@ in
   services.resolved.enable = false;
 
   # DNS: unbound is the caching resolver for antigone, the LAN, and roaming
-  # WireGuard clients. It forwards to Quad9 over DoT and answers
-  # authoritatively for rhyzomatic.net
-  # and the LAN reverse zones. Managed hosts and their services sit directly
-  # under the zone; site devices (ap0, modem) live under the perosi subzone.
-  # resolveLocalQueries points antigone's own queries here too.
-  services.unbound = {
+  # WireGuard clients. It forwards to Quad9 over DoT and serves the internal
+  # split-horizon view of the registry: the view's zones are declared static
+  # below and its records become the A and PTR data. resolveLocalQueries
+  # points antigone's own queries here too.
+  services.unbound = let
+    view = dns.views.internal;
+
+    # The records answered in the internal view, e.g.
+    #   { name = "antigone.rhyzomatic.net"; ptr = true;
+    #     answer.interface = { host = "antigone"; interface = "lan0"; }; }
+    servedRecords = lib.mapAttrsToList
+      (_: record: { inherit (record) name ptr; answer = record.views.internal; })
+      (lib.filterAttrs (_: record: record.views.internal != null) dns.records);
+
+    # local-data line for one served record: CNAME answers verbatim,
+    # address-bearing answers as A records resolved through the registry.
+    recordLine = record:
+      if record.answer ? cname
+      then ''"${record.name}. IN CNAME ${record.answer.cname}"''
+      else ''"${record.name}. IN A ${net.answerAddress hosts record.answer}"'';
+  in {
     enable = true;
     resolveLocalQueries = true;
     settings = {
       server = {
         interface = [
           "127.0.0.1"
-          "10.241.23.1"
+          antigone.lan0.address
         ];
         access-control = [
           "127.0.0.0/8 allow"
-          "10.241.23.0/24 allow"
-          "10.241.46.0/24 allow"
+          "${subnets.lan.cidr} allow"
+          "${subnets.wireguard.cidr} allow"
         ];
         tls-cert-bundle = "${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt";
-        local-zone = [
-          ''"rhyzomatic.net." static''
-          ''"23.241.10.in-addr.arpa." static''
-          ''"254.241.10.in-addr.arpa." static''
-        ];
-        local-data = [
-          ''"antigone.rhyzomatic.net. IN A 10.241.23.1"''
-          ''"slskd.antigone.rhyzomatic.net. IN A 10.241.23.1"''
-          ''"syncthing.antigone.rhyzomatic.net. IN A 10.241.23.1"''
-          ''"ap0.perosi.rhyzomatic.net. IN A 10.241.23.11"''
-          ''"modem.perosi.rhyzomatic.net. IN A 10.241.254.1"''
-        ];
-        local-data-ptr = [
-          ''"10.241.23.1 antigone.rhyzomatic.net"''
-          ''"10.241.23.11 ap0.perosi.rhyzomatic.net"''
-          ''"10.241.254.1 modem.perosi.rhyzomatic.net"''
-        ];
+        # The view's zones answered authoritatively, with static cutting any
+        # fallthrough to the forwarders, e.g. '"rhyzomatic.net." static'.
+        local-zone =
+          map (zone: ''"${zone}." static'') view.zones
+          # Reverse zones for the subnets antigone does reverse DNS for,
+          # named after their CIDRs, e.g. '"23.241.10.in-addr.arpa." static'.
+          ++ map (subnet: ''"${net.reverseZone subnet.cidr}." static'') [
+            subnets.lan
+            subnets.transit
+          ];
+        # One line per served record, e.g.
+        # '"antigone.rhyzomatic.net. IN A 10.241.23.1"'.
+        local-data = map recordLine servedRecords;
+        # One PTR record per address, from the record marked as the
+        # address's canonical name, e.g. '"10.241.23.1 antigone.rhyzomatic.net"'.
+        local-data-ptr = map
+          (record: ''"${net.answerAddress hosts record.answer} ${record.name}"'')
+          (lib.filter (record: record.ptr) servedRecords);
       };
       forward-zone = [
         {

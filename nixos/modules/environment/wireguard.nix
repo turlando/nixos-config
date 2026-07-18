@@ -17,6 +17,14 @@ in {
           null for spokes and roaming clients.
         '';
       };
+      options.listenPort = mkOption {
+        type = types.nullOr types.port;
+        default = null;
+        description = ''
+          UDP listen port for a listening device such as the hub; null for
+          spokes and roaming clients.
+        '';
+      };
     });
     readOnly = true;
     default = import ../../../registry/wireguard-devices.nix;

@@ -88,7 +88,7 @@
           recommendedProxySettings = true;
 
           virtualHosts = {
-            "dracma.us.to" = {
+            ${hostConfig.environment.network.dns.records.dracma.name} = {
               enableACME = true;
               forceSSL = true;
 
@@ -100,8 +100,8 @@
                   "http://${hostname}:${toString port}";
 
               extraConfig = ''
-                error_log /var/log/nginx/dracma.us.to-error.log error;
-                access_log /var/log/nginx/dracma.us.to-access.log combined;
+                error_log /var/log/nginx/${hostConfig.environment.network.dns.records.dracma.name}-error.log error;
+                access_log /var/log/nginx/${hostConfig.environment.network.dns.records.dracma.name}-access.log combined;
               '';
             };
           };

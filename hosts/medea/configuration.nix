@@ -1,4 +1,4 @@
-{ config, ... }:
+{ config, flake, lib, ... }:
 {
   system.stateVersion = "26.05";
 
@@ -41,7 +41,9 @@
   # resolver so rhyzomatic.net names resolve over the tunnel. The private key is
   # substituted from its agenix secret at activation, so it never enters the
   # store.
-  networking.networkmanager.ensureProfiles = {
+  networking.networkmanager.ensureProfiles = let
+    inherit (config.environment.network) dns hosts subnets;
+  in {
     environmentFiles = [ config.age.secrets.wireguard-medea-key.path ];
     profiles.wg-rhyzomatic = {
       connection = {
@@ -54,14 +56,16 @@
       wireguard.private-key = "$WG_PRIVATE_KEY";
       "wireguard-peer.${config.environment.wireguard.devices.creusa.publicKey}" = {
         endpoint = config.environment.wireguard.devices.creusa.endpoint;
-        allowed-ips = "10.241.0.0/16";
+        allowed-ips = subnets.site.cidr;
         persistent-keepalive = "25";
       };
       ipv4 = {
         method = "manual";
-        address1 = "10.241.46.10/24";
-        dns = "10.241.23.1";
-        dns-search = "rhyzomatic.net";
+        address1 = flake.lib.net.withPrefix hosts.medea.interfaces.wg0.address subnets.wireguard.cidr;
+        dns = hosts.antigone.interfaces.lan0.address;
+        # Short names resolve in the zones the internal view serves,
+        # i.e. dns-search=rhyzomatic.net.
+        dns-search = lib.concatStringsSep ";" dns.views.internal.zones;
         dns-priority = "-10";
         never-default = "true";
       };

@@ -10,7 +10,7 @@
     enableDefaultConfig = false;
     settings = {
       "antigone" = {
-        HostName = "10.241.23.1";
+        HostName = config.environment.network.hosts.antigone.interfaces.lan0.address;
         # tancredi by default; `ssh root@antigone` picks the root key from the
         # list (the tancredi key is offered first and simply rejected for root).
         User = "tancredi";
@@ -20,13 +20,13 @@
         ];
       };
       "antigone-unlock" = {
-        HostName = "10.241.23.1";
+        HostName = config.environment.network.hosts.antigone.interfaces.lan0.address;
         Port = 2222;
         User = "root";
         IdentityFile = config.age.secrets.ssh-key_antigone-root_medea-tancredi.path;
       };
       "creusa" = {
-        HostName = "46.225.229.141";
+        HostName = config.environment.network.hosts.creusa.interfaces.eth0.address;
         User = "root";
         IdentityFile = config.age.secrets.ssh-key_creusa-root_medea-tancredi.path;
       };

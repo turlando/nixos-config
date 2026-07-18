@@ -1,12 +1,16 @@
-{ config, ... }:
+{ config, flake, ... }:
+let
+  inherit (flake.lib) net;
+  inherit (config.environment.network) hosts subnets;
+in
 {
   # WireGuard hub. creusa has a stable public IP, so the spokes dial in here:
   # antigone (home, behind a rotating WAN) and roaming clients like medea.
   # creusa forwards between them, so a roaming client reaches antigone's LAN
   # through the tunnel without antigone needing a fixed, reachable endpoint.
   networking.wireguard.interfaces.wg0 = {
-    ips = [ "10.241.46.1/24" ];
-    listenPort = 51820;
+    ips = [ (net.withPrefix hosts.creusa.interfaces.wg0.address subnets.wireguard.cidr) ];
+    listenPort = config.environment.wireguard.devices.creusa.listenPort;
     privateKeyFile = config.age.secrets.wireguard-creusa-key.path;
 
     peers = [
@@ -15,18 +19,21 @@
       # antigone dials in and creusa learns its address from the handshake.
       {
         publicKey = config.environment.wireguard.devices.antigone.publicKey;
-        allowedIPs = [ "10.241.46.2/32" "10.241.23.0/24" ];
+        allowedIPs = [
+          "${hosts.antigone.interfaces.wg0.address}/32"
+          subnets.lan.cidr
+        ];
       }
       # antigone's initrd unlock identity: only its own address, so you can SSH
       # the initrd over the tunnel to enter the disk passphrase at boot.
       {
         publicKey = config.environment.wireguard.devices.antigone-initrd.publicKey;
-        allowedIPs = [ "10.241.46.3/32" ];
+        allowedIPs = [ "${hosts.antigone.interfaces.wg0-initrd.address}/32" ];
       }
       # medea: a single roaming client.
       {
         publicKey = config.environment.wireguard.devices.medea.publicKey;
-        allowedIPs = [ "10.241.46.10/32" ];
+        allowedIPs = [ "${hosts.medea.interfaces.wg0.address}/32" ];
       }
     ];
   };
@@ -44,6 +51,8 @@
 
   # Accept the tunnel handshake on the public link, and trust peers to reach
   # creusa's own services (e.g. actual-budget) over wg0.
-  networking.firewall.interfaces.eth0.allowedUDPPorts = [ 51820 ];
+  networking.firewall.interfaces.eth0.allowedUDPPorts = [
+    config.environment.wireguard.devices.creusa.listenPort
+  ];
   networking.firewall.trustedInterfaces = [ "wg0" ];
 }
