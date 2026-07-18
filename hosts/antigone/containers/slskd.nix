@@ -1,4 +1,4 @@
-{ self, config, pkgs-unstable, ... }:
+{ self, config, ... }:
 let
   # Bind the host-decrypted agenix secret through to the same path inside the
   # container.
@@ -143,7 +143,7 @@ in
 
         imports = [
           self.nixosModules.modules.services.journald
-          "${pkgs-unstable.path}/nixos/modules/services/web-apps/slskd.nix"
+          "${config.nixpkgs.unstable.pkgs.path}/nixos/modules/services/web-apps/slskd.nix"
         ];
 
         system.stateVersion = "26.05";
@@ -176,7 +176,7 @@ in
 
         services.slskd = {
           enable = true;
-          package = pkgs-unstable.slskd;
+          package = config.nixpkgs.unstable.pkgs.slskd;
           environmentFile = credentialsPath;
           settings = {
             # Bind the web UI to loopback so nginx (which shares the host

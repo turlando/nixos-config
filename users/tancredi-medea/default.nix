@@ -3,7 +3,6 @@ flake:
 flake.lib.mkHomeConfiguration {
   inherit flake;
   host = "medea";
-  allowUnfreeUnstable = [ "claude-code" ];
 
   modules = [
     flake.inputs.agenix.homeManagerModules.default

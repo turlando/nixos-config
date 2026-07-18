@@ -12,6 +12,5 @@ flake.inputs.nixpkgs.lib.nixosSystem {
     self = flake;
     lib-age = flake.lib.age;
     nixvirt-lib = flake.inputs.nixvirt.lib;
-    pkgs-unstable = import flake.inputs.nixpkgs-unstable { inherit system; };
   };
 }

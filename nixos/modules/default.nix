@@ -10,15 +10,17 @@ let
   environment = import ./environment;
   hardware = import ./hardware;
   i18n = import ./i18n;
+  nixpkgs = import ./nixpkgs;
   services = import ./services;
 in
 {
-  inherit boot environment hardware i18n services;
+  inherit boot environment hardware i18n nixpkgs services;
   default.imports = [
     boot.default
     environment.default
     hardware.default
     i18n.default
+    nixpkgs.default
     services.default
   ];
 }

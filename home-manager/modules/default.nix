@@ -8,13 +8,15 @@
 let
   environment = import ./environment;
   fonts = import ./fonts;
+  nixpkgs = import ./nixpkgs;
   programs = import ./programs;
 in
 {
-  inherit environment fonts programs;
+  inherit environment fonts nixpkgs programs;
   default.imports = [
     environment.default
     fonts.default
+    nixpkgs.default
     programs.default
   ];
 }

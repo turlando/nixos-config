@@ -1,4 +1,4 @@
-{ self, config, pkgs-unstable, ... }:
+{ self, config, ... }:
 {
   disko.devices.zpool.creusa.datasets = {
     "containers/actual-budget" = {
@@ -66,7 +66,7 @@
 
         imports = [
           self.nixosModules.modules.services.journald
-          "${pkgs-unstable.path}/nixos/modules/services/web-apps/actual.nix"
+          "${config.nixpkgs.unstable.pkgs.path}/nixos/modules/services/web-apps/actual.nix"
         ];
 
         system.stateVersion = "26.05";
@@ -92,7 +92,7 @@
 
         services.actual = {
           enable = true;
-          package = pkgs-unstable.actual-server;
+          package = config.nixpkgs.unstable.pkgs.actual-server;
           user = "actual";
           group = "actual";
           settings = {

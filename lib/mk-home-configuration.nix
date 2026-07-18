@@ -6,21 +6,15 @@
 , host
 , system ? "x86_64-linux"
 , allowUnfree ? []
-, allowUnfreeUnstable ? []
 , modules
 }:
 
-let
-  inherit (flake.inputs.nixpkgs) lib;
-
-  mkPkgs = input: allowed: import input {
+flake.inputs.home-manager.lib.homeManagerConfiguration {
+  pkgs = import flake.inputs.nixpkgs {
     inherit system;
     config.allowUnfreePredicate = pkg:
-      builtins.elem (lib.getName pkg) allowed;
+      builtins.elem (flake.inputs.nixpkgs.lib.getName pkg) allowUnfree;
   };
-in
-flake.inputs.home-manager.lib.homeManagerConfiguration {
-  pkgs = mkPkgs flake.inputs.nixpkgs allowUnfree;
 
   extraSpecialArgs = {
     inherit flake;
@@ -28,7 +22,6 @@ flake.inputs.home-manager.lib.homeManagerConfiguration {
     lib-age = flake.lib.age;
     nixosConfiguration = flake.nixosConfigurations.${host}.config;
     packages = flake.packages.${system};
-    pkgs-unstable = mkPkgs flake.inputs.nixpkgs-unstable allowUnfreeUnstable;
   };
 
   inherit modules;

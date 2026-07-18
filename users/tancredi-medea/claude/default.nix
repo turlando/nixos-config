@@ -6,12 +6,14 @@
 #
 # The package is pulled from nixpkgs-unstable to keep up with Claude Code's fast
 # release cadence.
-{ pkgs-unstable, ... }:
+{ config, ... }:
 
 {
+  nixpkgs.unstable.allowUnfree = [ "claude-code" ];
+
   programs.claude-code = {
     enable = true;
-    package = pkgs-unstable.claude-code;
+    package = config.nixpkgs.unstable.pkgs.claude-code;
     skills.manage-music-library = ./skills/manage-music-library/SKILL.md;
   };
 }
