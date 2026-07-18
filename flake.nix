@@ -47,6 +47,7 @@
   };
 
   outputs = {
+    self,
     flake-utils,
     nixpkgs,
     nixpkgs-unstable,
@@ -54,9 +55,9 @@
   }@inputs: {
     lib = import ./lib { inherit (nixpkgs) lib; };
     nixosModules = import ./nixos;
-    nixosConfigurations = import ./hosts inputs;
+    nixosConfigurations = import ./hosts self;
     homeManagerModules = import ./home-manager;
-    homeConfigurations = import ./users inputs;
+    homeConfigurations = import ./users self;
     tests = import ./tests { inherit (nixpkgs) lib; };
   }
   // flake-utils.lib.eachDefaultSystem (system: let

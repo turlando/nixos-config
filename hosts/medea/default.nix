@@ -1,29 +1,25 @@
-{ self, agenix, disko, nixos-hardware, nixpkgs, nixvirt, ... }:
+flake:
 
-nixpkgs.lib.nixosSystem {
+flake.lib.mkNixosSystem {
+  inherit flake;
   system = "x86_64-linux";
 
-  specialArgs = {
-    lib-age = self.lib.age;
-    nixvirt-lib = nixvirt.lib;
-  };
-
   modules = [
-    agenix.nixosModules.default
-    disko.nixosModules.default
-    nixos-hardware.nixosModules.framework-amd-ai-300-series
-    nixvirt.nixosModules.default
+    flake.inputs.agenix.nixosModules.default
+    flake.inputs.disko.nixosModules.default
+    flake.inputs.nixos-hardware.nixosModules.framework-amd-ai-300-series
+    flake.inputs.nixvirt.nixosModules.default
 
-    self.nixosModules.modules.default
+    flake.nixosModules.modules.default
 
-    self.nixosModules.profiles.base
-    self.nixosModules.profiles.boot-systemd
-    self.nixosModules.profiles.age
-    self.nixosModules.profiles.zfs
-    self.nixosModules.profiles.libvirt
-    self.nixosModules.profiles.clamav
-    self.nixosModules.profiles.graphical
-    self.nixosModules.profiles.smartcard
+    flake.nixosModules.profiles.base
+    flake.nixosModules.profiles.boot-systemd
+    flake.nixosModules.profiles.age
+    flake.nixosModules.profiles.zfs
+    flake.nixosModules.profiles.libvirt
+    flake.nixosModules.profiles.clamav
+    flake.nixosModules.profiles.graphical
+    flake.nixosModules.profiles.smartcard
 
     ./hardware.nix
     ./configuration.nix

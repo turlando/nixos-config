@@ -1,31 +1,19 @@
-{ self, agenix, home-manager, nixpkgs, ... }:
+flake:
 
-let
-  nixosConfiguration = self.nixosConfigurations.medea.config;
-  system = nixosConfiguration.nixpkgs.hostPlatform.system;
-  allowedUnfree = [ "slack" ];
-in home-manager.lib.homeManagerConfiguration {
-  pkgs = import nixpkgs {
-    inherit system;
-    config.allowUnfreePredicate = pkg:
-      builtins.elem (nixpkgs.lib.getName pkg) allowedUnfree;
-  };
-
-  extraSpecialArgs = {
-    lib-age = self.lib.age;
-    inherit nixosConfiguration;
-    packages = self.packages.${system};
-  };
+flake.lib.mkHomeConfiguration {
+  inherit flake;
+  host = "medea";
+  allowUnfree = [ "slack" ];
 
   modules = [
-    agenix.homeManagerModules.default
+    flake.inputs.agenix.homeManagerModules.default
 
-    self.homeManagerModules.modules.default
+    flake.homeManagerModules.modules.default
 
-    self.homeManagerModules.profiles.base
-    self.homeManagerModules.profiles.age
-    self.homeManagerModules.profiles.emacs
-    self.homeManagerModules.profiles.graphical
+    flake.homeManagerModules.profiles.base
+    flake.homeManagerModules.profiles.age
+    flake.homeManagerModules.profiles.emacs
+    flake.homeManagerModules.profiles.graphical
 
     ./configuration.nix
   ];

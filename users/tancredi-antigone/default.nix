@@ -1,26 +1,18 @@
-{ self, agenix, home-manager, nixpkgs, ... }:
+flake:
 
-let
-  nixosConfiguration = self.nixosConfigurations.antigone.config;
-  system = nixosConfiguration.nixpkgs.hostPlatform.system;
-in home-manager.lib.homeManagerConfiguration {
-  pkgs = import nixpkgs { inherit system; };
-
-  extraSpecialArgs = {
-    lib-age = self.lib.age;
-    inherit nixosConfiguration;
-    packages = self.packages.${system};
-  };
+flake.lib.mkHomeConfiguration {
+  inherit flake;
+  host = "antigone";
 
   # Headless curation home: no graphical profiles, just the beets library
   # module (./beets) on top of the base and agenix profiles.
   modules = [
-    agenix.homeManagerModules.default
+    flake.inputs.agenix.homeManagerModules.default
 
-    self.homeManagerModules.modules.default
+    flake.homeManagerModules.modules.default
 
-    self.homeManagerModules.profiles.base
-    self.homeManagerModules.profiles.age
+    flake.homeManagerModules.profiles.base
+    flake.homeManagerModules.profiles.age
 
     ./beets
     ./configuration.nix

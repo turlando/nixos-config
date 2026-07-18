@@ -1,27 +1,20 @@
-{ self, agenix, disko, nixpkgs, nixpkgs-unstable, ... }:
+flake:
 
-nixpkgs.lib.nixosSystem {
+flake.lib.mkNixosSystem {
+  inherit flake;
   system = "x86_64-linux";
 
-  specialArgs = {
-    inherit self;
-    pkgs-unstable = import nixpkgs-unstable {
-      system = "x86_64-linux";
-    };
-    lib-age = self.lib.age;
-  };
-
   modules = [
-    agenix.nixosModules.default
-    disko.nixosModules.default
+    flake.inputs.agenix.nixosModules.default
+    flake.inputs.disko.nixosModules.default
 
-    self.nixosModules.modules.default
+    flake.nixosModules.modules.default
 
-    self.nixosModules.profiles.base
-    self.nixosModules.profiles.boot-systemd
-    self.nixosModules.profiles.age
-    self.nixosModules.profiles.zfs
-    self.nixosModules.profiles.openssh-server
+    flake.nixosModules.profiles.base
+    flake.nixosModules.profiles.boot-systemd
+    flake.nixosModules.profiles.age
+    flake.nixosModules.profiles.zfs
+    flake.nixosModules.profiles.openssh-server
 
     ./hardware.nix
     ./disko.nix

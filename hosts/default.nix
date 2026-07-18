@@ -1,5 +1,5 @@
-inputs: {
-  antigone = import ./antigone inputs;
-  creusa = import ./creusa inputs;
-  medea = import ./medea inputs;
+flake: {
+  antigone = import ./antigone flake;
+  creusa = import ./creusa flake;
+  medea = import ./medea flake;
 }
