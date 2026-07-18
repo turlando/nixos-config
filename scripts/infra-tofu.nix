@@ -1,7 +1,7 @@
-{ pkgs, pkgs-unstable, ... }@inputs:
+{ pkgs, pkgs-unstable, ... }@args:
 
 let
-  age-read = import ./age-read.nix inputs;
+  age-read = import ./age-read.nix args;
 in
 
 pkgs.writeShellApplication {

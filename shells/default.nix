@@ -1,5 +1,5 @@
-inputs:
+args:
 
 {
-  default = import ./default-shell.nix inputs;
+  default = import ./default-shell.nix args;
 }

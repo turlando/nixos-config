@@ -52,7 +52,7 @@
     nixpkgs,
     nixpkgs-unstable,
     ...
-  }@inputs: {
+  }: {
     lib = import ./lib { inherit (nixpkgs) lib; };
     nixosModules = import ./nixos;
     nixosConfigurations = import ./hosts self;
@@ -63,11 +63,12 @@
   // flake-utils.lib.eachDefaultSystem (system: let
     pkgs = import nixpkgs { inherit system; };
     pkgs-unstable = import nixpkgs-unstable { inherit system; };
+    args = { flake = self; inherit system pkgs pkgs-unstable; };
   in {
-    inherit (import ./scripts (inputs // { inherit system pkgs pkgs-unstable; })) apps;
-    devShells = import ./shells (inputs // { inherit system pkgs pkgs-unstable; });
-    packages = (import ./packages (inputs // { inherit system pkgs pkgs-unstable; })) // {
-      terraform-config = import ./infra (inputs // { inherit system; });
+    inherit (import ./scripts args) apps;
+    devShells = import ./shells args;
+    packages = (import ./packages args) // {
+      terraform-config = import ./infra args;
     };
   });
 }

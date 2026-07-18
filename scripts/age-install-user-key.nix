@@ -1,4 +1,4 @@
-{ self, pkgs, ... }:
+{ flake, pkgs, ... }:
 
 pkgs.writeShellApplication {
   name = "age-install-user-key";
@@ -11,7 +11,7 @@ pkgs.writeShellApplication {
     if [ "$#" -ne 2 ]; then
       echo "Usage: age-install-user-key <keyfile> <user>" >&2
       echo "  Install <keyfile> as <user>'s agenix identity at their" >&2
-      echo "  ~/${self.lib.age.userKeyFile} (0600, owned by <user>)." >&2
+      echo "  ~/${flake.lib.age.userKeyFile} (0600, owned by <user>)." >&2
       echo "  Run as root to install for another user." >&2
       exit 2
     fi
@@ -31,7 +31,7 @@ pkgs.writeShellApplication {
     fi
 
     install -o "$TARGET_USER" -g "$(id -gn "$TARGET_USER")" -m 600 -D \
-      "$KEYFILE" "$HOME_DIR/${self.lib.age.userKeyFile}"
-    echo "Installed $TARGET_USER identity at $HOME_DIR/${self.lib.age.userKeyFile}"
+      "$KEYFILE" "$HOME_DIR/${flake.lib.age.userKeyFile}"
+    echo "Installed $TARGET_USER identity at $HOME_DIR/${flake.lib.age.userKeyFile}"
   '';
 }

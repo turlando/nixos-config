@@ -1,6 +1,6 @@
-{ system, terranix, ... }:
+{ flake, system, ... }:
 
-terranix.lib.terranixConfiguration {
+flake.inputs.terranix.lib.terranixConfiguration {
   inherit system;
   modules = [
     ./configuration.nix

@@ -1,4 +1,4 @@
-{ self, pkgs, ... }:
+{ flake, pkgs, ... }:
 
 let
   inherit (pkgs) lib;
@@ -8,7 +8,7 @@ let
   # gets baked into the case statement below as a literal store path.
   formatMountByHost = builtins.mapAttrs
     (_: nixosCfg: nixosCfg.config.system.build.formatMount)
-    self.nixosConfigurations;
+    flake.nixosConfigurations;
 
   caseClauses = lib.concatMapStringsSep "\n  "
     (host: ''${host}) SCRIPT="${formatMountByHost.${host}}" ;;'')

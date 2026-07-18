@@ -1,10 +1,10 @@
-{ self, system, pkgs, agenix, ... }:
+{ flake, system, pkgs, ... }:
 
 pkgs.writeShellApplication {
   name = "age-rekey";
   meta.description = "Re-encrypt all agenix secrets with the current set of public keys";
   runtimeInputs = [
-    agenix.packages.${system}.default
+    flake.inputs.agenix.packages.${system}.default
   ];
   text = ''
     if [ "$#" -gt 1 ]; then
@@ -13,7 +13,7 @@ pkgs.writeShellApplication {
       exit 2
     fi
 
-    IDENTITY="''${1:-${self.lib.age.identityFile}}"
+    IDENTITY="''${1:-${flake.lib.age.identityFile}}"
     SECRETS_DIR="''${SECRETS_DIR:-$PWD/secrets}"
 
     if [ ! -f "$SECRETS_DIR/secrets.nix" ]; then

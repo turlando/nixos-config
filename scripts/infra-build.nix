@@ -1,4 +1,4 @@
-{ self, system, pkgs, ... }:
+{ flake, system, pkgs, ... }:
 
 let
   # Read the Terranix-generated config from the flake's own packages
@@ -7,7 +7,7 @@ let
   # frozen JSON into place. When infra/configuration.nix changes,
   # this derivation rebuilds, and `nix run .#infra-build` picks up
   # the new path on the next invocation.
-  tfConfig = self.packages.${system}.terraform-config;
+  tfConfig = flake.packages.${system}.terraform-config;
 in
 
 pkgs.writeShellApplication {

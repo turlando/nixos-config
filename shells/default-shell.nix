@@ -1,10 +1,10 @@
-{ system, pkgs, pkgs-unstable, agenix, disko, home-manager, nix-unit, ... }:
+{ flake, system, pkgs, pkgs-unstable }:
 
 let
-  agenix-pkgs = agenix.packages.${system};
-  disko-pkgs = disko.packages.${system};
-  home-manager-pkgs = home-manager.packages.${system};
-  nix-unit-pkgs = nix-unit.packages.${system};
+  agenix-pkgs = flake.inputs.agenix.packages.${system};
+  disko-pkgs = flake.inputs.disko.packages.${system};
+  home-manager-pkgs = flake.inputs.home-manager.packages.${system};
+  nix-unit-pkgs = flake.inputs.nix-unit.packages.${system};
 in pkgs.mkShell {
   packages = [
     pkgs.deadnix

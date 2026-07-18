@@ -1,10 +1,10 @@
-{ self, system, pkgs, agenix, ... }:
+{ flake, system, pkgs, ... }:
 
 pkgs.writeShellApplication {
   name = "age-read";
   meta.description = "Decrypt an agenix secret and print it to stdout";
   runtimeInputs = [
-    agenix.packages.${system}.default
+    flake.inputs.agenix.packages.${system}.default
   ];
   text = ''
     if [ "$#" -lt 1 ] || [ "$#" -gt 2 ]; then
@@ -14,7 +14,7 @@ pkgs.writeShellApplication {
     fi
 
     NAME="$1"
-    IDENTITY="''${2:-$HOME/${self.lib.age.userKeyFile}}"
+    IDENTITY="''${2:-$HOME/${flake.lib.age.userKeyFile}}"
     SECRETS_DIR="''${SECRETS_DIR:-$PWD/secrets}"
 
     if [ ! -f "$SECRETS_DIR/secrets.nix" ]; then

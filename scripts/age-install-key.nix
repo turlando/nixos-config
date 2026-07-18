@@ -1,10 +1,10 @@
-{ self, pkgs, ... }:
+{ flake, pkgs, ... }:
 
 let
   # Default install destination. /mnt is the convention during NixOS
-  # install (target root mounted at /mnt); ${self.lib.age.keyDir} is
+  # install (target root mounted at /mnt); ${flake.lib.age.keyDir} is
   # the agenix key directory baked in at build time.
-  defaultDest = "/mnt${self.lib.age.keyDir}";
+  defaultDest = "/mnt${flake.lib.age.keyDir}";
 in
 
 pkgs.writeShellApplication {

@@ -1,4 +1,4 @@
-{ self, system, pkgs, agenix, ... }:
+{ flake, system, pkgs, ... }:
 
 pkgs.writeShellApplication {
   name = "age-passwd";
@@ -6,7 +6,7 @@ pkgs.writeShellApplication {
   runtimeInputs = [
     pkgs.coreutils
     pkgs.mkpasswd
-    agenix.packages.${system}.default
+    flake.inputs.agenix.packages.${system}.default
   ];
   text = ''
     # Usage check: <name> is required, [identity-file] is optional.
@@ -25,7 +25,7 @@ pkgs.writeShellApplication {
     # Below, the outer ''${2:-...} reaches bash unchanged (escaped);
     # the inner ''${...} is replaced by Nix with the agenix path.
     # Compiled bash: IDENTITY="''${2:-/etc/agenix/key}"
-    IDENTITY="''${2:-${self.lib.age.identityFile}}"
+    IDENTITY="''${2:-${flake.lib.age.identityFile}}"
 
     # Where to find secrets.nix and the .age files. Defaults to the
     # `secrets` subdirectory of the cwd (typical when invoked from the
