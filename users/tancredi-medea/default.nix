@@ -11,6 +11,7 @@ flake.lib.mkHomeConfiguration {
 
     flake.homeManagerModules.profiles.base
     flake.homeManagerModules.profiles.age
+    flake.homeManagerModules.profiles.claude-code
     flake.homeManagerModules.profiles.emacs
     flake.homeManagerModules.profiles.graphical
     flake.homeManagerModules.profiles.libvirt

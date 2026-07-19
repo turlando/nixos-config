@@ -3,6 +3,7 @@
 {
   age = ./age.nix;
   base = ./base.nix;
+  claude-code = ./claude-code.nix;
   emacs = ./emacs;
   graphical = ./graphical.nix;
   libvirt = ./libvirt.nix;

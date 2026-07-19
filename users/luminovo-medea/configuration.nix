@@ -38,6 +38,8 @@
   programs.emacs.enable = true;
   programs.emacs.package = pkgs.emacs-pgtk;
 
+  programs.claude-code.enable = true;
+
   home.packages = [
     pkgs.slack
 

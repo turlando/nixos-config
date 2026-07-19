@@ -1,19 +1,17 @@
-# Claude Code personal configuration for tancredi@medea, via the home-manager
-# module. Skills are operational runbooks Claude discovers under ~/.claude/skills
-# regardless of the working directory; manage-music-library drives beets on the
-# antigone NAS over SSH (see the beets library module in
-# users/tancredi-antigone/beets).
-#
-# The package is pulled from nixpkgs-unstable to keep up with Claude Code's fast
-# release cadence.
-{ config, ... }:
+# Tancredi's Claude Code extras on top of the shared claude-code profile: the
+# manage-music-library skill (drives beets on the antigone NAS over SSH; see
+# the beets library module in users/tancredi-antigone/beets) and personal
+# settings that merge into settings.json.
+_:
 
 {
-  nixpkgs.unstable.allowUnfree = [ "claude-code" ];
-
   programs.claude-code = {
     enable = true;
-    package = config.nixpkgs.unstable.pkgs.claude-code;
     skills.manage-music-library = ./skills/manage-music-library/SKILL.md;
+
+    settings = {
+      model = "claude-fable-5[1m]";
+      verbose = true;
+    };
   };
 }
