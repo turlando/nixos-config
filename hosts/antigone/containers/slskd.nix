@@ -173,8 +173,15 @@ in
         environment.etc."machine-id".text = "968550ca92ef428e91a8bcb33490d815";
         # Public resolver (unbound's own upstream), not antigone's unbound:
         # the container has no access to the host's resolver or the
-        # internal DNS view.
-        networking.nameservers = [ "9.9.9.9" "149.112.112.112" ];
+        # internal DNS view. resolvconf only compiles dhcp-style sources,
+        # which this static container has none of, and falls back to
+        # loopback; disabled, and nothing else manages the file, so it is a
+        # static etc entry.
+        networking.resolvconf.enable = false;
+        environment.etc."resolv.conf".text = ''
+          nameserver 9.9.9.9
+          nameserver 149.112.112.112
+        '';
 
         # The namespace's own firewall: the DNAT'd Soulseek port, and the
         # web UI for nginx.

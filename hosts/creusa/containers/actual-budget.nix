@@ -93,6 +93,11 @@ in
         system.stateVersion = "26.05";
         environment.etc."machine-id".text = "849157410a3041bcf9f3427e69af5832";
 
+        # No resolver: actual has no egress and resolves nothing. With
+        # resolvconf's loopback fallback disabled, resolv.conf is empty
+        # rather than pointing at a resolver that does not exist.
+        networking.resolvconf.enable = false;
+
         # The namespace's own firewall: actual's port for nginx.
         networking.firewall.allowedTCPPorts = [ actualPort ];
 

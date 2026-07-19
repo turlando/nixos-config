@@ -98,8 +98,15 @@ in
         system.stateVersion = "26.05";
         environment.etc."machine-id".text = "a57b69a7ef72b1aa85c104a969af4c02";
         # Public resolver: ACME ordering and OCSP need to resolve, and the
-        # container has no access to any host resolver.
-        networking.nameservers = [ "9.9.9.9" "149.112.112.112" ];
+        # container has no access to any host resolver. resolvconf only
+        # compiles dhcp-style sources, which this static container has none
+        # of, and falls back to loopback; disabled, so resolv.conf is
+        # generated from networking.nameservers.
+        networking.resolvconf.enable = false;
+        environment.etc."resolv.conf".text = ''
+          nameserver 9.9.9.9
+          nameserver 149.112.112.112
+        '';
 
         # The namespace's own firewall: the DNAT'd public web ports.
         networking.firewall.allowedTCPPorts = [ 80 443 ];

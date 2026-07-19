@@ -76,6 +76,11 @@ in
 
         system.stateVersion = "26.05";
         environment.etc."machine-id".text = "c0fdad4607d74823ab6e7c26fb178df9";
+        # No resolver: nginx has no egress and proxies by address. With
+        # resolvconf's loopback fallback disabled, resolv.conf is empty
+        # rather than pointing at a resolver that does not exist.
+        networking.resolvconf.enable = false;
+
         # The namespace's own firewall: HTTP from the routed clients.
         networking.firewall.allowedTCPPorts = [ 80 ];
 
