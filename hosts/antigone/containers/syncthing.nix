@@ -13,6 +13,14 @@ let
   # MP3 export shared one-way to medea; syncthing joins storage-music to read it.
   mp3Library = config.disko.devices.zpool.storage.datasets."music/electronic-mp3".mountpoint;
   storageMusicGid = config.environment.unixIds.gids.storage-music;
+
+  # Private network namespace addressing: the container's veth peers with
+  # antigone's shared services-side address.
+  syncthingAddress = config.environment.network.hosts.antigone-syncthing.interfaces.svc0.address;
+  servicesGateway = config.environment.network.hosts.antigone.interfaces.svc0.address;
+
+  # Syncthing's GUI port, proxied by nginx.
+  guiPort = 8384;
 in
 {
   disko.devices.zpool.antigone.datasets = {
@@ -43,10 +51,28 @@ in
     };
   };
 
-  # syncthing's sync port on the internet edge (like slskd's P2P port); the GUI
-  # stays loopback behind nginx, and local discovery stays on lan0.
-  networking.firewall.interfaces.wan0.allowedTCPPorts = [ syncPort ];
-  networking.firewall.interfaces.wan0.allowedUDPPorts = [ syncPort ];
+  # The sync port on the internet edge via DNAT (the forward chain accepts
+  # DNAT'd flows); LAN and VPN peers sync directly against the container's
+  # routed address, and syncthing dials discovery and relays out through the
+  # masqueraded services range. The GUI binds the veth and is reached only
+  # through nginx's forward rule.
+  networking.nat.forwardPorts = [
+    {
+      sourcePort = syncPort;
+      proto = "tcp";
+      destination = "${syncthingAddress}:${toString syncPort}";
+    }
+    {
+      sourcePort = syncPort;
+      proto = "udp";
+      destination = "${syncthingAddress}:${toString syncPort}";
+    }
+  ];
+  networking.nat.internalIPs = [ "${syncthingAddress}/32" ];
+  networking.firewall.extraForwardRules = ''
+    iifname { "lan0", "wg0" } oifname "ve-syncthing" tcp dport ${toString syncPort} accept
+    iifname { "lan0", "wg0" } oifname "ve-syncthing" udp dport ${toString syncPort} accept
+  '';
 
   # The MP3 dataset is on the storage pool (late stage-2 mount), so order the
   # container after zfs-mount, as slskd does.
@@ -58,7 +84,14 @@ in
   containers.syncthing = {
     ephemeral = true;
     autoStart = true;
-    extraFlags = [ "--resolv-conf=bind-host" ];
+
+    # Own network namespace: the container sees only its veth. nspawn's
+    # resolv.conf handling is off, as it would bind the host's (which points
+    # at loopback, container-local here); the container writes its own.
+    privateNetwork = true;
+    hostAddress = servicesGateway;
+    localAddress = syncthingAddress;
+    extraFlags = [ "--resolv-conf=off" ];
 
     bindMounts = {
       "/var/log/journal" = {
@@ -102,6 +135,15 @@ in
         # A fixed machine-id keeps the persistent journal (bind-mounted above)
         # coherent across restarts of the ephemeral container.
         environment.etc."machine-id".text = "09b948e9b51f452aa5b0fa62196d0145";
+        # Public resolver (unbound's own upstream), not antigone's unbound:
+        # the container has no access to the host's resolver or the
+        # internal DNS view.
+        networking.nameservers = [ "9.9.9.9" "149.112.112.112" ];
+
+        # The namespace's own firewall: the sync port, and the GUI for
+        # nginx.
+        networking.firewall.allowedTCPPorts = [ syncPort guiPort ];
+        networking.firewall.allowedUDPPorts = [ syncPort ];
 
         services.journald.settings = {
           SystemMaxUse = "256M";
@@ -114,9 +156,10 @@ in
         users.users.syncthing.extraGroups = [ "storage-music" ];
         users.groups.storage-music.gid = storageMusicGid;
 
-        # GUI stays on the default loopback (127.0.0.1:8384); nginx fronts it.
+        # GUI binds the veth; only nginx's explicit forward rule reaches it.
         services.syncthing = {
           enable = true;
+          guiAddress = "${syncthingAddress}:${toString guiPort}";
           # Pin the TLS identity (bound in above) so antigone's device ID stays
           # fixed at environment.syncthing.devices.antigone regardless of the
           # data dataset, instead of a fresh auto-generated cert.

@@ -20,6 +20,11 @@ in
 
     # WireGuard overlay: the creusa hub, spokes, and roaming clients.
     wireguard = { cidr = "10.241.46.0/24"; };
+
+    # antigone's service containers, one point-to-point veth per container
+    # with antigone holding the shared host side. Reachable only through
+    # antigone's explicit forward rules.
+    services = { cidr = "10.241.69.0/24"; };
   };
 
   hosts = {
@@ -36,7 +41,24 @@ in
         # The initrd's unlock-only WireGuard identity (see
         # wireguard-devices.nix).
         wg0-initrd = { subnet = "wireguard"; address = "10.241.46.3"; };
+
+        # Host side of every service container's veth, shared across them.
+        svc0 = { subnet = "services"; address = "10.241.69.1"; };
       };
+    };
+
+    # antigone's service containers: private network namespaces, each with
+    # one veth peered with antigone's shared services address.
+    antigone-nginx = {
+      interfaces.svc0 = { subnet = "services"; address = "10.241.69.2"; };
+    };
+
+    antigone-slskd = {
+      interfaces.svc0 = { subnet = "services"; address = "10.241.69.3"; };
+    };
+
+    antigone-syncthing = {
+      interfaces.svc0 = { subnet = "services"; address = "10.241.69.4"; };
     };
 
     creusa = {
@@ -84,14 +106,16 @@ in
         views.internal.interface = { host = "antigone"; interface = "lan0"; };
       };
 
+      # The service UIs answer with the nginx container's address; LAN and
+      # VPN clients route to it through antigone.
       slskd = {
         name = "slskd.antigone.${rhyzomatic}";
-        views.internal.interface = { host = "antigone"; interface = "lan0"; };
+        views.internal.interface = { host = "antigone-nginx"; interface = "svc0"; };
       };
 
       syncthing = {
         name = "syncthing.antigone.${rhyzomatic}";
-        views.internal.interface = { host = "antigone"; interface = "lan0"; };
+        views.internal.interface = { host = "antigone-nginx"; interface = "svc0"; };
       };
 
       ap0 = {

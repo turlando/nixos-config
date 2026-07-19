@@ -18,6 +18,15 @@ let
 
   # Master FLAC library on the storage pool, shared read-only through slskd.
   flacLibrary = config.disko.devices.zpool.storage.datasets."music/electronic-flac".mountpoint;
+
+  # Private network namespace addressing: the container's veth peers with
+  # antigone's shared services-side address.
+  slskdAddress = config.environment.network.hosts.antigone-slskd.interfaces.svc0.address;
+  servicesGateway = config.environment.network.hosts.antigone.interfaces.svc0.address;
+
+  soulseekPort = config.containers.slskd.config.services.slskd.settings.soulseek.listen_port;
+
+  unstable = config.nixpkgs.unstable.pkgs;
 in
 {
   disko.devices.zpool.antigone.datasets = {
@@ -76,11 +85,18 @@ in
   };
 
   # The Soulseek listen port is the one P2P data port we expose on the
-  # internet edge; the rest of wan0 stays default-deny. slskd's web UI binds
-  # loopback (below) and is reached only through nginx.
-  networking.firewall.interfaces.wan0.allowedTCPPorts = [
-    config.containers.slskd.config.services.slskd.settings.soulseek.listen_port
+  # internet edge: DNAT it from wan0 into the container (the forward chain
+  # accepts DNAT'd flows) and let slskd dial out to the server and peers
+  # through the masqueraded services range. The web UI binds the veth and
+  # is reached only through nginx's forward rule.
+  networking.nat.forwardPorts = [
+    {
+      sourcePort = soulseekPort;
+      proto = "tcp";
+      destination = "${slskdAddress}:${toString soulseekPort}";
+    }
   ];
+  networking.nat.internalIPs = [ "${slskdAddress}/32" ];
 
   # The downloads dataset is on the storage pool, which imports and unlocks in
   # stage 2. ZFS non-legacy mounts aren't fstab-backed, so the container's
@@ -94,7 +110,14 @@ in
   containers.slskd = {
     ephemeral = true;
     autoStart = true;
-    extraFlags = [ "--resolv-conf=bind-host" ];
+
+    # Own network namespace: the container sees only its veth. nspawn's
+    # resolv.conf handling is off, as it would bind the host's (which points
+    # at loopback, container-local here); the container writes its own.
+    privateNetwork = true;
+    hostAddress = servicesGateway;
+    localAddress = slskdAddress;
+    extraFlags = [ "--resolv-conf=off" ];
 
     bindMounts = {
       "/var/log/journal" = {
@@ -133,7 +156,7 @@ in
     };
 
     config =
-      { ... }:
+      { config, ... }:
       {
         # Pull the slskd module and package from unstable, replacing the
         # stable module of the same path.
@@ -143,11 +166,22 @@ in
 
         imports = [
           flake.nixosModules.modules.services.journald
-          "${config.nixpkgs.unstable.pkgs.path}/nixos/modules/services/web-apps/slskd.nix"
+          "${unstable.path}/nixos/modules/services/web-apps/slskd.nix"
         ];
 
         system.stateVersion = "26.05";
         environment.etc."machine-id".text = "968550ca92ef428e91a8bcb33490d815";
+        # Public resolver (unbound's own upstream), not antigone's unbound:
+        # the container has no access to the host's resolver or the
+        # internal DNS view.
+        networking.nameservers = [ "9.9.9.9" "149.112.112.112" ];
+
+        # The namespace's own firewall: the DNAT'd Soulseek port, and the
+        # web UI for nginx.
+        networking.firewall.allowedTCPPorts = [
+          config.services.slskd.settings.soulseek.listen_port
+          config.services.slskd.settings.web.port
+        ];
 
         # Pin slskd's uid so its bind-mounted state stays owned by it across
         # restarts of the ephemeral container, and add it to storage-music so
@@ -176,12 +210,12 @@ in
 
         services.slskd = {
           enable = true;
-          package = config.nixpkgs.unstable.pkgs.slskd;
+          package = unstable.slskd;
           environmentFile = credentialsPath;
           settings = {
-            # Bind the web UI to loopback so nginx (which shares the host
-            # netns) is the only way in; it is never reachable on lan0 or wan0.
-            web.ip_address = "127.0.0.1";
+            # Bind the web UI to the veth; only nginx's explicit forward
+            # rule reaches it.
+            web.ip_address = slskdAddress;
             # No web login: the LAN is trusted and nginx fronts it.
             web.authentication.disabled = true;
             # Share the FLAC library (bound read-only) on the Soulseek network.

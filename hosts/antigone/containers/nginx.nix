@@ -1,4 +1,10 @@
 { flake, config, ... }:
+let
+  # Private network namespace addressing: the container's veth peers with
+  # antigone's shared services-side address.
+  nginxAddress = config.environment.network.hosts.antigone-nginx.interfaces.svc0.address;
+  servicesGateway = config.environment.network.hosts.antigone.interfaces.svc0.address;
+in
 {
   disko.devices.zpool.antigone.datasets = {
     "containers/nginx" = {
@@ -25,10 +31,25 @@
     };
   };
 
+  # The service UIs' DNS records answer with this container's address; LAN
+  # and VPN clients route to it through antigone, and nginx in turn reaches
+  # only the two backend UIs.
+  networking.firewall.extraForwardRules = ''
+    iifname { "lan0", "wg0" } oifname "ve-nginx" tcp dport 80 accept
+    iifname "ve-nginx" oifname { "ve-slskd", "ve-syncthing" } accept
+  '';
+
   containers.nginx = {
     ephemeral = true;
     autoStart = true;
-    extraFlags = [ "--resolv-conf=bind-host" ];
+
+    # Own network namespace: the container sees only its veth. nspawn's
+    # resolv.conf handling is off, as it would bind the host's (which points
+    # at loopback, container-local here); the container writes its own.
+    privateNetwork = true;
+    hostAddress = servicesGateway;
+    localAddress = nginxAddress;
+    extraFlags = [ "--resolv-conf=off" ];
 
     bindMounts = {
       "/var/log/journal" = {
@@ -55,6 +76,13 @@
 
         system.stateVersion = "26.05";
         environment.etc."machine-id".text = "c0fdad4607d74823ab6e7c26fb178df9";
+        # Public resolver, not antigone's unbound: the container has no
+        # access to the host's resolver or the internal DNS view, and
+        # proxies by address anyway.
+        networking.nameservers = [ "9.9.9.9" "149.112.112.112" ];
+
+        # The namespace's own firewall: HTTP from the routed clients.
+        networking.firewall.allowedTCPPorts = [ 80 ];
 
         services.journald.settings = {
           SystemMaxUse = "256M";
@@ -63,8 +91,8 @@
         };
 
         # HTTP only for now (the LAN is trusted); TLS arrives with ACME later.
-        # Containers share the host network namespace, so the slskd and
-        # syncthing web UIs are reachable over loopback.
+        # The backend UIs bind their containers' veths; antigone forwards
+        # nginx's traffic to them.
         services.nginx = {
           enable = true;
           recommendedProxySettings = true;

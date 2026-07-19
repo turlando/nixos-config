@@ -99,17 +99,29 @@ in
     };
   };
 
-  # NAT: masquerade lan0 traffic out wan0 so LAN clients reach the internet.
+  # NAT: masquerade lan0 traffic out wan0 so LAN clients reach the
+  # internet; NAT also emits the matching forward accepts. Containers that
+  # earn internet egress add their own address to internalIPs next to
+  # their definition in containers/.
   networking.nat = {
     enable = true;
     externalInterface = "wan0";
     internalInterfaces = [ "lan0" ];
   };
 
-  # Firewall: trust lan0 (the apartment LAN) and wg0 (the VPN) so both reach
-  # antigone's services; wan0 stays default-deny inbound, passing only
-  # conntrack-established return traffic.
+  # Firewall: nftables, default-deny on input and forward. lan0 (the
+  # apartment LAN) and wg0 (the VPN) are trusted for input, so both reach
+  # antigone's own services; wan0 stays default-deny inbound, passing only
+  # conntrack-established return traffic. filterForward drops routed flows
+  # by default and accepts DNAT'd ones; LAN and VPN keep forwarding to each
+  # other, and each container's flows are declared next to it in
+  # containers/. The VPN is split-tunnel, so wg0 gets no internet egress.
+  networking.nftables.enable = true;
+  networking.firewall.filterForward = true;
   networking.firewall.trustedInterfaces = [ "lan0" "wg0" ];
+  networking.firewall.extraForwardRules = ''
+    iifname { "lan0", "wg0" } oifname { "lan0", "wg0" } accept
+  '';
 
   # SSH is management: reachable over the trusted interfaces (lan0 and the
   # wg0 VPN), never on wan0, the internet edge under DMZ.
