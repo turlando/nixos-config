@@ -1,4 +1,4 @@
-{ flake, config, ... }:
+{ flake, config, lib, ... }:
 let
   # Private network namespace addressing: the container's veth peers with
   # creusa's shared services-side address.
@@ -124,6 +124,23 @@ in
             inherit (config.services.nginx) group;
           };
         };
+
+        # ACME must not gate container readiness: the host configures the
+        # veth only after the container reports started (notify-ready with
+        # post-start networking), so any boot job waiting on the network
+        # deadlocks the whole container. The ensure service and nginx's
+        # want of the order service leave the boot transaction; the
+        # renewal timer fires shortly after boot instead, when the veth
+        # exists, and serves the persisted certificates meanwhile.
+        systemd.services."acme-dracma.us.to".wantedBy = lib.mkForce [ ];
+        systemd.services.nginx.wants =
+          lib.mkForce [ "acme-finished-dracma.us.to.target" ];
+        # OnActiveSec, not OnBootSec or OnStartupSec: containers share the
+        # kernel's clocks with the host, so the timer's activation at
+        # container boot is the only usable reference point. The module's
+        # AccuracySec and RandomizedDelaySec spread the actual firing over
+        # the following day, which the 30-day renewal window absorbs.
+        systemd.timers."acme-renew-dracma.us.to".timerConfig.OnActiveSec = "2min";
 
         services.nginx = {
           enable = true;
