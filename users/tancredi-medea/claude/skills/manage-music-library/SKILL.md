@@ -43,8 +43,9 @@ vocabularies are defined in the nixos-config repo under
 
 For each release: where the audio is on antigone, and either a **Discogs
 release id** or "not on Discogs". Plus anything Discogs cannot give or gets
-wrong: `source`, `macrogenre`, a catalog number when Discogs says none, and (for
-records) the physical `record_track`/`record_size`/`record_rpm`.
+wrong: `macrogenre` (always), a catalog number when Discogs says none, the
+physical `record_track`/`record_size`/`record_rpm` for records, and optionally
+`source` when the provenance is known.
 
 ## Key paths and facts
 
@@ -108,11 +109,13 @@ Run each step on antigone. Use `beet modify -y` for scripted field edits and
 
    ```sh
    beet modify -y album:"<ALBUM>" \
-     source="Collection" \
      macrogenre="Hardcore, Jungle, Drum and Bass"
    ```
 
    Depending on the release also set:
+   - `source` (optional) when you know the provenance: `Collection` or
+     `Bandcamp`. Leave it unset when unknown; lint no longer requires it, but
+     rejects any value outside the enum.
    - `catalognumbers` if the release has a catalog number Discogs reported as
      none (multi-valued; separate split-release numbers with `; `).
    - Grooved discs (`media` is `Vinyl` or `Acetate`): `record_track` (e.g. `A1`),

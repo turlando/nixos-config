@@ -23,11 +23,13 @@ from beets.ui import Subcommand
 # Media whose releases carry a physical record position/size/rpm.
 GROOVED_MEDIA = {"Vinyl", "Acetate"}
 
-# Single-valued fields every track must carry.
+# Single-valued fields every track must carry. `source` is deliberately not
+# here: it is optional (validated against its enum only when present), since the
+# provenance of a rip is not always known or relevant.
 REQUIRED = (
     "title", "artist", "albumartist", "album",
     "track", "tracktotal", "disc", "disctotal",
-    "year", "media", "macrogenre", "source",
+    "year", "media", "macrogenre",
 )
 # Multi-valued fields that must be non-empty ("none" counts as present).
 REQUIRED_MULTI = ("genres", "labels", "catalognumbers", "releasetype")
