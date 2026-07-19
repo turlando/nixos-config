@@ -8,6 +8,28 @@ let
 
   # Prefix length of a CIDR, as the string after the slash.
   prefixLength = cidr: lib.elemAt (lib.splitString "/" cidr) 1;
+
+  # 2^n for n >= 0.
+  pow2 = n: lib.foldl' (acc: _: acc * 2) 1 (lib.range 1 n);
+
+  # Numeric value of a dotted-quad IPv4 address.
+  addressValue = address:
+    lib.foldl' (acc: octet: acc * 256 + lib.toInt octet) 0
+      (lib.splitString "." address);
+
+  # Numeric network address of a CIDR, truncated to the given prefix length.
+  networkValueAt = cidr: prefix:
+    builtins.bitAnd
+      (addressValue (lib.elemAt (lib.splitString "/" cidr) 0))
+      (4294967295 - (pow2 (32 - prefix) - 1));
+
+  # Whether the CIDR inner lies entirely within the CIDR outer.
+  cidrContains = outer: inner:
+    let
+      outerPrefix = lib.toInt (prefixLength outer);
+    in
+      lib.toInt (prefixLength inner) >= outerPrefix
+      && networkValueAt inner outerPrefix == networkValueAt outer outerPrefix;
 in
 {
   types = {
@@ -27,7 +49,11 @@ in
     };
   };
 
-  inherit prefixLength;
+  inherit prefixLength cidrContains;
+
+  # Whether two CIDRs share any address; power-of-two ranges overlap only
+  # by containment.
+  cidrsOverlap = a: b: cidrContains a b || cidrContains b a;
 
   # Interface address in address/prefix notation, with the prefix taken from
   # the CIDR of the subnet the address sits in.

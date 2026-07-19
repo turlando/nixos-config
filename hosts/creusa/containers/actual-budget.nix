@@ -1,4 +1,15 @@
 { flake, config, ... }:
+let
+  # Private network namespace addressing: the container's veth peers with
+  # creusa's shared services-side address.
+  actualAddress = config.environment.network.hosts.creusa-actual.interfaces.svc0.address;
+  servicesGateway = config.environment.network.hosts.creusa.interfaces.svc0.address;
+
+  # actual's HTTP port, proxied by nginx.
+  actualPort = 5000;
+
+  unstable = config.nixpkgs.unstable.pkgs;
+in
 {
   disko.devices.zpool.creusa.datasets = {
     "containers/actual-budget" = {
@@ -38,10 +49,20 @@
     };
   };
 
-  containers.actual-budget = {
+  # Named actual, not actual-budget: the private network names the veth
+  # ve-<container>, and ve-actual-budget exceeds the kernel's interface
+  # name length limit.
+  containers.actual = {
     ephemeral = true;
     autoStart = true;
-    extraFlags = [ "--resolv-conf=bind-host" ];
+
+    # Own network namespace: the container sees only its veth. No
+    # resolv.conf at all: actual gets no internet egress and resolves
+    # nothing.
+    privateNetwork = true;
+    hostAddress = servicesGateway;
+    localAddress = actualAddress;
+    extraFlags = [ "--resolv-conf=off" ];
 
     bindMounts = {
       "/var/log/journal" = {
@@ -66,11 +87,14 @@
 
         imports = [
           flake.nixosModules.modules.services.journald
-          "${config.nixpkgs.unstable.pkgs.path}/nixos/modules/services/web-apps/actual.nix"
+          "${unstable.path}/nixos/modules/services/web-apps/actual.nix"
         ];
 
         system.stateVersion = "26.05";
         environment.etc."machine-id".text = "849157410a3041bcf9f3427e69af5832";
+
+        # The namespace's own firewall: actual's port for nginx.
+        networking.firewall.allowedTCPPorts = [ actualPort ];
 
         services.journald.settings = {
           SystemMaxUse = "256M";
@@ -92,12 +116,13 @@
 
         services.actual = {
           enable = true;
-          package = config.nixpkgs.unstable.pkgs.actual-server;
+          package = unstable.actual-server;
           user = "actual";
           group = "actual";
           settings = {
-            hostname = "127.0.0.1";
-            port = 5000;
+            # Bind the veth; only nginx's explicit forward rule reaches it.
+            hostname = actualAddress;
+            port = actualPort;
           };
         };
       };

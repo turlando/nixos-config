@@ -42,7 +42,7 @@
   # substituted from its agenix secret at activation, so it never enters the
   # store.
   networking.networkmanager.ensureProfiles = let
-    inherit (config.environment.network) dns hosts subnets;
+    inherit (config.environment.network) blocks dns hosts subnets;
   in {
     environmentFiles = [ config.age.secrets.wireguard-medea-key.path ];
     profiles.wg-rhyzomatic = {
@@ -56,7 +56,7 @@
       wireguard.private-key = "$WG_PRIVATE_KEY";
       "wireguard-peer.${config.environment.wireguard.devices.creusa.publicKey}" = {
         endpoint = config.environment.wireguard.devices.creusa.endpoint;
-        allowed-ips = subnets.site.cidr;
+        allowed-ips = blocks.perosi.cidr;
         persistent-keepalive = "25";
       };
       ipv4 = {

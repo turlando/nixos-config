@@ -8,23 +8,34 @@ let
   perosi = "perosi.${rhyzomatic}";
 in
 {
-  subnets = {
-    # Everything reachable over the site VPN, routed via the creusa hub.
-    site = { cidr = "10.241.0.0/16"; };
+  # Allocation blocks: coordinated address plans, each with its own routing
+  # domain. Every subnet declares the block it belongs to (null for a range
+  # local to its host); tests/registry/network.nix checks each declaration
+  # against the CIDRs and enforces non-overlap.
+  blocks = {
+    # The perosi site plan: everything the overlay routes. VPN clients
+    # route exactly this block into the tunnel.
+    perosi = { cidr = "10.241.0.0/16"; };
+  };
 
+  subnets = {
     # The perosi apartment LAN behind antigone.
-    lan = { cidr = "10.241.23.0/24"; };
+    lan = { cidr = "10.241.23.0/24"; block = "perosi"; };
 
     # Modem-to-antigone uplink segment.
-    transit = { cidr = "10.241.254.0/24"; };
+    transit = { cidr = "10.241.254.0/24"; block = "perosi"; };
 
     # WireGuard overlay: the creusa hub, spokes, and roaming clients.
-    wireguard = { cidr = "10.241.46.0/24"; };
+    wireguard = { cidr = "10.241.46.0/24"; block = "perosi"; };
 
     # antigone's service containers, one point-to-point veth per container
-    # with antigone holding the shared host side. Reachable only through
-    # antigone's explicit forward rules.
-    services = { cidr = "10.241.69.0/24"; };
+    # with antigone holding the shared host side. Site-routed, reachable
+    # only through antigone's explicit forward rules.
+    antigone-services = { cidr = "10.241.69.0/24"; block = "perosi"; };
+
+    # creusa's service containers, host-local veth plumbing; nothing routes
+    # here.
+    creusa-services = { cidr = "192.168.92.0/24"; block = null; };
   };
 
   hosts = {
@@ -43,22 +54,22 @@ in
         wg0-initrd = { subnet = "wireguard"; address = "10.241.46.3"; };
 
         # Host side of every service container's veth, shared across them.
-        svc0 = { subnet = "services"; address = "10.241.69.1"; };
+        svc0 = { subnet = "antigone-services"; address = "10.241.69.1"; };
       };
     };
 
     # antigone's service containers: private network namespaces, each with
     # one veth peered with antigone's shared services address.
     antigone-nginx = {
-      interfaces.svc0 = { subnet = "services"; address = "10.241.69.2"; };
+      interfaces.svc0 = { subnet = "antigone-services"; address = "10.241.69.2"; };
     };
 
     antigone-slskd = {
-      interfaces.svc0 = { subnet = "services"; address = "10.241.69.3"; };
+      interfaces.svc0 = { subnet = "antigone-services"; address = "10.241.69.3"; };
     };
 
     antigone-syncthing = {
-      interfaces.svc0 = { subnet = "services"; address = "10.241.69.4"; };
+      interfaces.svc0 = { subnet = "antigone-services"; address = "10.241.69.4"; };
     };
 
     creusa = {
@@ -66,7 +77,19 @@ in
         # Hetzner primary IPv4, allocated by infra/configuration.nix.
         eth0 = { address = "46.225.229.141"; };
         wg0 = { subnet = "wireguard"; address = "10.241.46.1"; };
+        # Host side of every service container's veth, shared across them.
+        svc0 = { subnet = "creusa-services"; address = "192.168.92.1"; };
       };
+    };
+
+    # creusa's service containers: private network namespaces, each with
+    # one veth peered with creusa's shared services address.
+    creusa-nginx = {
+      interfaces.svc0 = { subnet = "creusa-services"; address = "192.168.92.2"; };
+    };
+
+    creusa-actual = {
+      interfaces.svc0 = { subnet = "creusa-services"; address = "192.168.92.3"; };
     };
 
     medea = {

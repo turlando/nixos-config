@@ -82,6 +82,39 @@ in
     expected = "10.in-addr.arpa";
   };
 
+  test_cidr_contains_inner_subnet = {
+    expr = net.cidrContains "10.241.0.0/16" "10.241.23.0/24";
+    expected = true;
+  };
+
+  test_cidr_contains_itself = {
+    expr = net.cidrContains "10.241.23.0/24" "10.241.23.0/24";
+    expected = true;
+  };
+
+  test_cidr_does_not_contain_wider_range = {
+    expr = net.cidrContains "10.241.23.0/24" "10.241.0.0/16";
+    expected = false;
+  };
+
+  test_cidr_does_not_contain_disjoint_range = {
+    expr = net.cidrContains "10.241.0.0/16" "192.168.92.0/24";
+    expected = false;
+  };
+
+  test_cidrs_overlap_by_containment = {
+    expr = [
+      (net.cidrsOverlap "10.241.23.0/24" "10.241.0.0/16")
+      (net.cidrsOverlap "10.241.0.0/16" "10.241.23.0/24")
+    ];
+    expected = [ true true ];
+  };
+
+  test_disjoint_cidrs_do_not_overlap = {
+    expr = net.cidrsOverlap "10.241.23.0/24" "10.241.254.0/24";
+    expected = false;
+  };
+
   test_answer_address_follows_interface_reference = {
     expr = net.answerAddress
       { antigone.interfaces.lan0.address = "10.241.23.1"; }

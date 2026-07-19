@@ -43,9 +43,9 @@ in
     ephemeral = true;
     autoStart = true;
 
-    # Own network namespace: the container sees only its veth. nspawn's
-    # resolv.conf handling is off, as it would bind the host's (which points
-    # at loopback, container-local here); the container writes its own.
+    # Own network namespace: the container sees only its veth. No
+    # resolv.conf at all: nginx gets no internet egress and proxies by
+    # address.
     privateNetwork = true;
     hostAddress = servicesGateway;
     localAddress = nginxAddress;
@@ -76,11 +76,6 @@ in
 
         system.stateVersion = "26.05";
         environment.etc."machine-id".text = "c0fdad4607d74823ab6e7c26fb178df9";
-        # Public resolver, not antigone's unbound: the container has no
-        # access to the host's resolver or the internal DNS view, and
-        # proxies by address anyway.
-        networking.nameservers = [ "9.9.9.9" "149.112.112.112" ];
-
         # The namespace's own firewall: HTTP from the routed clients.
         networking.firewall.allowedTCPPorts = [ 80 ];
 

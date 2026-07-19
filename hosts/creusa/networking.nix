@@ -23,7 +23,7 @@ in
         allowedIPs = [
           "${hosts.antigone.interfaces.wg0.address}/32"
           subnets.lan.cidr
-          subnets.services.cidr
+          subnets.antigone-services.cidr
         ];
       }
       # antigone's initrd unlock identity: only its own address, so you can SSH
@@ -52,9 +52,16 @@ in
   '';
 
   # Accept the tunnel handshake on the public link, and trust peers to reach
-  # creusa's own services (e.g. actual-budget) over wg0.
+  # creusa's own services over wg0.
   networking.firewall.interfaces.eth0.allowedUDPPorts = [
     config.environment.wireguard.devices.creusa.listenPort
   ];
   networking.firewall.trustedInterfaces = [ "wg0" ];
+
+  # NAT for the service containers: their inbound DNAT and egress
+  # masquerade entries live next to each container in containers/.
+  networking.nat = {
+    enable = true;
+    externalInterface = "eth0";
+  };
 }

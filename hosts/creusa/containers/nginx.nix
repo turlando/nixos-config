@@ -1,4 +1,10 @@
 { flake, config, ... }:
+let
+  # Private network namespace addressing: the container's veth peers with
+  # creusa's shared services-side address.
+  nginxAddress = config.environment.network.hosts.creusa-nginx.interfaces.svc0.address;
+  servicesGateway = config.environment.network.hosts.creusa.interfaces.svc0.address;
+in
 {
   disko.devices.zpool.creusa.datasets = {
     "containers/nginx" = {
@@ -29,14 +35,37 @@
     "d ${config.environment.persistence.stateDir}/var/lib/acme 0750 root root -"
   ];
 
-  networking.firewall.interfaces.eth0.allowedTCPPorts = [
-    80 443
+  # The public web ports DNAT into the container (the forward chain accepts
+  # DNAT'd flows); nginx alone gets masqueraded egress, for ACME and OCSP,
+  # and in turn reaches only the actual container.
+  networking.nat.forwardPorts = [
+    {
+      sourcePort = 80;
+      proto = "tcp";
+      destination = "${nginxAddress}:80";
+    }
+    {
+      sourcePort = 443;
+      proto = "tcp";
+      destination = "${nginxAddress}:443";
+    }
   ];
+  networking.nat.internalIPs = [ "${nginxAddress}/32" ];
+  networking.firewall.extraForwardRules = ''
+    iifname "ve-nginx" oifname "ve-actual" accept
+  '';
 
   containers.nginx = {
     ephemeral = true;
     autoStart = true;
-    extraFlags = [ "--resolv-conf=bind-host" ];
+
+    # Own network namespace: the container sees only its veth. nspawn's
+    # resolv.conf handling is off, as it would bind the host's; the
+    # container writes its own.
+    privateNetwork = true;
+    hostAddress = servicesGateway;
+    localAddress = nginxAddress;
+    extraFlags = [ "--resolv-conf=off" ];
 
     bindMounts = {
       "/var/log/journal" = {
@@ -68,6 +97,12 @@
 
         system.stateVersion = "26.05";
         environment.etc."machine-id".text = "a57b69a7ef72b1aa85c104a969af4c02";
+        # Public resolver: ACME ordering and OCSP need to resolve, and the
+        # container has no access to any host resolver.
+        networking.nameservers = [ "9.9.9.9" "149.112.112.112" ];
+
+        # The namespace's own firewall: the DNAT'd public web ports.
+        networking.firewall.allowedTCPPorts = [ 80 443 ];
 
         services.journald.settings = {
           SystemMaxUse = "256M";
@@ -94,7 +129,7 @@
 
               locations."/".proxyPass =
                 let
-                  actualCfg = hostConfig.containers.actual-budget.config.services.actual;
+                  actualCfg = hostConfig.containers.actual.config.services.actual;
                   inherit (actualCfg.settings) hostname port;
                 in
                   "http://${hostname}:${toString port}";

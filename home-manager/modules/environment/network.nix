@@ -6,10 +6,29 @@ let
 
   network = import ../../../registry/network.nix;
 
-  subnet = types.submodule {
+  block = types.submodule {
     options.cidr = mkOption {
       type = ipv4Cidr;
-      description = "Subnet in CIDR notation.";
+      description = "Block in CIDR notation.";
+    };
+  };
+
+  subnet = types.submodule {
+    options = {
+      cidr = mkOption {
+        type = ipv4Cidr;
+        description = "Subnet in CIDR notation.";
+      };
+      block = mkOption {
+        type = types.nullOr (types.enum (lib.attrNames network.blocks));
+        description = ''
+          Name of the entry in environment.network.blocks whose plan this
+          subnet belongs to; null for a range local to its host, outside
+          every block. Required, so every subnet states its allegiance;
+          tests/registry/network.nix checks the declaration against the
+          CIDRs.
+        '';
+      };
     };
   };
 
@@ -151,6 +170,22 @@ let
   };
 in {
   options.environment.network = {
+    blocks = mkOption {
+      type = types.attrsOf block;
+      readOnly = true;
+      default = network.blocks;
+      description = ''
+        Allocation blocks: coordinated address plans, each with its own
+        routing domain (e.g. what VPN clients route into the tunnel). A
+        subnet belongs to the block containing it; a subnet outside every
+        block is local to its host. Containment and non-overlap are
+        enforced by tests/registry/network.nix.
+
+        This module is only the accessor: the blocks live in
+        registry/network.nix.
+      '';
+    };
+
     subnets = mkOption {
       type = types.attrsOf subnet;
       readOnly = true;
