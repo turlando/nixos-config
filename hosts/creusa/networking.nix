@@ -14,14 +14,16 @@ in
     privateKeyFile = config.age.secrets.wireguard-creusa-key.path;
 
     peers = [
-      # antigone: its tunnel address plus the apartment LAN behind it, so
-      # traffic for 10.241.23.0/24 routes here and on to antigone. No endpoint:
-      # antigone dials in and creusa learns its address from the handshake.
+      # antigone: its tunnel address plus the networks behind it (the
+      # apartment LAN and the service containers), so traffic for them
+      # routes here and on to antigone. No endpoint: antigone dials in and
+      # creusa learns its address from the handshake.
       {
         publicKey = config.environment.wireguard.devices.antigone.publicKey;
         allowedIPs = [
           "${hosts.antigone.interfaces.wg0.address}/32"
           subnets.lan.cidr
+          subnets.services.cidr
         ];
       }
       # antigone's initrd unlock identity: only its own address, so you can SSH
