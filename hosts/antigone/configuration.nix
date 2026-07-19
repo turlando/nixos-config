@@ -1,4 +1,4 @@
-{ config, ... }:
+{ config, pkgs, ... }:
 {
   system.stateVersion = "26.05";
 
@@ -17,13 +17,13 @@
     { path = boot2; efiSysMountPoint = boot2; devices = [ "nodev" ]; }
   ];
 
-  networking.hostName = "antigone";
-  networking.hostId = "4d86c32a";
-
   # Import the storage pool at boot and unlock it from its agenix keyfile.
   # Activation (so agenix) runs in the initrd, so /run/agenix already holds
   # the passphrase when the stage-2 import service reads it via keylocation.
   boot.zfs.extraPools = [ config.disko.devices.zpool.storage.name ];
+
+  networking.hostName = "antigone";
+  networking.hostId = "4d86c32a";
 
   environment.persistence.enable = true;
   services.ephemeral.enable = true;
@@ -42,6 +42,7 @@
       description = "Tancredi Orlando";
       isNormalUser = true;
       hashedPasswordFile = config.age.secrets.user-password-antigone-tancredi.path;
+      shell = pkgs.zsh;
       openssh.authorizedKeys.keys = [ config.environment.ssh.publicKeys.antigone-tancredi_medea-tancredi ];
       extraGroups = [
         config.users.groups.wheel.name
