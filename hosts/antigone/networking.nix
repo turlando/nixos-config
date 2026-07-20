@@ -18,11 +18,9 @@ in
   # into the initrd from /run/agenix at switch time; like the initrd host key
   # it lives unencrypted on the ESP, so creusa scopes its peer to its own
   # address.
-  boot.initrd.availableKernelModules = [
-    "e1000e"
-    "r8169"
-  ];
+  boot.initrd.availableKernelModules = [ "e1000e" "r8169" ];
   boot.initrd.kernelModules = [ "wireguard" ];
+
   # In the initrd, networkd runs as the unprivileged systemd-network user and
   # must read this key to build wg0. The initrd-secrets cpio forces root:root
   # ownership, so a group grant cannot reach it: the key has to be
@@ -30,13 +28,12 @@ in
   # onto the ESP.
   age.secrets.wireguard-antigone-initrd-key.mode = "0444";
   boot.initrd.secrets.${initrdWgKey} = config.age.secrets.wireguard-antigone-initrd-key.path;
+
   boot.initrd.systemd.network = {
     enable = true;
+
     netdevs."10-wg0" = {
-      netdevConfig = {
-        Name = "wg0";
-        Kind = "wireguard";
-      };
+      netdevConfig = { Name = "wg0"; Kind = "wireguard"; };
       wireguardConfig.PrivateKeyFile = initrdWgKey;
       wireguardPeers = [
         {
@@ -47,6 +44,7 @@ in
         }
       ];
     };
+
     networks = {
       "10-lan0" = {
         matchConfig.MACAddress = antigone.lan0.mac;
@@ -63,6 +61,7 @@ in
       };
     };
   };
+
   boot.initrd.network.ssh.authorizedKeys = [ config.environment.ssh.publicKeys.antigone-root_medea-tancredi ];
 
   # Pin interface names by MAC so they stay stable across reboots and as
@@ -87,6 +86,7 @@ in
   networking.useDHCP = false;
   networking.useNetworkd = true;
   systemd.network.wait-online.enable = false;
+
   systemd.network.networks = {
     "10-wan0" = {
       matchConfig.Name = "wan0";
@@ -135,7 +135,6 @@ in
   networking.wireguard.interfaces.wg0 = {
     ips = [ (net.withPrefix antigone.wg0.address subnets.wireguard.cidr) ];
     privateKeyFile = config.age.secrets.wireguard-antigone-key.path;
-
     peers = [
       {
         publicKey = config.environment.wireguard.devices.creusa.publicKey;
@@ -213,7 +212,9 @@ in
           "${subnets.lan.cidr} allow"
           "${subnets.wireguard.cidr} allow"
         ];
+
         tls-cert-bundle = "${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt";
+
         # The view's zones answered authoritatively, with static cutting any
         # fallthrough to the forwarders, e.g. '"rhyzomatic.net." static'.
         local-zone =
@@ -224,15 +225,18 @@ in
             subnets.lan
             subnets.transit
           ];
+
         # One line per served record, e.g.
         # '"antigone.rhyzomatic.net. IN A 10.241.23.1"'.
         local-data = map recordLine servedRecords;
+
         # One PTR record per address, from the record marked as the
         # address's canonical name, e.g. '"10.241.23.1 antigone.rhyzomatic.net"'.
         local-data-ptr = map
           (record: ''"${net.answerAddress hosts record.answer} ${record.name}"'')
           (lib.filter (record: record.ptr) servedRecords);
       };
+
       forward-zone = [
         {
           name = ".";
