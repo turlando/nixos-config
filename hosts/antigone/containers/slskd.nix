@@ -45,6 +45,8 @@ in
         primarycache = "metadata";
         sync = "disabled";
         atime = "off";
+        # journald grants per-user journal access via POSIX ACLs
+        acltype = "posixacl";
       };
     };
 
