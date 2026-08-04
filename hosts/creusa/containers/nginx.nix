@@ -33,8 +33,12 @@ in
     };
   };
 
+  # Only the bind mount source's existence is the host's business. The
+  # container's acme-setup owns the mode and the ownership, and a rule
+  # that pins them here is reapplied on every switch, locking nginx out
+  # of the certificates until acme-setup next runs.
   systemd.tmpfiles.rules = [
-    "d ${config.environment.persistence.stateDir}/var/lib/acme 0750 root root -"
+    "d ${config.environment.persistence.stateDir}/var/lib/acme - - - -"
   ];
 
   # The public web ports DNAT into the container (the forward chain accepts
@@ -135,8 +139,21 @@ in
         # renewal timer fires shortly after boot instead, when the veth
         # exists, and serves the persisted certificates meanwhile.
         systemd.services."acme-dracma.us.to".wantedBy = lib.mkForce [ ];
-        systemd.services.nginx.wants =
-          lib.mkForce [ "acme-finished-dracma.us.to.target" ];
+        # acme-setup stays in the boot transaction the order service
+        # leaves: it only reasserts ownership and modes on the persisted
+        # state and waits for no network, and nginx's configuration test
+        # cannot read the certificates before it has run.
+        systemd.services.nginx = {
+          wants = lib.mkForce [
+            "acme-finished-dracma.us.to.target"
+            "acme-setup.service"
+          ];
+          after = [ "acme-setup.service" ];
+          # Restart=always still gives up at the module's start limit of
+          # five attempts a minute, which turns a certificate error that
+          # later units resolve into indefinite downtime.
+          startLimitIntervalSec = lib.mkForce 0;
+        };
         # OnActiveSec, not OnBootSec or OnStartupSec: containers share the
         # kernel's clocks with the host, so the timer's activation at
         # container boot is the only usable reference point. The module's
