@@ -150,7 +150,13 @@ in
   services.kea.dhcp4 = {
     enable = true;
     settings = {
-      interfaces-config.interfaces = [ "lan0" ];
+      interfaces-config = {
+        interfaces = [ "lan0" ];
+        # Port 67 contention at startup is fatal, not silent: retry the bind,
+        # then exit so systemd restarts kea, instead of serving nothing.
+        service-sockets-require-all = true;
+        service-sockets-max-retries = 5;
+      };
       lease-database = {
         type = "memfile";
         persist = true;

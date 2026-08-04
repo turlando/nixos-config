@@ -109,6 +109,13 @@ in
     requires = [ "zfs-mount.service" ];
   };
 
+  # The container unit addresses ve-slskd itself; mark it unmanaged so
+  # networkd's vendor default (a DHCP server on ve-*) never claims it.
+  systemd.network.networks."50-ve-slskd" = {
+    matchConfig = { Kind = "veth"; Name = "ve-slskd"; };
+    linkConfig.Unmanaged = true;
+  };
+
   containers.slskd = {
     ephemeral = true;
     autoStart = true;

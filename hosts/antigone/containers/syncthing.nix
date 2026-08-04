@@ -83,6 +83,13 @@ in
     requires = [ "zfs-mount.service" ];
   };
 
+  # The container unit addresses ve-syncthing itself; mark it unmanaged so
+  # networkd's vendor default (a DHCP server on ve-*) never claims it.
+  systemd.network.networks."50-ve-syncthing" = {
+    matchConfig = { Kind = "veth"; Name = "ve-syncthing"; };
+    linkConfig.Unmanaged = true;
+  };
+
   containers.syncthing = {
     ephemeral = true;
     autoStart = true;
