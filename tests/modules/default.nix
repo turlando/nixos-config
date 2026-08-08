@@ -2,6 +2,7 @@
 {
   ephemeral = import ./ephemeral.nix { inherit lib; };
   families = import ./families.nix { inherit lib; };
+  firefox = import ./firefox.nix { inherit lib; };
   framework = import ./framework.nix { inherit lib; };
   index = import ./index.nix { inherit lib; };
   journald = import ./journald.nix { inherit lib; };

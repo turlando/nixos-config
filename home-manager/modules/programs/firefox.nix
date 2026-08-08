@@ -24,8 +24,12 @@ in {
   };
 
   config = mkIf cfg.enableSmartCardSupport {
+    # Firefox matches installed devices by library path, so a bare Add leaves a
+    # stale entry behind once its store path is garbage collected. Delete runs
+    # first in the same pass, reconciling the profile on every startup.
     programs.firefox.policies.SecurityDevices = {
-      "OpenSC PKCS#11" = "${pkgs.opensc}/lib/opensc-pkcs11.so";
+      Delete = [ "OpenSC PKCS#11" ];
+      Add."OpenSC PKCS#11" = "${pkgs.opensc}/lib/opensc-pkcs11.so";
     };
   };
 }
