@@ -26,9 +26,10 @@ let
   # Filename layout, shared by the master library and the MP3 export: label
   # first, catalog number leading, dates in brackets ([original, edition] for
   # reissues, [year] otherwise), track by physical record position (A1) for
-  # grooved discs, else the zero-padded number. $imprint/$catno/$trackpos/$dates
-  # come from the paths plugin.
-  layout = "$imprint/$catno - $albumartist - $album [$dates]/$trackpos. $title";
+  # grooved discs else the zero-padded number, and the title prefixed with the
+  # track artist on multi-artist releases. $imprint/$catno/$trackpos/$tracktitle/
+  # $dates come from the paths plugin.
+  layout = "$imprint/$catno - $albumartist - $album [$dates]/$trackpos. $tracktitle";
 in
 {
   programs.beets = {

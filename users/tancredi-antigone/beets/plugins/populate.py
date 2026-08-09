@@ -7,6 +7,9 @@ a release lands in the right label folder immediately instead of "Not on Label":
     catalognumbers  <- native `catalognum`  (unless "none")
     releasetype     <- Discogs' albumtype / format descriptions, mapped to one
                        primary type plus any modifiers (per `releasetype` config)
+    multiartist     <- 1 when the album artist is not one of the track artists
+                       (a compilation or split), so the paths plugin prefixes
+                       every track with its own artist; DB-only, never written
 
 At `album_imported`, canonicalize the album's genres to the preferred spelling
 (per the `genres` config aliases). Genres are a beets album-level field, so this
@@ -17,10 +20,28 @@ catalog number when Discogs says "none") stay manual.
 """
 
 import beets
+from beets.dbcore import types
 from beets.plugins import BeetsPlugin
 
 
+def _multiartist(items):
+    """1 when the release is multi-artist (a compilation or split), else 0.
+
+    A release is multi-artist when its album artist is not one of the track
+    artists: a synthetic "Various" or "X / Y" join rather than a single
+    performer. A solo album, even one with a guest track, keeps its album artist
+    as one of the track artists, so it stays single-artist.
+    """
+    artists = {(it.get("artist") or "").strip() for it in items}
+    albumartist = (items[0].get("albumartist") or "").strip() if items else ""
+    return 1 if albumartist and albumartist not in artists else 0
+
+
 class PopulatePlugin(BeetsPlugin):
+    # DB-only marker (no media field, so it is never written to the files); read
+    # by the paths plugin's $tracktitle to prefix each track with its artist.
+    item_types = {"multiartist": types.INTEGER}
+
     def __init__(self):
         super().__init__()
         self.register_listener("import_task_apply", self._populate)
@@ -28,7 +49,11 @@ class PopulatePlugin(BeetsPlugin):
 
     def _populate(self, session, task):
         primary, modifiers = self._release_types()
-        for item in task.imported_items():
+        items = task.imported_items()
+        multiartist = _multiartist(items)
+        for item in items:
+            item.multiartist = multiartist
+
             label = (item.get("label") or "").strip()
             item.labels = [label] if label and not label.startswith("Not On Label") else ["none"]
 
