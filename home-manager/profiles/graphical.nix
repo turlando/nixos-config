@@ -50,6 +50,22 @@
   # Migrate when moving to plasma-manager and dropping kde-gtk-config.
   systemd.user.sessionVariables.GTK_IM_MODULE = "simple";
 
+  # Plasma's crash pickup keeps watching for new dumps once it has consumed
+  # the backlog: drkonqi-coredump-processor quits on CoredumpWatcher's
+  # finished signal, emitted only after a dump reaches the launcher socket,
+  # while atLogEnd stays unconnected in pickup mode. The upstream unit caps
+  # the run at RuntimeMaxSec=30min, so a session without crashes ends up with
+  # a failed unit and a degraded session manager, which home-manager reports
+  # on every switch. Lifting the cap leaves the watcher idle at ~3M until
+  # PartOf=graphical-session.target stops it at logout.
+  #
+  # Upstream code: https://invent.kde.org/plasma/drkonqi/-/blob/master/src/coredump/processor/main.cpp
+  # Sibling defect in the same unit: https://bugs.kde.org/show_bug.cgi?id=484864
+  xdg.configFile."systemd/user/drkonqi-coredump-pickup.service.d/override.conf".text = ''
+    [Service]
+    RuntimeMaxSec=infinity
+  '';
+
   programs.keepassxc.enable = true;
 
   home.packages = [
