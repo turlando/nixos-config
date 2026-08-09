@@ -53,6 +53,9 @@
   programs.keepassxc.enable = true;
 
   home.packages = [
+    # KDE's mpv frontend: Qt6/Breeze native, MPRIS aware, VAAPI decoding.
+    pkgs.haruna
+
     pkgs.libreoffice-qt6-fresh
     pkgs.hunspell
     pkgs.hunspellDicts.en-us
