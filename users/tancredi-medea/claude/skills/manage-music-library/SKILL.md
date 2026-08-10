@@ -66,6 +66,15 @@ physical `record_track`/`record_size`/`record_rpm` for records, and optionally
 Run each step on antigone. Use `beet modify -y` for scripted field edits and
 `beet edit` only when interactive review is wanted.
 
+0. **Fit check, before touching anything.** From the release's Discogs
+   genres/styles (or a listen), confirm that every genre is in the vocabulary
+   and that exactly one configured macrogenre genuinely fits the release. If a
+   genre is unknown, or no macrogenre fits (e.g. a bleep techno record when the
+   only shelf is the breakbeat continuum), stop and ask Tancredi **now**, per
+   "Growing the vocabulary" — not after importing. This early check is the only
+   gate for macrogenre: lint verifies membership in the enum, so a
+   valid-but-wrong macrogenre (a misfiled release) never trips it.
+
 1. **Stage a writable copy.** The wipe rewrites files in place, so never wipe
    slskd's tree (or any shared/originals dir) directly. Copy the album into a
    staging dir owned by tancredi:
@@ -109,8 +118,12 @@ Run each step on antigone. Use `beet modify -y` for scripted field edits and
 
    ```sh
    beet modify -y album:"<ALBUM>" \
-     macrogenre="Hardcore, Jungle, Drum and Bass"
+     macrogenre="<the shelf the step-0 fit check settled on>"
    ```
+
+   Most of the collection files under `Hardcore, Jungle, Drum and Bass` (the
+   breakbeat continuum, happy hardcore included), but never write it as a
+   default: set exactly the macrogenre confirmed in step 0.
 
    Depending on the release also set:
    - `source` (optional) when you know the provenance: `Collection` or
@@ -129,6 +142,10 @@ Run each step on antigone. Use `beet modify -y` for scripted field edits and
    ```sh
    beet lint
    ```
+
+   Fix missing/inconsistent fields yourself; but for any `not in` violation
+   (a genre or enum value outside the vocabulary), stop and ask — see
+   "Growing the vocabulary" below.
 
 7. **Export** the release (or a wider query) to MP3:
 
@@ -159,12 +176,24 @@ Run each step on antigone. Use `beet modify -y` for scripted field edits and
 ### Growing the vocabulary
 
 New genres, macrogenres, or enum values are expected as the collection grows.
-When lint flags a value that should be allowed, do **not** bend the release to
-fit; add the value to `users/tancredi-antigone/beets/default.nix` (the
-`beetlint.enums`, `releasetype`, or `genres` block) in the nixos-config repo,
-redeploy tancredi's antigone home config (from the repo:
-`just home-switch-remote antigone tancredi antigone`), then re-lint. Report such
-additions back to the user.
+When a release carries a value outside the schema (a `not in` lint violation,
+or visible in the Discogs data during import), **stop and ask Tancredi what to
+do — never resolve it yourself**. In particular, never delete or rewrite a
+genre to make lint pass: that silently loses information Discogs provided.
+Present the value(s) and the release, and let him choose:
+
+- add it to the vocabulary as a new canonical value,
+- map it as an alias of an existing canonical genre, or
+- correct the release (only if the value is genuinely wrong for it).
+
+Only after his decision, apply it in `users/tancredi-antigone/beets/default.nix`
+(the `beetlint.enums`, `releasetype`, or `genres` block) in the nixos-config
+repo, redeploy tancredi's antigone home config (from the repo:
+`just home-switch-remote antigone tancredi antigone`), then re-lint.
+
+Note: beets stores Discogs *styles* as the genres; the umbrella Discogs genre
+(e.g. "Electronic") is intentionally never stored. Its absence is not a skipped
+genre, so do not try to restore it.
 
 ## Troubleshooting
 
