@@ -14,9 +14,10 @@ collections, both on the storage pool:
 
 - **Master, lossless:** `/srv/music/electronic-flac` (beets `directory`). Clean
   canonical Vorbis tags, one external `cover.jpg` per album, never embedded art.
-- **MP3 export:** `/srv/music/electronic-mp3` (beets `convert.dest`). 320 kbps
-  CBR, 44.1 kHz, ID3v2.3, embedded shrunk cover, a trimmed DJ tag set. Rebuilt
-  from the master on demand; syncthing replicates it.
+- **MP3 export:** `/srv/music/electronic-mp3` (the `alternatives.mp3`
+  collection). 320 kbps CBR, 44.1 kHz, ID3v2.3, embedded shrunk cover, a
+  trimmed DJ tag set. Kept in sync from the master with `beet alt update mp3`;
+  syncthing replicates it.
 
 beets runs **on antigone**. From medea, connect with `ssh antigone` and run
 every command there (e.g. `ssh antigone 'beet lint'`). The config is deployed by
@@ -65,6 +66,14 @@ physical `record_track`/`record_size`/`record_rpm` for records, and optionally
 
 Run each step on antigone. Use `beet modify -y` for scripted field edits and
 `beet edit` only when interactive review is wanted.
+
+Release-level native fields (`album`, `albumartist`, `year`, `genres`,
+`country`, ...) must be modified **album-level**: `beet modify -a -y`. beets
+resolves those fields from the Album object when building paths, so an
+item-level `beet modify album=...` changes the items' copies but never moves
+any file (master or export) — the rename silently does not happen. The custom
+per-track fields (`macrogenre`, `labels`, `catalognumbers`, `record_*`, ...)
+are item-level and take a plain `beet modify`.
 
 0. **Fit check, before touching anything.** From the release's Discogs
    genres/styles (or a listen), confirm that every genre is in the vocabulary
@@ -147,11 +156,17 @@ Run each step on antigone. Use `beet modify -y` for scripted field edits and
    (a genre or enum value outside the vocabulary), stop and ask — see
    "Growing the vocabulary" below.
 
-7. **Export** the release (or a wider query) to MP3:
+7. **Sync the MP3 export**:
 
    ```sh
-   beet convert -y album:"<ALBUM>"
+   beet alt update mp3
    ```
+
+   This reconciles the whole export incrementally against the master: new
+   items are transcoded in, renamed releases are moved (no re-transcode),
+   changed tags are rewritten in place, and removed items are deleted. There
+   is no per-release query and never a reason to run `beet convert` directly.
+   After renaming or removing releases, run it again — that is the cleanup.
 
 8. **Clean up** the staging copy (the master is already imported):
 
@@ -206,3 +221,10 @@ genre, so do not try to restore it.
 - **`beet` hangs or prompts about Discogs auth on a non-import command**: it
   should not (the placeholder token avoids OAuth). If it does, the config was
   not deployed; check `~/.config/beets/config.yaml`.
+- **The library DB was rebuilt** (`~/.local/state/beets/library.db` recreated,
+  e.g. after a re-import from the master): the export's sync state (`alt.mp3`
+  per item) lived in the old DB, so `beet alt update mp3` can no longer see
+  what it previously produced. Wipe the export contents first
+  (`rm -rf /srv/music/electronic-mp3/*`), then run `beet alt update mp3` to
+  regenerate the tree from scratch; never run it against the stale tree, which
+  would leave unreconcilable orphans.

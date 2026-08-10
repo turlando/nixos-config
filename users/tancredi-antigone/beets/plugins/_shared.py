@@ -40,21 +40,25 @@ class ExportProfile:
 
 
 def _export_roots():
-    """Absolute export roots by profile name, derived from the `convert` config.
+    """Absolute export roots by collection name, from the `alternatives` config.
 
-    Currently the single MP3 export (`convert.dest`). `dest` may be absolute
-    (the NAS library) or relative to the config directory (the lab), so it is
-    resolved against config_dir either way. Add more profiles here when a second
-    export format (e.g. Opus via `alternatives`) is introduced.
+    Each alternatives collection (e.g. the mp3 DJ export) declares the directory
+    it maintains; a second profile (e.g. Opus for the phone) becomes a new
+    collection and is picked up here automatically. Directories may be absolute
+    (the NAS datasets) or relative to the config directory (the lab), so both
+    resolve against config_dir.
     """
-    convert = beets.config["convert"]
-    if not convert.exists() or not convert["dest"].exists():
+    alternatives = beets.config["alternatives"]
+    if not alternatives.exists():
         return {}
-    dest = str(convert["dest"].get())
     base = beets.config.config_dir()
-    root = os.path.abspath(os.path.join(base, os.path.expanduser(dest)))
-    name = str(convert["format"].get()) if convert["format"].exists() else "mp3"
-    return {name: root}
+    roots = {}
+    for name in alternatives.keys():
+        directory = alternatives[name]["directory"]
+        if directory.exists():
+            path = os.path.expanduser(str(directory.get()))
+            roots[str(name)] = os.path.abspath(os.path.join(base, path))
+    return roots
 
 
 def export_profile(path):

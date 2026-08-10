@@ -35,6 +35,21 @@ in
   programs.beets = {
     enable = true;
 
+    # beets with the alternatives plugin: the sync engine for the MP3 export
+    # (adds, renames, tag rewrites, removals), replacing one-shot `beet convert`.
+    # pluginOverrides lives on the python module; toPythonApplication turns it
+    # back into the CLI package.
+    package = pkgs.python3Packages.toPythonApplication (
+      pkgs.python3Packages.beets.override {
+        pluginOverrides = {
+          alternatives = {
+            enable = true;
+            propagatedBuildInputs = [ pkgs.python3Packages.beets-alternatives ];
+          };
+        };
+      }
+    );
+
     settings = {
       directory = flacLibrary;
       # The library DB is a disposable cache, kept in the user's state dir. The
@@ -71,6 +86,7 @@ in
         "fromfilename"
         "fetchart"
         "convert"
+        "alternatives"
         "export"
         "beetlint"
       ];
@@ -85,20 +101,40 @@ in
         cover_names = [ "cover" ];
       };
 
-      # MP3 export mirror: 320 kbps CBR, 44.1 kHz via soxr, ID3v2.3, embedded
-      # (shrunk) cover, same folder layout. -map_metadata -1 / -fflags +bitexact
-      # drop the source Vorbis comments and ffmpeg's encoder tag so only beets'
-      # clean tags remain. Run on demand with `beet convert -y`.
+      # Tags on export MP3s are written by beets itself (via alternatives), so
+      # the global ID3 version applies: v2.3 for Pioneer CDJ compatibility.
+      # FLAC (Vorbis) is unaffected.
+      id3v23 = true;
+
+      # Transcoder definition, used by the alternatives collection below. 320
+      # kbps CBR MP3s tuned for Pioneer CDJs: constant bitrate (stable waveforms
+      # and beatgrids), 44.1 kHz via high-quality soxr resampling.
+      # -map_metadata -1 / -fflags +bitexact drop the source Vorbis comments and
+      # ffmpeg's encoder tag so only beets' clean tags remain. `dest` is
+      # deliberately absent: the export is maintained by `beet alt update mp3`,
+      # and a bare `beet convert` (which would write an unreconciled tree)
+      # fails without it.
       convert = {
-        dest = mp3Export;
-        format = "mp3";
-        embed = true;
-        id3v23 = true;
-        album_art_maxwidth = 500;
         formats.mp3 = {
           command = "ffmpeg -y -i $source -vn -c:a libmp3lame -b:a 320k -af aresample=44100:resampler=soxr:precision=28 -map_metadata -1 -fflags +bitexact $dest";
           extension = "mp3";
         };
+      };
+
+      # MP3 export mirror, kept in sync with `beet alt update mp3`: adds new
+      # items, renames moved ones, rewrites changed tags, embeds the (shrunk)
+      # cover, and removes items that left the library or the query. State
+      # lives in the DB (alt.mp3 per item), so after a DB rebuild wipe the
+      # export tree first.
+      alternatives.mp3 = {
+        directory = mp3Export;
+        query = "";
+        removable = true;
+        formats = "mp3";
+        # Bandcamp covers are huge; shrink the embedded art for the MP3
+        # (CDJ-friendly, smaller files). The master's external cover.jpg keeps
+        # full resolution.
+        album_art_maxwidth = 500;
         paths.default = layout;
       };
 
@@ -187,10 +223,10 @@ in
     };
   };
 
-  # beets (the default package already bundles the discogs client and pillow for
-  # art resizing) is added by the module above. These are the extra CLI tools
-  # the workflow shells out to: ffmpeg for the MP3 transcode, flac for the
-  # metaflac wipe step.
+  # beets itself (bundling the discogs client, pillow for art resizing, and the
+  # alternatives plugin via the override above) is added by the module. These
+  # are the extra CLI tools the workflow shells out to: ffmpeg for the MP3
+  # transcode, flac for the metaflac wipe step.
   home.packages = [ pkgs.ffmpeg pkgs.flac ];
 
   # Ensure the library DB's directory exists before beets opens the sqlite file.
