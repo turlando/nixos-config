@@ -130,9 +130,9 @@ are item-level and take a plain `beet modify`.
      macrogenre="<the shelf the step-0 fit check settled on>"
    ```
 
-   Most of the collection files under `Hardcore, Jungle, Drum and Bass` (the
-   breakbeat continuum, happy hardcore included), but never write it as a
-   default: set exactly the macrogenre confirmed in step 0.
+   Most of the collection bins under `Jungle` (the wide tent: the 93-96
+   transition and the modern revival default there), but never write any value
+   as a default: set exactly the macrogenre confirmed in step 0.
 
    Depending on the release also set:
    - `source` (optional) when you know the provenance: `Collection` or
@@ -181,12 +181,22 @@ are item-level and take a plain `beet modify`.
 
 - `media`: CD, File, Vinyl, Acetate
 - `source`: Collection, Bandcamp
-- `macrogenre` (single value): "Hardcore, Jungle, Drum and Bass"
+- `macrogenre` (single value): Breakbeat Hardcore, Happy Hardcore, Darkside,
+  Jungle, Drum and Bass, Atmospheric Drum and Bass. These are Tancredi's
+  subjective scan bins (mood shelves for CDJ browsing), not genre truth
+  claims — `genres` records what Discogs says; `macrogenre` records what
+  Tancredi says. His ear decides: Jungle is the wide tent (the 93-96
+  transition and the modern revival bin there by default), ties go to Jungle,
+  Darkside must be earned (file it only on a confident call; any hesitation
+  falls to Jungle), and Happy Hardcore is the 4-beat branch (the kick carries
+  the groove, breaks decorative; if the break carries it, it belongs in the
+  breakbeat lineage bins).
 - `record_size`: 7, 10, 12 &nbsp;·&nbsp; `record_rpm`: 33, 45, 78
 - `releasetype`: exactly one of Album, EP, Single, Compilation, plus optional
-  Reissue
+  Reissue.
 - `genres`: canonical spellings with aliases (e.g. "Drum and Bass" absorbs DnB,
-  "Drum n Bass"). Currently Drum and Bass, Jungle, Hardcore.
+  "Drum n Bass"). Currently Drum and Bass, Jungle, Hardcore, Breakbeat, Happy
+  Hardcore.
 
 ### Growing the vocabulary
 

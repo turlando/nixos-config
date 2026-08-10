@@ -191,7 +191,14 @@ in
       # cannot enforce them at write time). Grow these as new values appear.
       beetlint.enums = {
         media = [ "CD" "File" "Vinyl" "Acetate" ];
-        macrogenre = [ "Hardcore, Jungle, Drum and Bass" ];
+        macrogenre = [
+          "Breakbeat Hardcore"
+          "Happy Hardcore"
+          "Darkside"
+          "Jungle"
+          "Drum and Bass"
+          "Atmospheric Drum and Bass"
+        ];
         source = [ "Collection" "Bandcamp" ];
         record_size = [ 7 10 12 ];
         record_rpm = [ 33 45 78 ];
@@ -212,6 +219,8 @@ in
         "Drum and Bass" = [ "Drum n Bass" "DnB" "Drum 'n' Bass" ];
         "Jungle" = [ ];
         "Hardcore" = [ ];
+        "Breakbeat" = [ ];
+        "Happy Hardcore" = [ ];
       };
 
       # Directory + naming for the master library (label-first, catalog leading,
