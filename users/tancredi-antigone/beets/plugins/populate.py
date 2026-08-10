@@ -11,6 +11,10 @@ a release lands in the right label folder immediately instead of "Not on Label":
                        (a compilation or split), so the paths plugin prefixes
                        every track with its own artist; DB-only, never written
 
+Every imported field is also NFC-normalized first, so the database (and the
+paths and tags derived from it) carries the library's canonical Unicode form
+regardless of what Discogs served.
+
 At `album_imported`, canonicalize the album's genres to the preferred spelling
 (per the `genres` config aliases). Genres are a beets album-level field, so this
 has to happen once the album exists, not per item at apply time.
@@ -22,6 +26,8 @@ catalog number when Discogs says "none") stay manual.
 import beets
 from beets.dbcore import types
 from beets.plugins import BeetsPlugin
+
+from beetsplug._shared import nfc
 
 
 def _multiartist(items):
@@ -52,6 +58,13 @@ class PopulatePlugin(BeetsPlugin):
         items = task.imported_items()
         multiartist = _multiartist(items)
         for item in items:
+            # Canonical Unicode form first, so the fields derived below (and
+            # the paths and tags derived from them later) start from NFC.
+            for key, value in list(item.items()):
+                normalized = nfc(value)
+                if normalized != value:
+                    item[key] = normalized
+
             item.multiartist = multiartist
 
             label = (item.get("label") or "").strip()

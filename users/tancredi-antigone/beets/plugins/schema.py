@@ -18,7 +18,7 @@ import mediafile
 from beets.dbcore import types
 from beets.plugins import BeetsPlugin
 
-from beetsplug._shared import is_export
+from beetsplug._shared import is_export, nfc
 
 
 def _text_styles(key):
@@ -168,6 +168,11 @@ class SchemaPlugin(BeetsPlugin):
         self.register_listener("write", self._on_write)
 
     def _on_write(self, item, path, tags):
+        # Canonical Unicode form on everything going to the file: backstop for
+        # values entered after import (beet modify / edit), which bypass the
+        # populate hook's import-time normalization.
+        for key, value in list(tags.items()):
+            tags[key] = nfc(value)
         # Never write an empty custom field (unset text, 0 integers, empty list).
         for field in CUSTOM_FIELDS:
             if not item.get(field.name):

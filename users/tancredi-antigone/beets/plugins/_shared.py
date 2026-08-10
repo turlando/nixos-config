@@ -1,9 +1,11 @@
-"""Shared helpers for the config's custom plugins (schema, paths, export).
+"""Shared helpers for the config's custom plugins (schema, paths, export,
+populate, beetlint).
 
 Not a beets plugin itself; imported by the others as `beetsplug._shared`.
 """
 
 import os
+import unicodedata
 from dataclasses import dataclass
 
 import beets
@@ -12,6 +14,21 @@ import beets
 MISSING = "none"
 # How a missing record label renders in the path.
 NOT_ON_LABEL = "Not on Label"
+
+
+def nfc(value):
+    """NFC-normalize a tag value (a string, or a list of strings); any other
+    type passes through unchanged.
+
+    NFC is the library's canonical Unicode form for tags and, since file names
+    derive from tag values, for paths: it is what Linux input methods, the web,
+    syncthing, and rekordbox all expect. The ZFS `normalization` property only
+    affects name comparison, so the stored form is whatever we write."""
+    if isinstance(value, str):
+        return unicodedata.normalize("NFC", value)
+    if isinstance(value, list):
+        return [nfc(v) for v in value]
+    return value
 
 
 @dataclass(frozen=True)

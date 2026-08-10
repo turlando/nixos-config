@@ -7,6 +7,9 @@
     subset of the modifiers.
   - Every genre must be in the vocabulary (config `genres`).
   - Album-shared fields must agree across every track of a release.
+  - Every text value must be NFC-normalized (the library's canonical Unicode
+    form; a non-NFC database value would leak into a file name on the next
+    move, even though the write hook keeps the file tags themselves NFC).
 
 Failures are reported as typed `Violation`s, each of which renders its own
 message.
@@ -19,6 +22,8 @@ import beets
 from beets import ui
 from beets.plugins import BeetsPlugin
 from beets.ui import Subcommand
+
+from beetsplug._shared import nfc
 
 # Media whose releases carry a physical record position/size/rpm.
 GROOVED_MEDIA = {"Vinyl", "Acetate"}
@@ -95,6 +100,15 @@ class Inconsistent(Violation):
         return f"{self.where}: {self.field} differs across tracks {set(self.values)}"
 
 
+@dataclass(frozen=True)
+class NotNormalized(Violation):
+    field: str
+
+    @property
+    def message(self):
+        return f"{self.where}: {self.field} is not NFC-normalized"
+
+
 def _hashable(value):
     return tuple(value) if isinstance(value, list) else value
 
@@ -145,6 +159,12 @@ class BeetLintPlugin(BeetsPlugin):
         for genre in item.get("genres") or []:
             if genre not in genre_vocab:
                 yield NotAllowed(where, "genre", genre, tuple(sorted(genre_vocab)))
+
+        # Non-string values (and bytes, e.g. `path`) pass through nfc unchanged,
+        # so only genuinely denormalized text is flagged.
+        for field, value in item.items():
+            if nfc(value) != value:
+                yield NotNormalized(where, field)
 
     def _consistency_violations(self, items):
         albums = defaultdict(list)
