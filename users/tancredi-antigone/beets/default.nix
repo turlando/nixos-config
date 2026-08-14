@@ -198,6 +198,7 @@ in
           "Jungle"
           "Drum and Bass"
           "Atmospheric Drum and Bass"
+          "Breakcore"
         ];
         source = [ "Collection" "Bandcamp" ];
         record_size = [ 7 10 12 ];
@@ -221,6 +222,9 @@ in
         "Hardcore" = [ ];
         "Breakbeat" = [ ];
         "Happy Hardcore" = [ ];
+        "Breakcore" = [ ];
+        "Breaks" = [ ];
+        "Acid" = [ ];
       };
 
       # Directory + naming for the master library (label-first, catalog leading,

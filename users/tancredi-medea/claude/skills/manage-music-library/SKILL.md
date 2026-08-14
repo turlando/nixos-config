@@ -182,7 +182,8 @@ are item-level and take a plain `beet modify`.
 - `media`: CD, File, Vinyl, Acetate
 - `source`: Collection, Bandcamp
 - `macrogenre` (single value): Breakbeat Hardcore, Happy Hardcore, Darkside,
-  Jungle, Drum and Bass, Atmospheric Drum and Bass. These are Tancredi's
+  Jungle, Drum and Bass, Atmospheric Drum and Bass, Breakcore. These are
+  Tancredi's
   subjective scan bins (mood shelves for CDJ browsing), not genre truth
   claims — `genres` records what Discogs says; `macrogenre` records what
   Tancredi says. His ear decides: Jungle is the wide tent (the 93-96
@@ -196,7 +197,7 @@ are item-level and take a plain `beet modify`.
   Reissue.
 - `genres`: canonical spellings with aliases (e.g. "Drum and Bass" absorbs DnB,
   "Drum n Bass"). Currently Drum and Bass, Jungle, Hardcore, Breakbeat, Happy
-  Hardcore.
+  Hardcore, Breakcore, Breaks, Acid.
 
 ### Growing the vocabulary
 
