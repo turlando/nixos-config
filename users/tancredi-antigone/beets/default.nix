@@ -200,7 +200,7 @@ in
           "Atmospheric Drum and Bass"
           "Breakcore"
         ];
-        source = [ "Collection" "Bandcamp" ];
+        source = [ "Collection" "Bandcamp" "SoundCloud" ];
         record_size = [ 7 10 12 ];
         record_rpm = [ 33 45 78 ];
       };

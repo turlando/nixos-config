@@ -135,9 +135,9 @@ are item-level and take a plain `beet modify`.
    as a default: set exactly the macrogenre confirmed in step 0.
 
    Depending on the release also set:
-   - `source` (optional) when you know the provenance: `Collection` or
-     `Bandcamp`. Leave it unset when unknown; lint no longer requires it, but
-     rejects any value outside the enum.
+   - `source` (optional) when you know the provenance: `Collection`,
+     `Bandcamp`, or `SoundCloud`. Leave it unset when unknown; lint no longer
+     requires it, but rejects any value outside the enum.
    - `catalognumbers` if the release has a catalog number Discogs reported as
      none (multi-valued; separate split-release numbers with `; `).
    - Grooved discs (`media` is `Vinyl` or `Acetate`): `record_track` (e.g. `A1`),
@@ -180,7 +180,7 @@ are item-level and take a plain `beet modify`.
 `users/tancredi-antigone/beets/default.nix` for the current values.
 
 - `media`: CD, File, Vinyl, Acetate
-- `source`: Collection, Bandcamp
+- `source`: Collection, Bandcamp, SoundCloud
 - `macrogenre` (single value): Breakbeat Hardcore, Happy Hardcore, Darkside,
   Jungle, Drum and Bass, Atmospheric Drum and Bass, Breakcore. These are
   Tancredi's
