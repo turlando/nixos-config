@@ -46,6 +46,11 @@
     enableCustomDefaults = true;
   };
 
+  programs.firefox.profiles.luminovo = {
+    id = 1;
+    enableCustomDefaults = true;
+  };
+
   programs.thunderbird.enable = true;
   programs.thunderbird.profiles.tancredi = {
     isDefault = true;
