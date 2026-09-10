@@ -45,16 +45,15 @@ in
     };
   };
 
-  # The storage datasets import and mount in stage 2, and ZFS non-legacy
-  # mounts aren't fstab-backed, so ownership and the inherited group ACL are
-  # applied from a oneshot ordered after zfs-mount rather than tmpfiles (which
-  # would race the late mount) or a postCreateHook (which sees the /mnt
-  # altroot). Idempotent: setgid + a default ACL make new files group-rwX and
-  # group-owned, so slskd/syncthing/tancredi share them via storage-music.
+  # The storage datasets import and mount in stage 2, so ownership and the
+  # inherited group ACL are applied from a oneshot ordered after their mount
+  # units rather than tmpfiles (which would race the late mount) or a
+  # postCreateHook (which sees the /mnt altroot). Idempotent: setgid + a
+  # default ACL make new files group-rwX and group-owned, so
+  # slskd/syncthing/tancredi share them via storage-music.
   systemd.services.storage-music-perms = {
     description = "Ownership and default ACLs for the storage-music datasets";
-    after = [ "zfs-mount.service" ];
-    requires = [ "zfs-mount.service" ];
+    unitConfig.RequiresMountsFor = libraryDirs;
     wantedBy = [ "multi-user.target" ];
     path = [ pkgs.acl pkgs.coreutils ];
     serviceConfig = {

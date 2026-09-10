@@ -18,4 +18,11 @@
   # Scrubbing is off by default and enabled here. Periodic TRIM needs no line:
   # `services.zfs.trim.enable` already defaults to `true`.
   services.zfs.autoScrub.enable = true;
+
+  # disko declares every dataset and emits its fstab mount unit, so systemd is
+  # the mounter. zfs-mount.service (`zfs mount -a`) would mount the same
+  # datasets in parallel with those units and race them: the unit's mount then
+  # fails with EBUSY, and a lost race fails local-fs.target. Masked, so nothing
+  # mounts behind systemd's back.
+  systemd.services.zfs-mount.enable = false;
 }

@@ -100,15 +100,6 @@ in
   ];
   networking.nat.internalIPs = [ "${slskdAddress}/32" ];
 
-  # The downloads dataset is on the storage pool, which imports and unlocks in
-  # stage 2. ZFS non-legacy mounts aren't fstab-backed, so the container's
-  # auto-generated RequiresMountsFor can't order against them; wait for
-  # zfs-mount explicitly.
-  systemd.services."container@slskd" = {
-    after = [ "zfs-mount.service" ];
-    requires = [ "zfs-mount.service" ];
-  };
-
   # The container unit addresses ve-slskd itself; mark it unmanaged so
   # networkd's vendor default (a DHCP server on ve-*) never claims it.
   systemd.network.networks."50-ve-slskd" = {

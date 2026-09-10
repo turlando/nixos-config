@@ -76,13 +76,6 @@ in
     iifname { "lan0", "wg0" } oifname "ve-syncthing" udp dport ${toString syncPort} accept
   '';
 
-  # The MP3 dataset is on the storage pool (late stage-2 mount), so order the
-  # container after zfs-mount, as slskd does.
-  systemd.services."container@syncthing" = {
-    after = [ "zfs-mount.service" ];
-    requires = [ "zfs-mount.service" ];
-  };
-
   # The container unit addresses ve-syncthing itself; mark it unmanaged so
   # networkd's vendor default (a DHCP server on ve-*) never claims it.
   systemd.network.networks."50-ve-syncthing" = {
