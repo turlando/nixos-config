@@ -76,6 +76,9 @@ in
     "downloads/slskd" = {
       type = "zfs_fs";
       mountpoint = "/srv/downloads/slskd";
+      # nofail, as for the music datasets in storage.nix: the storage pool
+      # never blocks the router's boot, only this container.
+      mountOptions = [ "nofail" ];
       options = {
         # slskd's downloads, in-progress and completed: large, sequential
         # media. A big recordsize maximizes throughput and compression

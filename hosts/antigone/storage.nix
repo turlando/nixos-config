@@ -24,9 +24,15 @@ in
     # (beets converts, syncthing replicates). acltype=posixacl is inherited
     # from the pool root; passthrough keeps chmod from discarding the group
     # ACLs applied by storage-music-perms below.
+    #
+    # nofail: the storage pool is the NAS side of the box. A failed import or
+    # mount degrades only the units that RequiresMountsFor these paths (the
+    # containers, the perms oneshot); it never fails local-fs.target and with
+    # it the router's boot.
     "music/electronic-flac" = {
       type = "zfs_fs";
       mountpoint = "/srv/music/electronic-flac";
+      mountOptions = [ "nofail" ];
       options = {
         recordsize = "1M";
         atime = "off";
@@ -37,6 +43,7 @@ in
     "music/electronic-mp3" = {
       type = "zfs_fs";
       mountpoint = "/srv/music/electronic-mp3";
+      mountOptions = [ "nofail" ];
       options = {
         recordsize = "1M";
         atime = "off";
