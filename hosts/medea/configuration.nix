@@ -7,6 +7,10 @@
   #networking.interfaces.eth0 =  { macAddress = "9c:bf:0d:00:be:a2"; };
   networking.interfaces.wlan0 = { macAddress = "d8:b3:2f:bd:d6:f1"; };
 
+  # Fixed machine-id, the value the host has carried since install, so its
+  # identity is declared like on the other hosts.
+  environment.etc."machine-id".text = "acd8df8179e94bbeb2072a1da5a1eed0";
+
   hardware.framework = {
     enable = true;
 

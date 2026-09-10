@@ -25,6 +25,12 @@
   networking.hostName = "antigone";
   networking.hostId = "4d86c32a";
 
+  # Fixed machine-id. The root dataset is ephemeral and /etc/machine-id is not
+  # persisted, so systemd would otherwise generate a new id every boot and
+  # journald would open a new /var/log/journal/<id>/ per boot, hiding earlier
+  # boots from journalctl.
+  environment.etc."machine-id".text = "085bb912fd4c4f86af7f84ac110244f6";
+
   environment.persistence.enable = true;
   services.ephemeral.enable = true;
   services.ephemeral.datasets."antigone/nixos/ROOT".enable = true;
