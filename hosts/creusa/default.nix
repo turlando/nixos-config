@@ -11,6 +11,7 @@ flake.lib.mkNixosSystem {
     flake.nixosModules.modules.default
 
     flake.nixosModules.profiles.base
+    flake.nixosModules.profiles.headless
     flake.nixosModules.profiles.boot-systemd
     flake.nixosModules.profiles.age
     flake.nixosModules.profiles.zfs

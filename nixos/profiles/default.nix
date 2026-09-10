@@ -7,6 +7,7 @@
   boot-systemd = ./boot-systemd.nix;
   clamav = ./clamav.nix;
   graphical = ./graphical.nix;
+  headless = ./headless.nix;
   initrd-openssh-server = ./initrd-openssh-server.nix;
   libvirt = ./libvirt.nix;
   openssh-server = ./openssh-server.nix;
