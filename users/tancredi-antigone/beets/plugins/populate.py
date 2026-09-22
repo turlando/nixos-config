@@ -15,6 +15,11 @@ Every imported field is also NFC-normalized first, so the database (and the
 paths and tags derived from it) carries the library's canonical Unicode form
 regardless of what Discogs served.
 
+The Discogs plugin stashes its release/artist IDs into the native MusicBrainz
+`mb_*` fields; the library is Discogs-only and wants no MusicBrainz residue, so
+those are cleared at apply (items) and `album_imported` (the album entity). The
+files never carry them anyway (the zero plugin's keep_fields excludes `mb_*`).
+
 At `album_imported`, canonicalize the album's genres to the preferred spelling
 (per the `genres` config aliases). Genres are a beets album-level field, so this
 has to happen once the album exists, not per item at apply time.
@@ -28,6 +33,28 @@ from beets.dbcore import types
 from beets.plugins import BeetsPlugin
 
 from beetsplug._shared import nfc
+
+# MusicBrainz ID fields the Discogs plugin populates at match time. The library
+# is Discogs-only, so these are stripped at import (see module docstring).
+_MB_ID_FIELDS = (
+    "mb_albumid", "mb_artistid", "mb_albumartistid",
+    "mb_trackid", "mb_releasetrackid", "mb_releasegroupid", "mb_workid",
+)
+_MB_ID_LIST_FIELDS = ("mb_artistids", "mb_albumartistids")
+
+
+def _strip_musicbrainz(obj):
+    """Clear every MusicBrainz ID field on an item or album; True if any changed."""
+    changed = False
+    for field in _MB_ID_FIELDS:
+        if obj.get(field):
+            obj[field] = ""
+            changed = True
+    for field in _MB_ID_LIST_FIELDS:
+        if obj.get(field):
+            obj[field] = []
+            changed = True
+    return changed
 
 
 def _multiartist(items):
@@ -51,7 +78,7 @@ class PopulatePlugin(BeetsPlugin):
     def __init__(self):
         super().__init__()
         self.register_listener("import_task_apply", self._populate)
-        self.register_listener("album_imported", self._canonicalize_genres)
+        self.register_listener("album_imported", self._finalize_album)
 
     def _populate(self, session, task):
         primary, modifiers = self._release_types()
@@ -64,6 +91,8 @@ class PopulatePlugin(BeetsPlugin):
                 normalized = nfc(value)
                 if normalized != value:
                     item[key] = normalized
+
+            _strip_musicbrainz(item)
 
             item.multiartist = multiartist
 
@@ -85,15 +114,23 @@ class PopulatePlugin(BeetsPlugin):
             if types:
                 item.releasetype = types
 
-    def _canonicalize_genres(self, lib, album):
+    def _finalize_album(self, lib, album):
+        # Canonicalize genres to the preferred spelling.
         aliases = self._genre_aliases()
         original = list(album.genres or [])
         canonical = [aliases.get(g.lower(), g) for g in original]
+        changed = False
         if canonical != original:
             album.genres = canonical
-            album.store()
+            changed = True
             for item in album.items():
                 item.try_write()
+        # The album entity carries its own mb_* copies (items are handled at
+        # apply); strip them too. DB-only, so no file rewrite.
+        if _strip_musicbrainz(album):
+            changed = True
+        if changed:
+            album.store()
 
     def _release_types(self):
         cfg = beets.config["releasetype"]
