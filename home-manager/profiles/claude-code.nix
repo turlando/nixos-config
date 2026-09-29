@@ -7,7 +7,7 @@
     package = config.nixpkgs.unstable.pkgs.claude-code;
 
     settings = {
-      model = "claude-opus-5[1m]";
+      model = "claude-opus-5-5[1m]";
       effortLevel = "xhigh";
 
       tui = "fullscreen";
